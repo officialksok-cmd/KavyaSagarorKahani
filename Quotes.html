@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>प्रेरणादायक बातें - काव्य सागर और कहानी</title>
+
+  <!-- Global Language Switcher Script -->
+  <script src="lang.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0d0d15;
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* ---------------- HEADER ---------------- */
+    header {
+      background: rgba(30, 30, 47, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d4a017;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+
+    .brand svg { width: 28px; height: 28px; flex-shrink: 0; }
+
+    nav { display: flex; gap: 20px; }
+    nav a {
+      color: #9ca3af; text-decoration: none; font-size: 0.95rem; transition: color 0.2s;
+    }
+    nav a:hover, nav a.active { color: #d4a017; }
+
+    /* Dual Language Dropdown */
+    .lang-dropdown-wrapper { position: relative; margin-right: 12px; }
+    .lang-select {
+      background: rgba(255, 255, 255, 0.05); border: 1px solid #d4a017; color: #d4a017;
+      padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; outline: none; transition: all 0.2s ease; appearance: none;
+      -webkit-appearance: none; padding-right: 28px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%23d4a017' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat; background-position: right 8px center;
+    }
+    .lang-select:hover { background-color: rgba(212, 160, 23, 0.15); }
+    .lang-select option { background: #181824; color: #f3f4f6; }
+
+    /* User Profile Dropdown Menu */
+    .user-profile-menu { position: relative; }
+    .user-btn {
+      display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4); padding: 6px 12px; border-radius: 20px;
+      color: #f3f4f6; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+    }
+    .user-btn:hover { background: rgba(212, 160, 23, 0.15); border-color: #d4a017; }
+    .avatar-icon {
+      width: 22px; height: 22px; background: #ffd700; color: #0d0d15; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem;
+    }
+    .avatar-icon.guest-avatar {
+      background: #4b5563;
+      color: #f3f4f6;
+    }
+
+    .dropdown-content {
+      display: none; position: absolute; right: 0; top: 110%; background: #181824;
+      border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; min-width: 150px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5); overflow: hidden; z-index: 200;
+    }
+    .dropdown-content.show { display: block; }
+    .dropdown-content a, .dropdown-content button {
+      display: block; width: 100%; padding: 10px 14px; color: #d1d5db; text-decoration: none;
+      background: none; border: none; text-align: left; font-size: 0.85rem; cursor: pointer;
+    }
+    .dropdown-content a:hover, .dropdown-content button:hover { background: rgba(212, 160, 23, 0.15); color: #d4a017; }
+
+    /* ---------------- MAIN CONTAINER ---------------- */
+    .quotes-container {
+      max-width: 1240px; margin: 30px auto; padding: 0 20px; width: 100%; flex: 1;
+    }
+
+    /* ---------------- TOP CATEGORY TILES ---------------- */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+      margin-bottom: 35px;
+      align-items: center;
+    }
+
+    .tile-slot {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .tile-slot:hover {
+      transform: translateY(-6px) scale(1.03);
+    }
+
+    .custom-tile {
+      width: 100%;
+      height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 16px 12px;
+      position: relative;
+      user-select: none;
+    }
+
+    .custom-tile span {
+      font-size: 0.88rem;
+      font-weight: 700;
+      line-height: 1.35;
+      color: #9ca3af;
+      z-index: 3;
+      transition: all 0.3s ease;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .tile-bg-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: visible;
+    }
+
+    .tile-path {
+      fill: rgba(255, 255, 255, 0.02);
+      stroke: rgba(255, 255, 255, 0.2);
+      stroke-width: 2;
+      stroke-dasharray: 6 4;
+      transition: all 0.35s ease;
+    }
+
+    /* ---------------- THEMED COLOR SYSTEM ---------------- */
+    /* 1. Spiritual & Life (Fire Glow) */
+    .theme-spiritual .tile-path { stroke: rgba(255, 170, 0, 0.4); }
+    .theme-spiritual.active .tile-path {
+      fill: rgba(255, 120, 0, 0.18);
+      stroke: #ff9900;
+      stroke-width: 2.8;
+      stroke-dasharray: 0;
+      filter: drop-shadow(0 0 18px rgba(255, 140, 0, 0.6));
+    }
+    .theme-spiritual.active span { color: #ffb703; }
+
+    /* 2. Self Believe (Lime Glow) */
+    .theme-belief .tile-path { stroke: rgba(132, 204, 22, 0.4); }
+    .theme-belief.active .tile-path {
+      fill: rgba(132, 204, 22, 0.18);
+      stroke: #a3e635;
+      stroke-width: 2.8;
+      stroke-dasharray: 0;
+      filter: drop-shadow(0 0 16px rgba(163, 230, 53, 0.55));
+    }
+    .theme-belief.active span { color: #bef264; }
+
+    /* 3. Love & Gratitude (Pink/Red Glow) */
+    .theme-love .tile-path { stroke: rgba(244, 63, 94, 0.4); }
+    .theme-love.active .tile-path {
+      fill: rgba(244, 63, 94, 0.2);
+      stroke: #fb7185;
+      stroke-width: 2.8;
+      stroke-dasharray: 0;
+      filter: drop-shadow(0 0 16px rgba(251, 113, 133, 0.6));
+    }
+    .theme-love.active span { color: #fda4af; }
+
+    /* 4. Deep Thought (Cyan/Blue Glow) */
+    .theme-wisdom .tile-path { stroke: rgba(56, 189, 248, 0.4); }
+    .theme-wisdom.active .tile-path {
+      fill: rgba(14, 116, 144, 0.25);
+      stroke: #38bdf8;
+      stroke-width: 2.8;
+      stroke-dasharray: 0;
+      filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.55));
+    }
+    .theme-wisdom.active span { color: #7dd3fc; }
+
+    /* 5. Success & Hardwork (Amber Glow) */
+    .theme-success .tile-path { stroke: rgba(249, 115, 22, 0.4); }
+    .theme-success.active .tile-path {
+      fill: rgba(249, 115, 22, 0.2);
+      stroke: #fb923c;
+      stroke-width: 2.8;
+      stroke-dasharray: 0;
+      filter: drop-shadow(0 0 16px rgba(251, 146, 60, 0.55));
+    }
+    .theme-success.active span { color: #fed7aa; }
+
+    /* ---------------- NATIVE 3D QUOTE CARD DECK ---------------- */
+    .custom-carousel-box {
+      background: #15151f;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 35px 20px 25px 20px;
+      width: 100%;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .viewer-title-tag {
+      text-align: center;
+      font-size: 1.35rem;
+      margin-bottom: 25px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      transition: color 0.3s ease;
+    }
+
+    .card-deck-stage {
+      position: relative;
+      width: 100%;
+      height: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1000px;
+    }
+
+    .custom-slide-card {
+      position: absolute;
+      width: 380px;
+      max-width: 85%;
+      min-height: 300px;
+      background: #1b1b26;
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 28px 24px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease, box-shadow 0.45s ease, border-color 0.45s ease;
+      cursor: pointer;
+      user-select: none;
+      overflow: hidden;
+    }
+
+    /* Shape background SVG positioned behind content */
+    .quote-bg-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    /* CARD POSITION STATES */
+    .custom-slide-card.active {
+      transform: translateX(0) scale(1) translateZ(50px);
+      opacity: 1;
+      z-index: 10;
+      cursor: default;
+      border-width: 2px !important;
+    }
+
+    .custom-slide-card.prev {
+      transform: translateX(-210px) scale(0.84) rotateY(8deg);
+      opacity: 0.32;
+      z-index: 5;
+      filter: blur(0.5px);
+    }
+
+    .custom-slide-card.next {
+      transform: translateX(210px) scale(0.84) rotateY(-8deg);
+      opacity: 0.32;
+      z-index: 5;
+      filter: blur(0.5px);
+    }
+
+    .custom-slide-card.hidden-left {
+      transform: translateX(-350px) scale(0.65);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .custom-slide-card.hidden-right {
+      transform: translateX(350px) scale(0.65);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* THEME ACTIVE GLOWS FOR WORKSPACE */
+    .custom-slide-card.active.theme-spiritual {
+      background: linear-gradient(145deg, rgba(255, 140, 0, 0.22), rgba(24, 24, 34, 0.98));
+      border-color: #ff9900;
+      box-shadow: 0 0 35px rgba(255, 140, 0, 0.45);
+    }
+    .custom-slide-card.active.theme-belief {
+      background: linear-gradient(145deg, rgba(163, 230, 53, 0.22), rgba(24, 24, 34, 0.98));
+      border-color: #a3e635;
+      box-shadow: 0 0 35px rgba(163, 230, 53, 0.45);
+    }
+    .custom-slide-card.active.theme-love {
+      background: linear-gradient(145deg, rgba(251, 113, 133, 0.22), rgba(24, 24, 34, 0.98));
+      border-color: #fb7185;
+      box-shadow: 0 0 35px rgba(251, 113, 133, 0.45);
+    }
+    .custom-slide-card.active.theme-wisdom {
+      background: linear-gradient(145deg, rgba(56, 189, 248, 0.22), rgba(24, 24, 34, 0.98));
+      border-color: #38bdf8;
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.45);
+    }
+    .custom-slide-card.active.theme-success {
+      background: linear-gradient(145deg, rgba(251, 146, 60, 0.22), rgba(24, 24, 34, 0.98));
+      border-color: #fb923c;
+      box-shadow: 0 0 35px rgba(251, 146, 60, 0.45);
+    }
+
+    .quote-content-body {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .quote-badge-top {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+
+    .quote-main-text {
+      font-size: 1.15rem;
+      line-height: 1.8;
+      color: #ffffff;
+      font-style: italic;
+      margin-bottom: 14px;
+      white-space: pre-line;
+      max-width: 88%;
+    }
+
+    .quote-author-sign {
+      font-size: 0.92rem;
+      font-weight: 600;
+      width: 88%;
+      text-align: right;
+    }
+
+    .card-actions-bar {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    .q-action-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      color: #9ca3af;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .q-action-btn:hover { transform: scale(1.15); }
+    .q-action-btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .q-action-btn.liked svg { fill: #ff416c; stroke: #ff416c; color: #ff416c; }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 25px;
+      margin-top: 20px;
+      z-index: 20;
+    }
+
+    .nav-arrow {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-arrow:hover {
+      background: #d4a017;
+      color: #0d0d15;
+      border-color: #d4a017;
+      transform: scale(1.08);
+    }
+
+    .counter {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #9ca3af;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    /* ---------------- UNIVERSAL 4-CARD FOOTER ---------------- */
+    .footer-section {
+      max-width: 1240px; margin: 40px auto 0 auto; padding: 30px 20px 0 20px; width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .footer-card {
+      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 20px; text-align: center; text-decoration: none; color: #d1d5db; font-weight: 600; font-size: 1rem; transition: transform 0.2s, border-color 0.2s, background 0.2s; display: flex; align-items: center; justify-content: center; min-height: 80px;
+    }
+    .footer-card:hover { transform: translateY(-4px); border-color: rgba(212, 160, 23, 0.4); background: rgba(212, 160, 23, 0.05); color: #ffffff; }
+
+    .other-links-wrapper { position: relative; display: flex; justify-content: center; align-items: center; }
+    .other-links-btn {
+      width: 100%; height: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #d1d5db; font-weight: 600; font-size: 1rem; cursor: pointer; min-height: 80px; transition: all 0.2s;
+    }
+    .other-links-btn:hover, .other-links-btn.active { border-color: #d4a017; color: #d4a017; background: rgba(212, 160, 23, 0.08); }
+
+    .social-popup {
+      position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); display: flex; gap: 16px; pointer-events: none; z-index: 50;
+    }
+    .social-popup.active { pointer-events: auto; }
+    .social-circle {
+      width: 50px; height: 50px; border-radius: 50%; background: #181824; border: 2px solid rgba(255, 255, 255, 0.15); display: flex; align-items: center; justify-content: center; color: #ffffff; text-decoration: none; box-shadow: 0 10px 20px rgba(0,0,0,0.6); opacity: 0; transform: translateY(20px) scale(0.5); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .social-popup.active .social-circle { opacity: 1; transform: translateY(0) scale(1); }
+    .social-popup.active .social-circle:nth-child(1) { transition-delay: 0.05s; }
+    .social-popup.active .social-circle:nth-child(2) { transition-delay: 0.1s; }
+    .social-popup.active .social-circle:nth-child(3) { transition-delay: 0.15s; }
+    .social-circle.yt:hover { background: #ff0000; border-color: #ff0000; }
+    .social-circle.fb:hover { background: #1877f2; border-color: #1877f2; }
+    .social-circle.ig:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: #e6683c; }
+    .social-circle svg { width: 24px; height: 24px; fill: currentColor; }
+
+    footer { text-align: center; padding: 30px 20px; color: #6b7280; font-size: 0.85rem; }
+
+    @media (max-width: 992px) {
+      .category-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      header { padding: 10px 15px; } nav { display: none; }
+      .category-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+      .custom-carousel-box { padding: 25px 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header>
+    <a href="home.html" class="brand">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+        <path d="M22 38l16-16" />
+        <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+        <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+      </svg>
+      <span data-lang-key="brandTitle">काव्य सागर और कहानी</span>
+    </a>
+
+    <nav>
+      <a href="home.html" data-lang-key="navHome">होम</a>
+      <a href="poem.html" data-lang-key="navPoem">कविताएँ</a>
+      <a href="stories.html" data-lang-key="navStory">कहानी</a>
+      <a href="diaries.html" data-lang-key="navDiary">डायरी</a>
+      <a href="quotes.html" class="active" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
+    </nav>
+
+    <div style="display: flex; align-items: center;">
+      <div class="lang-dropdown-wrapper">
+        <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
+          <option value="hi">हिन्दी</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div class="user-profile-menu" id="userAuthContainer"></div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="quotes-container">
+
+    <!-- 1. CATEGORY TILES (Top Section) -->
+    <div class="category-grid">
+
+      <!-- Tile 1: Spiritual and Life Philosophy (Realistic Fire Flame Shape 🔥) -->
+      <div class="tile-slot theme-spiritual active" id="slot-spiritual" onclick="selectCategory('spiritual', this)">
+        <div class="custom-tile">
+          <svg class="tile-bg-svg" viewBox="0 0 160 140" preserveAspectRatio="none">
+            <path class="tile-path" d="M80,12 C82,25 78,38 72,48 C66,58 54,64 54,76 C54,92 68,104 80,104 C92,104 106,92 106,76 C106,66 100,58 94,50 C90,44 88,36 90,30 C98,38 122,58 122,86 C122,112 103,130 80,130 C57,130 38,112 38,86 C38,62 52,42 66,28 C74,20 78,12 80,12 Z M80,68 C74,68 70,74 70,80 C70,86 74,92 80,92 C86,92 90,86 90,80 C90,74 86,68 80,68 Z" />
+          </svg>
+          <span data-lang-key="tileSpiritual">Spiritual &amp; Life<br>Philosophy</span>
+        </div>
+      </div>
+
+      <!-- Tile 2: Self Believe & Positivity (4-Leaf Clover Shape) -->
+      <div class="tile-slot theme-belief" id="slot-belief" onclick="selectCategory('belief', this)">
+        <div class="custom-tile">
+          <svg class="tile-bg-svg" viewBox="0 0 160 140" preserveAspectRatio="none">
+            <path class="tile-path" d="M80,35 C65,10 40,15 35,40 C10,45 15,70 40,75 C15,80 10,105 35,110 C40,135 65,130 80,105 C95,130 120,135 125,110 C150,105 145,80 120,75 C145,70 150,45 125,40 C120,15 95,10 80,35 Z" />
+            <path d="M80,105 Q70,130 65,138" stroke="currentColor" stroke-width="2" fill="none" opacity="0.6"/>
+          </svg>
+          <span data-lang-key="tileBelief">Self Believe<br>&amp; Positivity</span>
+        </div>
+      </div>
+
+      <!-- Tile 3: Love, Bond and Gratitude (Heart Shape) -->
+      <div class="tile-slot theme-love" id="slot-love" onclick="selectCategory('love', this)">
+        <div class="custom-tile">
+          <svg class="tile-bg-svg" viewBox="0 0 160 140" preserveAspectRatio="none">
+            <path class="tile-path" d="M80,128 C80,128 18,92 18,48 C18,22 42,12 60,22 C72,28 80,40 80,40 C80,40 88,28 100,22 C118,12 142,22 142,48 C142,92 80,128 80,128 Z" />
+          </svg>
+          <span data-lang-key="tileLove">Love, Bond<br>&amp; Gratitude</span>
+        </div>
+      </div>
+
+      <!-- Tile 4: Deep Thought and Wisdom (Cloud Shape) -->
+      <div class="tile-slot theme-wisdom" id="slot-wisdom" onclick="selectCategory('wisdom', this)">
+        <div class="custom-tile">
+          <svg class="tile-bg-svg" viewBox="0 0 160 140" preserveAspectRatio="none">
+            <path class="tile-path" d="M40,110 C20,110 10,90 20,75 C10,55 30,35 50,45 C65,25 95,25 110,45 C130,35 150,55 140,75 C150,90 140,110 120,110 Z" />
+          </svg>
+          <span data-lang-key="tileWisdom">Deep Thought<br>&amp; Wisdom</span>
+        </div>
+      </div>
+
+      <!-- Tile 5: Success and Hardwork (Open Book Shape) -->
+      <div class="tile-slot theme-success" id="slot-success" onclick="selectCategory('success', this)">
+        <div class="custom-tile">
+          <svg class="tile-bg-svg" viewBox="0 0 160 140" preserveAspectRatio="none">
+            <path class="tile-path" d="M12,25 C45,15 75,28 80,35 C85,28 115,15 148,25 L148,115 C115,105 85,118 80,125 C75,118 45,105 12,115 Z" />
+            <line x1="80" y1="35" x2="80" y2="125" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+          </svg>
+          <span data-lang-key="tileSuccess">Success &amp;<br>Hardwork</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 2. QUOTES 3D CAROUSEL BOX -->
+    <div class="custom-carousel-box" id="viewerWorkspace">
+      <div class="viewer-title-tag" id="viewerCategoryTitle">Spiritual &amp; Life Philosophy</div>
+
+      <!-- Native 3D Deck Stage -->
+      <div class="card-deck-stage" id="quotesDeckStage"></div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <button class="nav-arrow" onclick="navigateQuotesDeck(-1)" id="prevPageBtn">&lt;</button>
+        <span class="counter" id="pageNumberTracker">1 / 1</span>
+        <button class="nav-arrow" onclick="navigateQuotesDeck(1)" id="nextPageBtn">&gt;</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Universal 4-Card Footer Section -->
+  <section class="footer-section">
+    <div class="footer-grid">
+      <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
+      <a href="privacy-policy.html" class="footer-card" data-lang-key="privacyPolicy">Privacy Policy</a>
+      <a href="terms.html" class="footer-card" data-lang-key="termsConditions">Terms and Conditions</a>
+
+      <div class="other-links-wrapper">
+        <button class="other-links-btn" id="otherLinksBtn" data-lang-key="otherLinks">Other Links</button>
+
+        <div class="social-popup" id="socialPopup">
+          <a href="https://www.youtube.com/@KavyaSagarorKahani" target="_blank" class="social-circle yt" title="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 काव्य सागर और कहानी. All rights reserved.
+  </footer>
+
+  <script>
+    // --- 1. LOCAL TRANSLATION DICTIONARY ---
+    const localDict = {
+      hi: {
+        tileSpiritual: "आध्यात्म और जीवन दर्शन",
+        tileBelief: "आत्मविश्वास और सकारात्मकता",
+        tileLove: "प्रेम, संबंध और आभार",
+        tileWisdom: "गहरे विचार और ज्ञान",
+        tileSuccess: "सफलता और कड़ी मेहनत"
+      },
+      en: {
+        tileSpiritual: "Spiritual & Life Philosophy",
+        tileBelief: "Self Believe & Positivity",
+        tileLove: "Love, Bond & Gratitude",
+        tileWisdom: "Deep Thought & Wisdom",
+        tileSuccess: "Success & Hardwork"
+      }
+    };
+
+    // --- 2. THEMED SHAPES FOR ACTIVE QUOTE CARDS ---
+    const categoryConfigs = {
+      spiritual: {
+        themeClass: "theme-spiritual",
+        color: "#ff9900",
+        pathSvg: `
+          <svg class="quote-bg-svg" viewBox="0 0 320 220" preserveAspectRatio="none">
+            <path d="M160,18 C164,40 156,62 144,78 C132,94 112,104 112,124 C112,150 134,170 160,170 C186,170 208,150 208,124 C208,108 198,94 188,82 C182,72 178,60 180,50 C194,62 232,94 232,138 C232,180 200,210 160,210 C120,210 88,180 88,138 C88,100 110,68 134,44 C148,32 156,18 160,18 Z M160,110 C150,110 144,120 144,130 C144,140 150,150 160,150 C170,150 176,140 176,130 C176,120 170,110 160,110 Z" 
+                  fill="rgba(255, 140, 0, 0.08)" stroke="#ff9900" stroke-width="2.2" filter="drop-shadow(0 0 12px rgba(255, 140, 0, 0.35))"/>
+          </svg>
+        `
+      },
+      belief: {
+        themeClass: "theme-belief",
+        color: "#a3e635",
+        pathSvg: `
+          <svg class="quote-bg-svg" viewBox="0 0 320 220" preserveAspectRatio="none">
+            <path d="M160,50 C135,10 80,18 70,60 C20,70 30,115 70,125 C20,135 15,175 65,185 C75,225 125,215 160,175 C195,215 245,225 255,185 C305,175 300,135 250,125 C290,115 300,70 250,60 C240,18 185,10 160,50 Z" 
+                  fill="rgba(163, 230, 53, 0.08)" stroke="#a3e635" stroke-width="2.2" filter="drop-shadow(0 0 10px rgba(163, 230, 53, 0.3))"/>
+          </svg>
+        `
+      },
+      love: {
+        themeClass: "theme-love",
+        color: "#fb7185",
+        pathSvg: `
+          <svg class="quote-bg-svg" viewBox="0 0 320 220" preserveAspectRatio="none">
+            <path d="M160,205 C160,205 30,145 30,75 C30,30 70,15 105,30 C125,40 145,60 160,60 C175,60 195,40 215,30 C250,15 290,30 290,75 C290,145 160,205 160,205 Z" 
+                  fill="rgba(251, 113, 133, 0.08)" stroke="#fb7185" stroke-width="2.2" filter="drop-shadow(0 0 12px rgba(251, 113, 133, 0.35))"/>
+          </svg>
+        `
+      },
+      wisdom: {
+        themeClass: "theme-wisdom",
+        color: "#38bdf8",
+        pathSvg: `
+          <svg class="quote-bg-svg" viewBox="0 0 320 220" preserveAspectRatio="none">
+            <path d="M80,180 C40,180 20,145 40,120 C20,90 60,55 95,70 C125,40 185,40 215,70 C250,55 290,90 270,120 C290,145 270,180 230,180 Z" 
+                  fill="rgba(56, 189, 248, 0.08)" stroke="#38bdf8" stroke-width="2.2" filter="drop-shadow(0 0 10px rgba(56, 189, 248, 0.3))"/>
+          </svg>
+        `
+      },
+      success: {
+        themeClass: "theme-success",
+        color: "#fb923c",
+        pathSvg: `
+          <svg class="quote-bg-svg" viewBox="0 0 320 220" preserveAspectRatio="none">
+            <path d="M20,38 C80,22 150,42 160,52 C170,42 240,22 300,38 L300,180 C240,165 170,185 160,195 C150,185 80,165 20,180 Z" 
+                  fill="rgba(251, 146, 60, 0.08)" stroke="#fb923c" stroke-width="2.2" filter="drop-shadow(0 0 10px rgba(251, 146, 60, 0.3))"/>
+            <line x1="160" y1="52" x2="160" y2="195" stroke="#fb923c" stroke-width="2" opacity="0.6"/>
+          </svg>
+        `
+      }
+    };
+
+    // --- 3. BILINGUAL QUOTES DATASET ---
+    const quotesData = {
+      spiritual: {
+        hi: [
+          { text: "आत्मा का असली सुख शांति में है,\nबाहरी दिखावे में नहीं।", author: "~ कुमार" },
+          { text: "संसार को नहीं, खुद को जानना ही\nवास्तविक ज्ञान है।", author: "~ अज्ञात" },
+          { text: "ईश्वर की भक्ति हृदय को निर्मल\nऔर शांत बनाती है।", author: "~ कबीर" }
+        ],
+        en: [
+          { text: "The true joy of the soul lies in peace,\nnot in pretense.", author: "~ Kumar" },
+          { text: "Knowing oneself is the beginning of\ntrue wisdom.", author: "~ Unknown" },
+          { text: "Devotion purifies the soul and\nbrings eternal stillness.", author: "~ Kabir" }
+        ]
+      },
+      belief: {
+        hi: [
+          { text: "खुद पर विश्वास ही सफलता की\nपहली सीढ़ी है।", author: "~ कुमार" },
+          { text: "सकारात्मक सोच अंधेरे में भी\nरोशनी खोज लेती है।", author: "~ अज्ञात" },
+          { text: "जो खुद पर भरोसा रखते हैं,\nमंज़िलें उनके कदम चूमती हैं।", author: "~ कुमार" }
+        ],
+        en: [
+          { text: "Belief in yourself is the foundation\nof all success.", author: "~ Kumar" },
+          { text: "A positive mindset finds light\neven in deep darkness.", author: "~ Unknown" },
+          { text: "Those who believe in their strength\nalways reach their dreams.", author: "~ Kumar" }
+        ]
+      },
+      love: {
+        hi: [
+          { text: "प्रेम वो डोर है जो दो आत्माओं को\nनिस्वार्थ जोड़ती है।", author: "~ कुमार" },
+          { text: "कृतज्ञता से भरा दिल हर पल\nआनंदित रहता है।", author: "~ अज्ञात" },
+          { text: "सच्चे रिश्ते समर्पण और सम्मान\nकी नींव पर टिकते हैं।", author: "~ कुमार" }
+        ],
+        en: [
+          { text: "Love is the sacred thread that\nconnects two souls.", author: "~ Kumar" },
+          { text: "A grateful heart is perpetually\nin a state of joy.", author: "~ Unknown" },
+          { text: "Genuine bonds are built on mutual\nrespect and selfless care.", author: "~ Kumar" }
+        ]
+      },
+      wisdom: {
+        hi: [
+          { text: "ज्ञान शब्दों में नहीं, बल्कि शांत\nआचरण में झलकता है।", author: "~ कुमार" },
+          { text: "मौन रहना भी कई बार सबसे\nसटीक और गहरा उत्तर होता है।", author: "~ चाणक्य" },
+          { text: "धैर्य वह कड़वा पौधा है जिस पर\nफल हमेशा मीठा लगता है।", author: "~ अज्ञात" }
+        ],
+        en: [
+          { text: "Wisdom reflects in quiet action,\nnot merely in words.", author: "~ Kumar" },
+          { text: "Silence is often the most profound\nand accurate answer.", author: "~ Chanakya" },
+          { text: "Patience is a bitter plant,\nbut its fruit is sweet.", author: "~ Unknown" }
+        ]
+      },
+      success: {
+        hi: [
+          { text: "मेहनत करने वालों की\nकभी हार नहीं होती।", author: "~ कुमार" },
+          { text: "हर अंधेरे के बाद\nउजाला होता है।", author: "~ कुमार" },
+          { text: "सपनों को सच करने के लिए\nजागना पड़ता है।", author: "~ कलाम" }
+        ],
+        en: [
+          { text: "Those who put in hard work\nnever face defeat.", author: "~ Kumar" },
+          { text: "There is always bright light\nafter every dark night.", author: "~ Kumar" },
+          { text: "To make your dreams come true,\nyou must first wake up.", author: "~ Kalam" }
+        ]
+      }
+    };
+
+    let activeCat = 'spiritual';
+    let currentQuoteIndex = 0;
+
+    // --- 4. 3D QUOTES DECK ENGINE ---
+    function renderQuotesView() {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = localDict[currentLang] || localDict.hi;
+      const config = categoryConfigs[activeCat];
+
+      // Update Workspace Title & Glow Color
+      const catTitleKeys = {
+        spiritual: 'tileSpiritual',
+        belief: 'tileBelief',
+        love: 'tileLove',
+        wisdom: 'tileWisdom',
+        success: 'tileSuccess'
+      };
+      const titleEl = document.getElementById('viewerCategoryTitle');
+      titleEl.innerText = dict[catTitleKeys[activeCat]];
+      titleEl.style.color = config.color;
+
+      const list = quotesData[activeCat][currentLang] || quotesData[activeCat].hi;
+      const stage = document.getElementById('quotesDeckStage');
+      stage.innerHTML = '';
+
+      list.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = `custom-slide-card ${config.themeClass}`;
+        card.setAttribute('data-index', idx);
+        card.onclick = () => {
+          if (idx !== currentQuoteIndex) {
+            currentQuoteIndex = idx;
+            updateQuotesCardPositions();
+          }
+        };
+
+        card.innerHTML = `
+          <!-- Category Matching SVG Contour -->
+          ${config.pathSvg}
+
+          <div class="quote-content-body">
+            <div class="quote-badge-top" style="color: ${config.color};">QUOTE</div>
+            <div class="quote-main-text">${q.text}</div>
+            <div class="quote-author-sign" style="color: ${config.color};">${q.author}</div>
+          </div>
+
+          <div class="card-actions-bar">
+            <button class="q-action-btn" onclick="handleProtectedQuoteLike(event, this)" title="Like">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+            <button class="q-action-btn" onclick="handleShareQuote(event)" title="Share">
+              <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            </button>
+            <button class="q-action-btn" onclick="handleCommentQuote(event)" title="Comment">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </button>
+          </div>
+        `;
+        stage.appendChild(card);
+      });
+
+      if (currentQuoteIndex >= list.length) {
+        currentQuoteIndex = 0;
+      }
+      updateQuotesCardPositions();
+    }
+
+    function updateQuotesCardPositions() {
+      const cards = document.querySelectorAll('#quotesDeckStage .custom-slide-card');
+      const total = cards.length;
+      if (total === 0) return;
+
+      cards.forEach((card, idx) => {
+        card.classList.remove('active', 'prev', 'next', 'hidden-left', 'hidden-right');
+
+        if (idx === currentQuoteIndex) {
+          card.classList.add('active');
+        } else if (idx === (currentQuoteIndex - 1 + total) % total && total > 1) {
+          card.classList.add('prev');
+        } else if (idx === (currentQuoteIndex + 1) % total && total > 1) {
+          card.classList.add('next');
+        } else {
+          if (idx < currentQuoteIndex) {
+            card.classList.add('hidden-left');
+          } else {
+            card.classList.add('hidden-right');
+          }
+        }
+      });
+
+      document.getElementById('pageNumberTracker').innerText = `${currentQuoteIndex + 1} / ${total}`;
+    }
+
+    function navigateQuotesDeck(dir) {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const list = quotesData[activeCat][currentLang] || quotesData[activeCat].hi;
+      const total = list.length;
+      if (total <= 1) return;
+
+      currentQuoteIndex = (currentQuoteIndex + dir + total) % total;
+      updateQuotesCardPositions();
+    }
+
+    function selectCategory(catKey, el) {
+      activeCat = catKey;
+      currentQuoteIndex = 0;
+      document.querySelectorAll('.tile-slot').forEach(t => t.classList.remove('active'));
+      if (el) el.classList.add('active');
+      renderQuotesView();
+    }
+
+    // --- 5. PROTECTED ACTIONS ---
+    function handleProtectedQuoteLike(e, btn) {
+      e.stopPropagation();
+      const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
+      if (!isLoggedIn) {
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const msg = currentLang === 'hi'
+          ? 'विचार को सहेजने/पसंद करने के लिए कृपया पहले लॉगिन करें। क्या आप लॉगिन पृष्ठ पर जाना चाहते हैं?'
+          : 'Please log in to like and save quotes to your dashboard. Would you like to log in now?';
+
+        if (confirm(msg)) {
+          sessionStorage.setItem('redirectAfterLogin', window.location.href);
+          window.location.href = 'login.html';
+        }
+        return;
+      }
+      btn.classList.toggle('liked');
+    }
+
+    function handleShareQuote(e) {
+      e.stopPropagation();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(window.location.href);
+        alert('विचार का लिंक कॉपी हो गया है! (Quote link copied!)');
+      } else {
+        alert('साझा करें (Share link triggered)');
+      }
+    }
+
+    function handleCommentQuote(e) {
+      e.stopPropagation();
+      alert('टिप्पणी अनुभाग जल्द ही आ रहा है! (Comments section opening soon!)');
+    }
+
+    // --- 6. DYNAMIC AUTH HEADER ---
+    function renderAuthHeader() {
+      const container = document.getElementById('userAuthContainer');
+      if (!container) return;
+
+      const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+
+      if (isLoggedIn) {
+        const rawName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
+        const userName = rawName.trim();
+        const userInitial = userName.charAt(0).toUpperCase() || 'A';
+
+        container.innerHTML = `
+          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+            <span class="avatar-icon">${userInitial}</span>
+            <span>${userName}</span>
+            <small>▼</small>
+          </button>
+          <div class="dropdown-content" id="userDropdown">
+            <a href="profile.html" data-lang-key="myProfile">My Profile</a>
+            <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
+            <a href="my-work.html" data-lang-key="myWorks">My Works</a>
+            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+            <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
+          </div>
+        `;
+      } else {
+        const guestLabel = currentLang === 'hi' ? 'अतिथि (Guest)' : 'Guest';
+        const signInLabel = currentLang === 'hi' ? 'साइन इन करें' : 'Sign In';
+
+        container.innerHTML = `
+          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+            <span class="avatar-icon guest-avatar">G</span>
+            <span>${guestLabel}</span>
+            <small>▼</small>
+          </button>
+          <div class="dropdown-content" id="userDropdown">
+            <a href="login.html" style="color:#d4a017; font-weight:600;">🔑 ${signInLabel}</a>
+            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+          </div>
+        `;
+      }
+
+      if (typeof translations !== 'undefined' && translations[currentLang]) {
+        const dict = translations[currentLang];
+        container.querySelectorAll('[data-lang-key]').forEach(el => {
+          const key = el.getAttribute('data-lang-key');
+          if (dict[key]) el.innerText = dict[key];
+        });
+      }
+    }
+
+    function toggleUserDropdown(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) dropdown.classList.toggle('show');
+    }
+
+    function handleUserLogout() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userName');
+      sessionStorage.clear();
+      window.location.reload();
+    }
+
+    // --- 7. UI LISTENERS & KEYBOARD CONTROLS ---
+    window.addEventListener('click', (e) => {
+      const userMenuBtn = document.getElementById('userMenuBtn');
+      const userDropdown = document.getElementById('userDropdown');
+      const otherLinksBtn = document.getElementById('otherLinksBtn');
+      const socialPopup = document.getElementById('socialPopup');
+
+      if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
+        userDropdown.classList.remove('show');
+      }
+
+      if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
+        socialPopup.classList.remove('active');
+        otherLinksBtn.classList.remove('active');
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+        otherLinksBtn.innerText = dict ? dict.otherLinks : 'Other Links';
+      }
+    });
+
+    const otherLinksBtn = document.getElementById('otherLinksBtn');
+    const socialPopup = document.getElementById('socialPopup');
+
+    otherLinksBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = socialPopup.classList.toggle('active');
+      otherLinksBtn.classList.toggle('active');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+      if (dict) {
+        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+      } else {
+        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') navigateQuotesDeck(-1);
+      if (e.key === 'ArrowRight') navigateQuotesDeck(1);
+    });
+
+    window.addEventListener('languageChanged', () => {
+      renderAuthHeader();
+      renderQuotesView();
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAuthHeader();
+      renderQuotesView();
+    });
+  </script>
+
+</body>
+</html>

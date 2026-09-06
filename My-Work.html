@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>मेरी रचनाएँ - काव्य सागर और कहानी</title>
+
+  <!-- Global Language Switcher Script -->
+  <script src="lang.js"></script>
+
+  <!-- Strict Session Protection Check -->
+  <script>
+    const isAuth = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
+    if (!isAuth) {
+      alert('अनधिकृत पहुँच! कृपया पहले लॉगिन करें।\nUnauthorized access! Please log in first.');
+      sessionStorage.setItem('redirectAfterLogin', 'my-works.html');
+      window.location.href = 'login.html';
+    }
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0d0d15;
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* ---------------- HEADER ---------------- */
+    header {
+      background: rgba(30, 30, 47, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d4a017;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+
+    .brand svg { width: 28px; height: 28px; flex-shrink: 0; }
+
+    nav { display: flex; gap: 20px; }
+    nav a {
+      color: #9ca3af; text-decoration: none; font-size: 0.95rem; transition: color 0.2s;
+    }
+    nav a:hover, nav a.active { color: #d4a017; }
+
+    .lang-dropdown-wrapper { position: relative; margin-right: 12px; }
+    .lang-select {
+      background: rgba(255, 255, 255, 0.05); border: 1px solid #d4a017; color: #d4a017;
+      padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; outline: none; transition: all 0.2s ease; appearance: none;
+      -webkit-appearance: none; padding-right: 28px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%23d4a017' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat; background-position: right 8px center;
+    }
+    .lang-select:hover { background-color: rgba(212, 160, 23, 0.15); }
+    .lang-select option { background: #181824; color: #f3f4f6; }
+
+    .user-profile-menu { position: relative; }
+    .user-btn {
+      display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4); padding: 6px 12px; border-radius: 20px;
+      color: #f3f4f6; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+    }
+    .user-btn:hover { background: rgba(212, 160, 23, 0.15); border-color: #d4a017; }
+    .avatar-icon {
+      width: 22px; height: 22px; background: #ffd700; color: #0d0d15; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem;
+    }
+
+    .dropdown-content {
+      display: none; position: absolute; right: 0; top: 110%; background: #181824;
+      border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; min-width: 150px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5); overflow: hidden; z-index: 200;
+    }
+    .dropdown-content.show { display: block; }
+    .dropdown-content a, .dropdown-content button {
+      display: block; width: 100%; padding: 10px 14px; color: #d1d5db; text-decoration: none;
+      background: none; border: none; text-align: left; font-size: 0.85rem; cursor: pointer;
+    }
+    .dropdown-content a:hover, .dropdown-content button:hover { background: rgba(212, 160, 23, 0.15); color: #d4a017; }
+
+    /* ---------------- MAIN DASHBOARD CARD ---------------- */
+    .dashboard-container {
+      max-width: 1240px;
+      margin: 35px auto;
+      padding: 0 20px;
+      width: 100%;
+      flex: 1;
+    }
+
+    .dashboard-card {
+      width: 100%;
+      background: #1e1e24;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+      min-height: 640px;
+    }
+
+    /* Left Sidebar */
+    .sidebar-section {
+      background: #18181f;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 25px;
+      text-decoration: none;
+    }
+
+    .brand-svg {
+      width: 34px;
+      height: 34px;
+      color: #d4a017;
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      color: #d4a017;
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .brand-text span {
+      color: #8e8e9d;
+      font-size: 0.7rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .current-section-badge {
+      background: rgba(212, 160, 23, 0.1);
+      border: 1px dashed rgba(212, 160, 23, 0.3);
+      padding: 8px 14px;
+      border-radius: 12px;
+      color: #d4a017;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      list-style: none;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.02);
+      color: #d1d5db;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .menu-item svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .menu-item:hover, .menu-item.active {
+      background: rgba(212, 160, 23, 0.15);
+      border-color: #d4a017;
+      color: #ffffff;
+      transform: translateX(4px);
+    }
+
+    /* Right Workspace Panel */
+    .works-panel {
+      background: #1b1b22;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .works-header {
+      padding: 18px 25px;
+      background: #23232c;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .header-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .header-title-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-title-box h2 {
+      font-size: 1.25rem;
+      color: #ffffff;
+    }
+
+    .btn-new-work {
+      background: rgba(212, 160, 23, 0.15);
+      border: 1px solid #d4a017;
+      color: #d4a017;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-new-work:hover {
+      background: #d4a017;
+      color: #0e0e14;
+    }
+
+    .status-tabs-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      color: #9ca3af;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+    }
+
+    .tab-btn.active {
+      background: #d4a017;
+      color: #0e0e14;
+      border-color: #d4a017;
+      box-shadow: 0 4px 12px rgba(212, 160, 23, 0.3);
+    }
+
+    .category-tabs-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .cat-pill {
+      padding: 6px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.02);
+      color: #9ca3af;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .cat-pill:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+    }
+
+    .cat-pill.active {
+      background: rgba(212, 160, 23, 0.15);
+      color: #d4a017;
+      border-color: #d4a017;
+    }
+
+    .works-body {
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .tasklist-column {
+      background: #181820;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      max-height: 480px;
+    }
+
+    .tasklist-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #9ca3af;
+      margin-bottom: 4px;
+      padding-left: 4px;
+    }
+
+    .task-card {
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .task-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(212, 160, 23, 0.3);
+    }
+
+    .task-card.active {
+      background: rgba(212, 160, 23, 0.12);
+      border-color: #d4a017;
+    }
+
+    .task-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .task-number {
+      font-size: 0.75rem;
+      color: #d4a017;
+      font-weight: 700;
+    }
+
+    .task-date {
+      font-size: 0.7rem;
+      color: #6b7280;
+    }
+
+    .task-item-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .task-item-snippet {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .workspace-column {
+      padding: 25px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 15px;
+      overflow-y: auto;
+      background: #1b1b22;
+    }
+
+    .workspace-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .editor-title-input {
+      width: 70%;
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 1.3rem;
+      font-weight: 700;
+      outline: none;
+    }
+
+    .status-badge {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-draft { background: rgba(156, 163, 175, 0.15); color: #d1d5db; border: 1px solid #9ca3af; }
+    .badge-finished { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid #3b82f6; }
+    .badge-published { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid #22c55e; }
+
+    .editor-textarea {
+      width: 100%;
+      height: 240px;
+      background: #24242e;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 16px;
+      color: #f3f4f6;
+      font-size: 0.98rem;
+      line-height: 1.8;
+      outline: none;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+
+    .editor-textarea:focus {
+      border-color: #d4a017;
+      box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.2);
+    }
+
+    .workspace-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-top: 10px;
+    }
+
+    .word-count {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-action {
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #d1d5db;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #d4a017 0%, #b8860b 100%);
+      color: #0e0e14;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 160, 23, 0.35);
+    }
+
+    /* ---------------- UNIVERSAL 4-CARD FOOTER ---------------- */
+    .footer-section {
+      max-width: 1240px; margin: 40px auto 0 auto; padding: 30px 20px 0 20px; width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .footer-card {
+      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 20px; text-align: center; text-decoration: none; color: #d1d5db; font-weight: 600; font-size: 1rem; transition: transform 0.2s, border-color 0.2s, background 0.2s; display: flex; align-items: center; justify-content: center; min-height: 80px;
+    }
+    .footer-card:hover { transform: translateY(-4px); border-color: rgba(212, 160, 23, 0.4); background: rgba(212, 160, 23, 0.05); color: #ffffff; }
+
+    .other-links-wrapper { position: relative; display: flex; justify-content: center; align-items: center; }
+    .other-links-btn {
+      width: 100%; height: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #d1d5db; font-weight: 600; font-size: 1rem; cursor: pointer; min-height: 80px; transition: all 0.2s;
+    }
+    .other-links-btn:hover, .other-links-btn.active { border-color: #d4a017; color: #d4a017; background: rgba(212, 160, 23, 0.08); }
+
+    .social-popup {
+      position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); display: flex; gap: 16px; pointer-events: none; z-index: 50;
+    }
+    .social-popup.active { pointer-events: auto; }
+    .social-circle {
+      width: 50px; height: 50px; border-radius: 50%; background: #181824; border: 2px solid rgba(255, 255, 255, 0.15); display: flex; align-items: center; justify-content: center; color: #ffffff; text-decoration: none; box-shadow: 0 10px 20px rgba(0,0,0,0.6); opacity: 0; transform: translateY(20px) scale(0.5); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .social-popup.active .social-circle { opacity: 1; transform: translateY(0) scale(1); }
+    .social-popup.active .social-circle:nth-child(1) { transition-delay: 0.05s; }
+    .social-popup.active .social-circle:nth-child(2) { transition-delay: 0.1s; }
+    .social-popup.active .social-circle:nth-child(3) { transition-delay: 0.15s; }
+
+    .social-circle.yt:hover { background: #ff0000; border-color: #ff0000; }
+    .social-circle.fb:hover { background: #1877f2; border-color: #1877f2; }
+    .social-circle.ig:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: #e6683c; }
+
+    .social-circle svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-card { grid-template-columns: 1fr; }
+      .sidebar-section { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+      .works-body { grid-template-columns: 1fr; }
+      .tasklist-column { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.06); max-height: 200px; }
+      header { padding: 10px 15px; } nav { display: none; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header>
+    <a href="home.html" class="brand">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+        <path d="M22 38l16-16" />
+        <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+        <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+      </svg>
+      <span data-lang-key="brandTitle">काव्य सागर और कहानी</span>
+    </a>
+
+    <nav>
+      <a href="home.html" data-lang-key="navHome">होम</a>
+      <a href="poem.html" data-lang-key="navPoem">कविताएँ</a>
+      <a href="stories.html" data-lang-key="navStory">कहानी</a>
+      <a href="diaries.html" data-lang-key="navDiary">डायरी</a>
+      <a href="quotes.html" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
+    </nav>
+
+    <div style="display: flex; align-items: center;">
+      <div class="lang-dropdown-wrapper">
+        <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
+          <option value="hi">हिन्दी</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div class="user-profile-menu" id="userAuthContainer"></div>
+    </div>
+  </header>
+
+  <!-- Main Dashboard View -->
+  <main class="dashboard-container">
+    <div class="dashboard-card">
+
+      <!-- 1. LEFT SIDEBAR -->
+      <aside class="sidebar-section">
+        <a href="home.html" class="brand-box">
+          <svg class="brand-svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+            <path d="M22 38l16-16" />
+            <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+            <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+          </svg>
+          <div class="brand-text">
+            <h1 data-lang-key="brandTitle">काव्य सागर और कहानी</h1>
+            <span id="sidebarRoleBadge">USER DASHBOARD</span>
+          </div>
+        </a>
+
+        <div class="current-section-badge" id="currentSectionBadge">
+          रचना प्रबंधन (My Works)
+        </div>
+
+        <ul class="nav-menu">
+          <li>
+            <a href="saved-items.html" class="menu-item">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              <span id="labelSavedMenu">सहेजी गई रचनाएँ</span>
+            </a>
+          </li>
+          <li>
+            <a href="my-works.html" class="menu-item active">
+              <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+              <span id="labelWorksMenu">मेरी रचनाएँ</span>
+            </a>
+          </li>
+          <li>
+            <a href="profile.html" class="menu-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              <span id="labelProfileMenu">मेरी प्रोफ़ाइल</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" id="sidebarLogoutBtn" class="menu-item">
+              <svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+              <span id="labelLogoutMenu">लॉग आउट</span>
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- 2. RIGHT WORKSPACE PANEL -->
+      <section class="works-panel">
+        <div class="works-header">
+          <div class="header-top-row">
+            <div class="header-title-box">
+              <h2 id="panelHeaderTitle">मेरी कृतियाँ</h2>
+              <button class="btn-new-work" onclick="createNewWork()" id="btnNewWork">+ नई रचना</button>
+            </div>
+            
+            <div class="status-tabs-row">
+              <button class="tab-btn active" id="tab-draft" onclick="switchStage('draft')">Draft (ड्राफ्ट)</button>
+              <button class="tab-btn" id="tab-finished" onclick="switchStage('finished')">Finished (पूर्ण)</button>
+              <button class="tab-btn" id="tab-published" onclick="switchStage('published')">Published (प्रकाशित)</button>
+            </div>
+          </div>
+
+          <div class="category-tabs-row">
+            <button class="cat-pill active" id="cat-kavita" onclick="switchContentCategory('kavita')">कविताएँ (Poems)</button>
+            <button class="cat-pill" id="cat-kahani" onclick="switchContentCategory('kahani')">कहानियाँ (Stories)</button>
+            <button class="cat-pill" id="cat-diary" onclick="switchContentCategory('diary')">डायरी (Diary)</button>
+            <button class="cat-pill" id="cat-prerna" onclick="switchContentCategory('prerna')">प्रेरणादायक बातें (Quotes)</button>
+          </div>
+        </div>
+
+        <div class="works-body">
+          <div class="tasklist-column" id="taskListContainer">
+            <div class="tasklist-title" id="taskListTitle">रचना सूची (Task List)</div>
+          </div>
+
+          <div class="workspace-column">
+            <div>
+              <div class="workspace-top-bar">
+                <input type="text" id="workTitle" class="editor-title-input" placeholder="शीर्षक यहाँ लिखें...">
+                <span id="workBadge" class="status-badge badge-draft">Draft</span>
+              </div>
+              
+              <textarea id="workContent" class="editor-textarea" placeholder="यहाँ अपनी कविता, कहानी या विचार लिखें..."></textarea>
+            </div>
+
+            <div class="workspace-footer">
+              <span class="word-count" id="wordCountText">शब्द: 0 | वर्ण: 0</span>
+              <div class="action-group" id="actionGroup"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Universal 4-Card Footer Section -->
+  <section class="footer-section">
+    <div class="footer-grid">
+      <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
+      <a href="privacy-policy.html" class="footer-card" data-lang-key="privacyPolicy">Privacy Policy</a>
+      <a href="terms.html" class="footer-card" data-lang-key="termsConditions">Terms and Conditions</a>
+
+      <div class="other-links-wrapper">
+        <button class="other-links-btn" id="otherLinksBtn" data-lang-key="otherLinks">Other Links</button>
+
+        <div class="social-popup" id="socialPopup">
+          <a href="https://www.youtube.com/@KavyaSagarorKahani" target="_blank" class="social-circle yt" title="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 काव्य सागर और कहानी. All rights reserved.
+  </footer>
+
+  <script>
+    // --- 1. LOCAL TRANSLATION DICTIONARY (FOR UI ONLY) ---
+    const localDict = {
+      hi: {
+        currentSectionBadge: "रचना प्रबंधन (My Works)",
+        labelSavedMenu: "सहेजी गई रचनाएँ",
+        labelWorksMenu: "मेरी रचनाएँ",
+        labelProfileMenu: "मेरी प्रोफ़ाइल",
+        labelLogoutMenu: "लॉग आउट",
+        panelHeaderTitle: "मेरी कृतियाँ",
+        btnNewWork: "+ नई रचना",
+        tabDraft: "Draft (ड्राफ्ट)",
+        tabFinished: "Finished (पूर्ण)",
+        tabPublished: "Published (प्रकाशित)",
+        catKavita: "कविताएँ (Poems)",
+        catKahani: "कहानियाँ (Stories)",
+        catDiary: "डायरी (Diary)",
+        catPrerna: "प्रेरणादायक बातें (Quotes)",
+        taskListTitle: "रचना सूची (Task List)",
+        noItemsText: "इस श्रेणी में कोई रचना नहीं है।",
+        btnSaveDraft: "सहेजें (Save Draft)",
+        btnMoveFinished: "पूर्ण करें (Move to Finished) →",
+        btnBackDraft: "← वापस ड्राफ्ट में लाएं",
+        btnPublish: "प्रकाशित करें (Publish) 🚀",
+        btnUnpublish: "ड्राफ्ट में वापस लें (Unpublish)",
+        btnSaveUpdates: "अपडेट करें (Save Updates)",
+        wordsLabel: "शब्द",
+        charsLabel: "वर्ण",
+        editorTitlePlaceholder: "शीर्षक यहाँ लिखें...",
+        editorContentPlaceholder: "यहाँ अपनी कविता, कहानी या विचार लिखें..."
+      },
+      en: {
+        currentSectionBadge: "Author Studio (My Works)",
+        labelSavedMenu: "Saved Items",
+        labelWorksMenu: "My Works",
+        labelProfileMenu: "My Profile",
+        labelLogoutMenu: "Logout",
+        panelHeaderTitle: "My Creations",
+        btnNewWork: "+ New Creation",
+        tabDraft: "Draft",
+        tabFinished: "Finished",
+        tabPublished: "Published",
+        catKavita: "Poems",
+        catKahani: "Stories",
+        catDiary: "Diary",
+        catPrerna: "Quotes",
+        taskListTitle: "Creations List",
+        noItemsText: "No works in this category.",
+        btnSaveDraft: "Save Draft",
+        btnMoveFinished: "Mark Finished →",
+        btnBackDraft: "← Move to Draft",
+        btnPublish: "Publish Live 🚀",
+        btnUnpublish: "Move to Draft (Unpublish)",
+        btnSaveUpdates: "Save Updates",
+        wordsLabel: "Words",
+        charsLabel: "Chars",
+        editorTitlePlaceholder: "Enter title here...",
+        editorContentPlaceholder: "Write your poem, story or journal here..."
+      }
+    };
+
+    // --- 2. PERSISTENT WORKS DATABASE ---
+    const defaultWorks = {
+      draft: [
+        { 
+          id: 1, 
+          category: "kavita", 
+          date: "14-Aug-2026",
+          title: "चाँद और मेरी तन्हाई",
+          snippet: "रात के सन्नाटे में जब चाँद निकलता है...",
+          content: "रात के सन्नाटे में जब चाँद निकलता है,\nदिल पुरानी यादों के दीप जलाता है।\nअनकहे अल्फ़ाज़ हवाओं में तैरते हैं,\nऔर ख़्वाब चुपके से मुस्कुराते हैं।"
+        },
+        { 
+          id: 2, 
+          category: "kahani", 
+          date: "12-Aug-2026",
+          title: "अधूरी दास्तान - कहानी",
+          snippet: "गाँव की उस पगडंडी पर एक पुराना घर था...",
+          content: "गाँव की उस पगडंडी पर एक पुराना नीम का पेड़ था। उस पेड़ की छाँव में हर शाम बच्चे खेला करते थे। मगर उस दिन वहाँ कुछ अजीब खामोशी थी..."
+        },
+        { 
+          id: 3, 
+          category: "diary", 
+          date: "11-Aug-2026",
+          title: "एक शांत शाम की डायरी",
+          snippet: "आज शाम बालकनी में बैठकर चाय पी...",
+          content: "आज शाम बालकनी में बैठकर चाय पीते हुए महसूस हुआ कि ज़िंदगी की सबसे खूबसूरत चीज़ें कितनी सरल होती हैं।"
+        },
+        { 
+          id: 4, 
+          category: "prerna", 
+          date: "09-Aug-2026",
+          title: "असफलता ही सफलता की सीढ़ी है",
+          snippet: "हर हार हमें कुछ नया सिखाती है...",
+          content: "जब तक आप कोशिश करना नहीं छोड़ते, तब तक आप कभी पराजित नहीं होते। संघर्ष ही मनुष्य को निखारता है।"
+        }
+      ],
+      finished: [
+        { 
+          id: 5, 
+          category: "kavita", 
+          date: "08-Aug-2026",
+          title: "प्रेम का अहसास",
+          snippet: "जब धड़कनें गीत गाने लगें...",
+          content: "जब धड़कनें गीत गाने लगें,\nऔर हर नज़र में तू ही नज़र आए,\nसमझ लेना यही वो मोहब्बत है,\nजो रूह को रूह से मिलाए।"
+        },
+        { 
+          id: 6, 
+          category: "kahani", 
+          date: "06-Aug-2026",
+          title: "चालाक लोमड़ी का सच",
+          snippet: "जंगल के राजा ने एक दिन सभा बुलाई...",
+          content: "जंगल के राजा ने एक दिन सभी जानवरों की सभा बुलाई। लोमड़ी ने अपनी चालाकी से सबका ध्यान खींचा..."
+        }
+      ],
+      published: [
+        { 
+          id: 7, 
+          category: "kavita", 
+          date: "01-Aug-2026",
+          title: "प्रकृति का संगीत",
+          snippet: "नदियों की कलकल, हवा की सरसराहट...",
+          content: "नदियों की कलकल, हवा की सरसराहट,\nपहाड़ों की ऊँचाई और वादियों की मुस्कुराहट।\nप्रकृति हमें सिखाती है निस्वार्थ प्रेम,\nजिसमें छुपा है जीवन का सारा रस।"
+        }
+      ]
+    };
+
+    // Load user's saved data from localStorage or fallback to defaults
+    let worksData = null;
+    try {
+      const stored = localStorage.getItem('user_my_works_data');
+      worksData = stored ? JSON.parse(stored) : defaultWorks;
+    } catch(e) {
+      worksData = defaultWorks;
+    }
+
+    function saveWorksToStorage() {
+      localStorage.setItem('user_my_works_data', JSON.stringify(worksData));
+    }
+
+    let activeCategory = 'kavita';
+    let activeStage = 'published';
+    let currentSelectedId = 7;
+
+    const taskListContainer = document.getElementById('taskListContainer');
+    const workTitle = document.getElementById('workTitle');
+    const workContent = document.getElementById('workContent');
+    const workBadge = document.getElementById('workBadge');
+    const wordCountText = document.getElementById('wordCountText');
+    const actionGroup = document.getElementById('actionGroup');
+
+    // --- 3. CATEGORY & STAGE SWITCHING ---
+    function switchContentCategory(catKey) {
+      activeCategory = catKey;
+      document.querySelectorAll('.cat-pill').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`cat-${catKey}`).classList.add('active');
+
+      renderTaskList();
+      renderActionButtons();
+    }
+
+    function switchStage(stageKey) {
+      activeStage = stageKey;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`tab-${stageKey}`).classList.add('active');
+
+      workBadge.className = `status-badge badge-${stageKey}`;
+      workBadge.innerText = stageKey.toUpperCase();
+
+      renderTaskList();
+      renderActionButtons();
+    }
+
+    function renderActionButtons() {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = localDict[currentLang] || localDict.hi;
+
+      if (activeStage === 'draft') {
+        actionGroup.innerHTML = `
+          <button class="btn-action btn-secondary" onclick="saveCurrentWork()">${dict.btnSaveDraft}</button>
+          <button class="btn-action btn-primary" onclick="promoteWork('finished')">${dict.btnMoveFinished}</button>
+        `;
+      } else if (activeStage === 'finished') {
+        actionGroup.innerHTML = `
+          <button class="btn-action btn-secondary" onclick="promoteWork('draft')">${dict.btnBackDraft}</button>
+          <button class="btn-action btn-primary" onclick="promoteWork('published')">${dict.btnPublish}</button>
+        `;
+      } else if (activeStage === 'published') {
+        actionGroup.innerHTML = `
+          <button class="btn-action btn-secondary" onclick="promoteWork('draft')">${dict.btnUnpublish}</button>
+          <button class="btn-action btn-primary" onclick="saveCurrentWork()">${dict.btnSaveUpdates}</button>
+        `;
+      }
+    }
+
+    function renderTaskList() {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = localDict[currentLang] || localDict.hi;
+
+      // Update UI static labels
+      document.getElementById('currentSectionBadge').innerText = dict.currentSectionBadge;
+      document.getElementById('labelSavedMenu').innerText = dict.labelSavedMenu;
+      document.getElementById('labelWorksMenu').innerText = dict.labelWorksMenu;
+      document.getElementById('labelProfileMenu').innerText = dict.labelProfileMenu;
+      document.getElementById('labelLogoutMenu').innerText = dict.labelLogoutMenu;
+      document.getElementById('panelHeaderTitle').innerText = dict.panelHeaderTitle;
+      document.getElementById('btnNewWork').innerText = dict.btnNewWork;
+      document.getElementById('tab-draft').innerText = dict.tabDraft;
+      document.getElementById('tab-finished').innerText = dict.tabFinished;
+      document.getElementById('tab-published').innerText = dict.tabPublished;
+      document.getElementById('cat-kavita').innerText = dict.catKavita;
+      document.getElementById('cat-kahani').innerText = dict.catKahani;
+      document.getElementById('cat-diary').innerText = dict.catDiary;
+      document.getElementById('cat-prerna').innerText = dict.catPrerna;
+      document.getElementById('taskListTitle').innerText = dict.taskListTitle;
+
+      workTitle.placeholder = dict.editorTitlePlaceholder;
+      workContent.placeholder = dict.editorContentPlaceholder;
+
+      const allStageItems = worksData[activeStage] || [];
+      const filteredItems = allStageItems.filter(item => item.category === activeCategory);
+
+      taskListContainer.innerHTML = `<div class="tasklist-title" id="taskListTitle">${dict.taskListTitle}</div>`;
+
+      if (filteredItems.length === 0) {
+        taskListContainer.innerHTML += `<p style="color:#6b7280; font-size:0.82rem; padding:15px 5px; text-align:center;">${dict.noItemsText}</p>`;
+        workTitle.value = '';
+        workContent.value = '';
+        workTitle.disabled = true;
+        workContent.disabled = true;
+        updateWordCount();
+        return;
+      }
+
+      workTitle.disabled = false;
+      workContent.disabled = false;
+
+      filteredItems.forEach((item, index) => {
+        const taskCard = document.createElement('div');
+        taskCard.className = `task-card ${item.id === currentSelectedId ? 'active' : ''}`;
+        taskCard.onclick = () => selectTask(item.id);
+
+        taskCard.innerHTML = `
+          <div class="task-card-header">
+            <span class="task-number">Task #${index + 1}</span>
+            <span class="task-date">${item.date}</span>
+          </div>
+          <div class="task-item-title">${item.title || 'Untitled'}</div>
+          <div class="task-item-snippet">${item.snippet || '...'}</div>
+        `;
+        taskListContainer.appendChild(taskCard);
+      });
+
+      const exists = filteredItems.find(i => i.id === currentSelectedId);
+      if (!exists && filteredItems.length > 0) {
+        selectTask(filteredItems[0].id);
+      } else if (exists) {
+        loadWorkspaceContent(exists);
+      }
+    }
+
+    function selectTask(id) {
+      currentSelectedId = id;
+      const allStageItems = worksData[activeStage] || [];
+      const item = allStageItems.find(i => i.id === id);
+      const filteredItems = allStageItems.filter(i => i.category === activeCategory);
+
+      document.querySelectorAll('.task-card').forEach((card, idx) => {
+        if (filteredItems[idx] && filteredItems[idx].id === id) {
+          card.classList.add('active');
+        } else {
+          card.classList.remove('active');
+        }
+      });
+
+      if (item) {
+        loadWorkspaceContent(item);
+      }
+    }
+
+    function loadWorkspaceContent(item) {
+      workTitle.value = item.title || '';
+      workContent.value = item.content || '';
+      updateWordCount();
+    }
+
+    function updateWordCount() {
+      const text = workContent.value.trim();
+      const words = text ? text.split(/\s+/).length : 0;
+      const chars = text.length;
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = localDict[currentLang] || localDict.hi;
+      wordCountText.innerText = `${dict.wordsLabel}: ${words} | ${dict.charsLabel}: ${chars}`;
+    }
+
+    workContent.addEventListener('input', updateWordCount);
+
+    function saveCurrentWork() {
+      const allStageItems = worksData[activeStage] || [];
+      const item = allStageItems.find(i => i.id === currentSelectedId);
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+
+      if (item) {
+        item.title = workTitle.value.trim() || (currentLang === 'hi' ? 'शीर्षक हीन' : 'Untitled');
+        item.content = workContent.value;
+        item.snippet = item.content.slice(0, 35).replace(/\n/g, ' ') + '...';
+
+        saveWorksToStorage();
+        renderTaskList();
+        alert(currentLang === 'hi' ? 'रचना सफलतापूर्वक सहेजी गई!' : 'Work saved successfully!');
+      }
+    }
+
+    function promoteWork(targetStage) {
+      const currentList = worksData[activeStage];
+      const itemIndex = currentList.findIndex(i => i.id === currentSelectedId);
+      if (itemIndex === -1) return;
+
+      const [itemToMove] = currentList.splice(itemIndex, 1);
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+
+      itemToMove.title = workTitle.value.trim() || (currentLang === 'hi' ? 'शीर्षक हीन' : 'Untitled');
+      itemToMove.content = workContent.value;
+      itemToMove.snippet = itemToMove.content.slice(0, 35).replace(/\n/g, ' ') + '...';
+
+      worksData[targetStage].push(itemToMove);
+      saveWorksToStorage();
+
+      const stageLabels = {
+        draft: currentLang === 'hi' ? 'ड्राफ्ट (Draft)' : 'Draft',
+        finished: currentLang === 'hi' ? 'पूर्ण (Finished)' : 'Finished',
+        published: currentLang === 'hi' ? 'प्रकाशित (Published)' : 'Published'
+      };
+
+      alert(currentLang === 'hi' 
+        ? `रचना को सफलतापूर्वक '${stageLabels[targetStage]}' में स्थानांतरित कर दिया गया है!` 
+        : `Work moved to '${stageLabels[targetStage]}' successfully!`
+      );
+
+      switchStage(targetStage);
+      selectTask(itemToMove.id);
+    }
+
+    function createNewWork() {
+      const newId = Date.now();
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const defaultTitle = currentLang === 'hi' ? "नई रचना" : "New Creation";
+
+      const newItem = {
+        id: newId,
+        category: activeCategory,
+        date: "Today",
+        title: defaultTitle,
+        snippet: currentLang === 'hi' ? "यहाँ अपनी रचना लिखना शुरू करें..." : "Start writing here...",
+        content: ""
+      };
+
+      worksData.draft.unshift(newItem);
+      saveWorksToStorage();
+      switchStage('draft');
+      selectTask(newId);
+    }
+
+    // --- 4. DYNAMIC AUTH HEADER ---
+    function renderAuthHeader() {
+      const container = document.getElementById('userAuthContainer');
+      if (!container) return;
+
+      const userName = localStorage.getItem('userName') || 'Admin';
+      const userInitial = userName.trim().charAt(0).toUpperCase() || 'A';
+
+      container.innerHTML = `
+        <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+          <span class="avatar-icon">${userInitial}</span>
+          <span>${userName}</span>
+          <small>▼</small>
+        </button>
+        <div class="dropdown-content" id="userDropdown">
+          <a href="profile.html" data-lang-key="myProfile">My Profile</a>
+          <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
+          <a href="my-work.html" data-lang-key="myWorks">My Works</a>
+          <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+          <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
+        </div>
+      `;
+
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      if (typeof translations !== 'undefined' && translations[currentLang]) {
+        const dict = translations[currentLang];
+        container.querySelectorAll('[data-lang-key]').forEach(el => {
+          const key = el.getAttribute('data-lang-key');
+          if (dict[key]) el.innerText = dict[key];
+        });
+      }
+    }
+
+    function toggleUserDropdown(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) dropdown.classList.toggle('show');
+    }
+
+    function handleUserLogout() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userName');
+      sessionStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    // --- 5. UI EVENT LISTENERS ---
+    document.getElementById('sidebarLogoutBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      handleUserLogout();
+    });
+
+    window.addEventListener('click', (e) => {
+      const userMenuBtn = document.getElementById('userMenuBtn');
+      const userDropdown = document.getElementById('userDropdown');
+      const otherLinksBtn = document.getElementById('otherLinksBtn');
+      const socialPopup = document.getElementById('socialPopup');
+
+      if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
+        userDropdown.classList.remove('show');
+      }
+
+      if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
+        socialPopup.classList.remove('active');
+        otherLinksBtn.classList.remove('active');
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+        otherLinksBtn.innerText = dict ? dict.otherLinks : 'Other Links';
+      }
+    });
+
+    const otherLinksBtn = document.getElementById('otherLinksBtn');
+    const socialPopup = document.getElementById('socialPopup');
+
+    otherLinksBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = socialPopup.classList.toggle('active');
+      otherLinksBtn.classList.toggle('active');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+      if (dict) {
+        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+      } else {
+        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+      }
+    });
+
+    // Re-render when language changes globally without wiping user input
+    window.addEventListener('languageChanged', () => {
+      renderAuthHeader();
+      renderTaskList();
+      renderActionButtons();
+    });
+
+    // Initial Load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAuthHeader();
+      switchStage('finished');
+    });
+  </script>
+
+</body>
+</html>

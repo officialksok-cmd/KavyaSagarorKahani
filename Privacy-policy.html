@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>गोपनीयता नीति - काव्य सागर और कहानी</title>
+
+  <!-- Global Language Switcher Script -->
+  <script src="lang.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0d0d15;
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* ---------------- HEADER ---------------- */
+    header {
+      background: rgba(30, 30, 47, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d4a017;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    nav a {
+      color: #9ca3af;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: #d4a017;
+    }
+
+    /* Dual Language Dropdown */
+    .lang-dropdown-wrapper {
+      position: relative;
+      margin-right: 12px;
+    }
+
+    .lang-select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #d4a017;
+      color: #d4a017;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 28px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%23d4a017' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+
+    .lang-select:hover {
+      background-color: rgba(212, 160, 23, 0.15);
+    }
+
+    .lang-select option {
+      background: #181824;
+      color: #f3f4f6;
+    }
+
+    /* User Profile Dropdown Menu */
+    .user-profile-menu {
+      position: relative;
+    }
+
+    .user-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: #f3f4f6;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .user-btn:hover {
+      background: rgba(212, 160, 23, 0.15);
+      border-color: #d4a017;
+    }
+
+    .avatar-icon {
+      width: 22px;
+      height: 22px;
+      background: #ffd700;
+      color: #0d0d15;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.75rem;
+    }
+
+    .avatar-icon.guest-avatar {
+      background: #4b5563;
+      color: #f3f4f6;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 110%;
+      background: #181824;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      min-width: 150px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      overflow: hidden;
+      z-index: 200;
+    }
+
+    .dropdown-content.show {
+      display: block;
+    }
+
+    .dropdown-content a, .dropdown-content button {
+      display: block;
+      width: 100%;
+      padding: 10px 14px;
+      color: #d1d5db;
+      text-decoration: none;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .dropdown-content a:hover, .dropdown-content button:hover {
+      background: rgba(212, 160, 23, 0.15);
+      color: #d4a017;
+    }
+
+    /* ---------------- POLICY CONTAINER ---------------- */
+    .policy-container {
+      max-width: 920px;
+      margin: 40px auto;
+      padding: 0 20px;
+      width: 100%;
+      flex: 1;
+    }
+
+    .policy-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 45px 40px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+    }
+
+    .page-title {
+      font-size: 2.2rem;
+      color: #d4a017;
+      margin-bottom: 8px;
+    }
+
+    .last-updated {
+      color: #9ca3af;
+      font-size: 0.875rem;
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .intro-text {
+      color: #d1d5db;
+      line-height: 1.8;
+      font-size: 1.05rem;
+      margin-bottom: 30px;
+      padding-bottom: 25px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .policy-section {
+      margin-bottom: 35px;
+    }
+
+    .policy-section h2 {
+      font-size: 1.35rem;
+      color: #ffffff;
+      margin-bottom: 14px;
+    }
+
+    .policy-section h3 {
+      font-size: 1.1rem;
+      color: #d4a017;
+      margin: 18px 0 10px 0;
+    }
+
+    .policy-section p {
+      color: #9ca3af;
+      line-height: 1.8;
+      font-size: 0.98rem;
+      margin-bottom: 12px;
+    }
+
+    .policy-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-left: 5px;
+    }
+
+    .policy-list li {
+      color: #d1d5db;
+      line-height: 1.7;
+      font-size: 0.98rem;
+      position: relative;
+      padding-left: 22px;
+    }
+
+    .policy-list li::before {
+      content: "•";
+      color: #d4a017;
+      font-weight: bold;
+      font-size: 1.3rem;
+      position: absolute;
+      left: 0;
+      top: -3px;
+    }
+
+    .note-box {
+      background: rgba(212, 160, 23, 0.08);
+      border-left: 4px solid #d4a017;
+      border-radius: 4px 8px 8px 4px;
+      padding: 16px 20px;
+      margin-top: 15px;
+      color: #e5e7eb;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .contact-info {
+      background: rgba(212, 160, 23, 0.06);
+      border: 1px solid rgba(212, 160, 23, 0.25);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-top: 15px;
+    }
+
+    .contact-info p {
+      color: #d1d5db;
+      margin-bottom: 8px;
+      font-size: 0.98rem;
+    }
+
+    .contact-info p:last-child {
+      margin-bottom: 0;
+    }
+
+    .contact-info a {
+      color: #ffd700;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .contact-info a:hover {
+      text-decoration: underline;
+    }
+
+    /* ---------------- UNIVERSAL 4-CARD FOOTER ---------------- */
+    .footer-section {
+      max-width: 1200px;
+      margin: 40px auto 0 auto;
+      padding: 30px 16px 0 16px;
+      width: 100%;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .footer-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      text-decoration: none;
+      color: #d1d5db;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+    }
+
+    .footer-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(212, 160, 23, 0.4);
+      background: rgba(212, 160, 23, 0.05);
+      color: #ffffff;
+    }
+
+    .other-links-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .other-links-btn {
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      color: #d1d5db;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      min-height: 80px;
+      transition: all 0.2s;
+    }
+
+    .other-links-btn:hover, .other-links-btn.active {
+      border-color: #d4a017;
+      color: #d4a017;
+      background: rgba(212, 160, 23, 0.08);
+    }
+
+    .social-popup {
+      position: absolute;
+      bottom: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .social-popup.active {
+      pointer-events: auto;
+    }
+
+    .social-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #181824;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-decoration: none;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+      opacity: 0;
+      transform: translateY(20px) scale(0.5);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .social-popup.active .social-circle {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .social-popup.active .social-circle:nth-child(1) { transition-delay: 0.05s; }
+    .social-popup.active .social-circle:nth-child(2) { transition-delay: 0.1s; }
+    .social-popup.active .social-circle:nth-child(3) { transition-delay: 0.15s; }
+
+    .social-circle.yt:hover { background: #ff0000; border-color: #ff0000; }
+    .social-circle.fb:hover { background: #1877f2; border-color: #1877f2; }
+    .social-circle.ig:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: #e6683c; }
+
+    .social-circle svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 10px 15px; }
+      nav { display: none; }
+      .policy-container { padding: 0 12px; margin: 20px auto; }
+      .policy-card { padding: 28px 20px; }
+      .page-title { font-size: 1.75rem; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header>
+    <a href="home.html" class="brand">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+        <path d="M22 38l16-16" />
+        <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+        <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+      </svg>
+      <span data-lang-key="brandTitle">काव्य सागर और कहानी</span>
+    </a>
+
+    <nav>
+      <a href="home.html" data-lang-key="navHome">होम</a>
+      <a href="poem.html" data-lang-key="navPoem">कविताएँ</a>
+      <a href="stories.html" data-lang-key="navStory">कहानी</a>
+      <a href="diaries.html" data-lang-key="navDiary">डायरी</a>
+      <a href="quotes.html" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
+    </nav>
+
+    <div style="display: flex; align-items: center;">
+      <!-- Language Dropdown -->
+      <div class="lang-dropdown-wrapper">
+        <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
+          <option value="hi">हिन्दी</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <!-- Dynamic User / Guest Profile Container -->
+      <div class="user-profile-menu" id="userAuthContainer">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Policy Content -->
+  <main class="policy-container">
+    <div class="policy-card">
+      <h1 class="page-title" id="policyTitle">गोपनीयता नीति (Privacy Policy)</h1>
+      <span class="last-updated" id="policyLastUpdated">अंतिम अद्यतन: 13-अगस्त-2026</span>
+
+      <p class="intro-text" id="policyIntro">
+        <strong>काव्य सागर और कहानी</strong> में आपका स्वागत है। हम आपकी गोपनीयता का सम्मान करते हैं और आपके व्यक्तिगत डेटा की सुरक्षा के लिए पूरी तरह प्रतिबद्ध हैं। यह नीति बताती है कि हम क्या जानकारी एकत्र करते हैं, उसका उपयोग कैसे करते हैं, और आपके अधिकार क्या हैं।
+      </p>
+
+      <!-- Section 1 -->
+      <div class="policy-section">
+        <h2 id="sec1Title">1. हम कौन सी जानकारी एकत्र करते हैं</h2>
+        
+        <h3 id="sec1SubA">क. आपके द्वारा प्रदान की गई जानकारी</h3>
+        <p id="sec1DescA">जब आप खाता बनाते हैं या हमारी वेबसाइट का उपयोग करते हैं, तो हम निम्नलिखित जानकारी एकत्र कर सकते हैं:</p>
+        <ul class="policy-list" id="sec1ListA">
+          <li><strong>खाता विवरण:</strong> उपयोगकर्ता नाम (Username), ईमेल पता और पासवर्ड।</li>
+          <li><strong>प्रोफ़ाइल जानकारी:</strong> प्रोफ़ाइल चित्र, बायो और आपके द्वारा जोड़े गए विवरण।</li>
+          <li><strong>रचनात्मक सामग्री:</strong> आपके द्वारा प्रकाशित कहानियाँ, कविताएँ, डायरी प्रविष्टियाँ और टिप्पणियाँ।</li>
+        </ul>
+
+        <h3 id="sec1SubB">ख. स्वचालित रूप से एकत्र की गई तकनीकी जानकारी</h3>
+        <p id="sec1DescB">वेबसाइट विज़िट करते समय सिस्टम द्वारा स्वचालित रूप से तकनीकी डेटा दर्ज किया जाता है:</p>
+        <ul class="policy-list" id="sec1ListB">
+          <li>आपका आईपी पता, ब्राउज़र का प्रकार, ऑपरेटिंग सिस्टम, डिवाइस का विवरण और विज़िट किए गए पृष्ठ।</li>
+        </ul>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="policy-section">
+        <h2 id="sec2Title">2. हम आपकी जानकारी का उपयोग कैसे करते हैं</h2>
+        <p id="sec2Desc">हम एकत्रित जानकारी का उपयोग निम्नलिखित उद्देश्यों के लिए करते हैं:</p>
+        <ul class="policy-list" id="sec2List">
+          <li>आपके खाते को बनाने, प्रबंधित करने और सुरक्षित रखने के लिए।</li>
+          <li>आपको रचनाएँ लिखने, सहेजने और टिप्पणियाँ करने की सुविधा देने के लिए।</li>
+          <li>वेबसाइट के प्रदर्शन को बेहतर बनाने और तकनीकी समस्याओं के समाधान के लिए।</li>
+          <li>Google AdSense के माध्यम से प्रासंगिक विज्ञापन प्रदर्शित करने के लिए।</li>
+        </ul>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="policy-section">
+        <h2 id="sec3Title">3. कुकीज़ और विज्ञापन तकनीकें</h2>
+        <p id="sec3Desc">हमारी वेबसाइट उपयोगकर्ताओं के अनुभव को बेहतर बनाने और विज्ञापन दिखाने के लिए कुकीज़ का उपयोग करती है।</p>
+
+        <h3 id="sec3SubA">Google AdSense और तृतीय-पक्ष कुकीज़</h3>
+        <ul class="policy-list" id="sec3ListA">
+          <li>हम विज्ञापन प्रदर्शित करने के लिए Google AdSense का उपयोग करते हैं।</li>
+          <li>Google आपकी पूर्व विज़िट के आधार पर विज्ञापन दिखाने के लिए कुकीज़ (जैसे DART कुकी) का उपयोग कर सकता है।</li>
+          <li>उपयोगकर्ता Google की विज्ञापन सेटिंग्स में जाकर व्यक्तिगत विज्ञापनों से बाहर निकल सकते हैं।</li>
+        </ul>
+      </div>
+
+      <!-- Section 4 -->
+      <div class="policy-section">
+        <h2 id="sec4Title">4. जानकारी साझा करना</h2>
+        <p id="sec4Desc">हम आपकी व्यक्तिगत जानकारी को किसी तीसरे पक्ष को बेचते या किराए पर नहीं देते हैं। जानकारी केवल निम्नलिखित स्थितियों में साझा हो सकती है:</p>
+        <ul class="policy-list" id="sec4List">
+          <li><strong>सार्वजनिक सामग्री:</strong> आपके द्वारा सार्वजनिक रूप से प्रकाशित कविताएँ, कहानियाँ या टिप्पणियाँ अन्य पाठकों को दिखाई देंगी।</li>
+          <li><strong>सेवा प्रदाता:</strong> होस्टिंग और डेटाबेस प्रबंधन में सहायता करने वाले अधिकृत भागीदार।</li>
+          <li><strong>कानूनी आवश्यकता:</strong> कानून या सरकारी प्राधिकरण द्वारा अनिवार्य होने पर।</li>
+        </ul>
+      </div>
+
+      <!-- Section 5 -->
+      <div class="policy-section">
+        <h2 id="sec5Title">5. डेटा सुरक्षा और भंडारण</h2>
+        <p id="sec5Desc">हम आपकी जानकारी की सुरक्षा के लिए मानक सुरक्षा उपाय लागू करते हैं। हालाँकि, इंटरनेट पर कोई भी प्रसारण शत-प्रतिशत सुरक्षित नहीं हो सकता।</p>
+        <div class="note-box" id="sec5Note">
+          <strong>महत्वपूर्ण सूचना:</strong> हम उपयोगकर्ताओं को अपनी रचनाओं का स्थानीय बैकअप (Local Backup) रखने की सलाह देते हैं।
+        </div>
+      </div>
+
+      <!-- Section 6 -->
+      <div class="policy-section">
+        <h2 id="sec6Title">6. आपके अधिकार और विकल्प</h2>
+        <p id="sec6Desc">आप अपने डेटा के संबंध में निम्नलिखित अधिकार रखते हैं:</p>
+        <ul class="policy-list" id="sec6List">
+          <li><strong>खाता विवरण अपडेट करना:</strong> प्रोफ़ाइल सेटिंग्स से अपनी जानकारी देखना और संपादित करना।</li>
+          <li><strong>खाता हटाना:</strong> खाता और सहेजी गई जानकारी हटाने के लिए हमसे संपर्क करना।</li>
+          <li><strong>कुकी प्राथमिकताएँ:</strong> ब्राउज़र सेटिंग से कुकीज़ को अक्षम करना।</li>
+        </ul>
+      </div>
+
+      <!-- Section 7 -->
+      <div class="policy-section">
+        <h2 id="sec7Title">7. बच्चों की गोपनीयता</h2>
+        <p id="sec7Desc">यह वेबसाइट 13 वर्ष से कम उम्र के बच्चों के लिए लक्षित नहीं है। हम जानबूझकर 13 वर्ष से कम आयु के बच्चों से व्यक्तिगत डेटा एकत्र नहीं करते हैं।</p>
+      </div>
+
+      <!-- Section 8 -->
+      <div class="policy-section">
+        <h2 id="sec8Title">8. नीति में परिवर्तन</h2>
+        <p id="sec8Desc">हम समय-समय पर इस नीति को अद्यतन कर सकते हैं। परिवर्तनों की जानकारी इस पृष्ठ के "अंतिम अद्यतन" तिथि पर प्रदर्शित होगी।</p>
+      </div>
+
+      <!-- Section 9 -->
+      <div class="policy-section">
+        <h2 id="sec9Title">9. संपर्क करें</h2>
+        <p id="sec9Desc">यदि इस गोपनीयता नीति के संबंध में आपका कोई प्रश्न या सुझाव है, तो कृपया हमसे संपर्क करें:</p>
+        <div class="contact-info">
+          <p><strong>Email:</strong> <a href="mailto:official.ksok@gmail.com">official.ksok@gmail.com</a></p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Universal 4-Card Footer Section -->
+  <section class="footer-section">
+    <div class="footer-grid">
+      <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
+      <a href="privacy-policy.html" class="footer-card" data-lang-key="privacyPolicy">Privacy Policy</a>
+      <a href="terms.html" class="footer-card" data-lang-key="termsConditions">Terms and Conditions</a>
+
+      <!-- Other Links Button with Pop-up Social Badges -->
+      <div class="other-links-wrapper">
+        <button class="other-links-btn" id="otherLinksBtn" data-lang-key="otherLinks">Other Links</button>
+
+        <!-- Pop-up Circle Social Icons -->
+        <div class="social-popup" id="socialPopup">
+          <a href="https://www.youtube.com/@KavyaSagarorKahani" target="_blank" class="social-circle yt" title="YouTube">
+            <svg viewBox="0 0 24 24">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+          </a>
+
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 काव्य सागर और कहानी. All rights reserved.
+  </footer>
+
+  <script>
+    // --- 1. LOCAL BILINGUAL PRIVACY POLICY DATA ---
+    const policyContent = {
+      hi: {
+        policyTitle: "गोपनीयता नीति (Privacy Policy)",
+        policyLastUpdated: "अंतिम अद्यतन: 13-अगस्त-2026",
+        policyIntro: "<strong>काव्य सागर और कहानी</strong> में आपका स्वागत है। हम आपकी गोपनीयता का सम्मान करते हैं और आपके व्यक्तिगत डेटा की सुरक्षा के लिए पूरी तरह प्रतिबद्ध हैं। यह नीति बताती है कि हम क्या जानकारी एकत्र करते हैं, उसका उपयोग कैसे करते हैं, और आपके अधिकार क्या हैं।",
+        sec1Title: "1. हम कौन सी जानकारी एकत्र करते हैं",
+        sec1SubA: "क. आपके द्वारा प्रदान की गई जानकारी",
+        sec1DescA: "जब आप खाता बनाते हैं या हमारी वेबसाइट का उपयोग करते हैं, तो हम निम्नलिखित जानकारी एकत्र कर सकते हैं:",
+        sec1ListA: [
+          "<strong>खाता विवरण:</strong> उपयोगकर्ता नाम (Username), ईमेल पता और पासवर्ड।",
+          "<strong>प्रोफ़ाइल जानकारी:</strong> प्रोफ़ाइल चित्र, बायो और आपके द्वारा जोड़े गए विवरण।",
+          "<strong>रचनात्मक सामग्री:</strong> आपके द्वारा प्रकाशित कहानियाँ, कविताएँ, डायरी प्रविष्टियाँ और टिप्पणियाँ।"
+        ],
+        sec1SubB: "ख. स्वचालित रूप से एकत्र की गई तकनीकी जानकारी",
+        sec1DescB: "वेबसाइट विज़िट करते समय सिस्टम द्वारा स्वचालित रूप से तकनीकी डेटा दर्ज किया जाता है:",
+        sec1ListB: [
+          "आपका आईपी पता, ब्राउज़र का प्रकार, ऑपरेटिंग सिस्टम, डिवाइस का विवरण और विज़िट किए गए पृष्ठ।"
+        ],
+        sec2Title: "2. हम आपकी जानकारी का उपयोग कैसे करते हैं",
+        sec2Desc: "हम एकत्रित जानकारी का उपयोग निम्नलिखित उद्देश्यों के लिए करते हैं:",
+        sec2List: [
+          "आपके खाते को बनाने, प्रबंधित करने और सुरक्षित रखने के लिए।",
+          "आपको रचनाएँ लिखने, सहेजने और टिप्पणियाँ करने की सुविधा देने के लिए।",
+          "वेबसाइट के प्रदर्शन को बेहतर बनाने और तकनीकी समस्याओं के समाधान के लिए।",
+          "Google AdSense के माध्यम से प्रासंगिक विज्ञापन प्रदर्शित करने के लिए।"
+        ],
+        sec3Title: "3. कुकीज़ और विज्ञापन तकनीकें",
+        sec3Desc: "हमारी वेबसाइट उपयोगकर्ताओं के अनुभव को बेहतर बनाने और विज्ञापन दिखाने के लिए कुकीज़ का उपयोग करती है।",
+        sec3SubA: "Google AdSense और तृतीय-पक्ष कुकीज़",
+        sec3ListA: [
+          "हम विज्ञापन प्रदर्शित करने के लिए Google AdSense का उपयोग करते हैं।",
+          "Google आपकी पूर्व विज़िट के आधार पर विज्ञापन दिखाने के लिए कुकीज़ (जैसे DART कुकी) का उपयोग कर सकता है।",
+          "उपयोगकर्ता Google की विज्ञापन सेटिंग्स में जाकर व्यक्तिगत विज्ञापनों से बाहर निकल सकते हैं।"
+        ],
+        sec4Title: "4. जानकारी साझा करना",
+        sec4Desc: "हम आपकी व्यक्तिगत जानकारी को किसी तीसरे पक्ष को बेचते या किराए पर नहीं देते हैं। जानकारी केवल निम्नलिखित स्थितियों में साझा हो सकती है:",
+        sec4List: [
+          "<strong>सार्वजनिक सामग्री:</strong> आपके द्वारा सार्वजनिक रूप से प्रकाशित कविताएँ, कहानियाँ या टिप्पणियाँ अन्य पाठकों को दिखाई देंगी।",
+          "<strong>सेवा प्रदाता:</strong> होस्टिंग और डेटाबेस प्रबंधन में सहायता करने वाले अधिकृत भागीदार।",
+          "<strong>कानूनी आवश्यकता:</strong> कानून या सरकारी प्राधिकरण द्वारा अनिवार्य होने पर।"
+        ],
+        sec5Title: "5. डेटा सुरक्षा और भंडारण",
+        sec5Desc: "हम आपकी जानकारी की सुरक्षा के लिए मानक सुरक्षा उपाय लागू करते हैं। हालाँकि, इंटरनेट पर कोई भी प्रसारण शत-प्रतिशत सुरक्षित नहीं हो सकता।",
+        sec5Note: "<strong>महत्वपूर्ण सूचना:</strong> हम उपयोगकर्ताओं को अपनी रचनाओं का स्थानीय बैकअप (Local Backup) रखने की सलाह देते हैं।",
+        sec6Title: "6. आपके अधिकार और विकल्प",
+        sec6Desc: "आप अपने डेटा के संबंध में निम्नलिखित अधिकार रखते हैं:",
+        sec6List: [
+          "<strong>खाता विवरण अपडेट करना:</strong> प्रोफ़ाइल सेटिंग्स से अपनी जानकारी देखना और संपादित करना।",
+          "<strong>खाता हटाना:</strong> खाता और सहेजी गई जानकारी हटाने के लिए हमसे संपर्क करना।",
+          "<strong>कुकी प्राथमिकताएँ:</strong> ब्राउज़र सेटिंग से कुकीज़ को अक्षम करना।"
+        ],
+        sec7Title: "7. बच्चों की गोपनीयता",
+        sec7Desc: "यह वेबसाइट 13 वर्ष से कम उम्र के बच्चों के लिए लक्षित नहीं है। हम जानबूझकर 13 वर्ष से कम आयु के बच्चों से व्यक्तिगत डेटा एकत्र नहीं करते हैं।",
+        sec8Title: "8. नीति में परिवर्तन",
+        sec8Desc: "हम समय-समय पर इस नीति को अद्यतन कर सकते हैं। परिवर्तनों की जानकारी इस पृष्ठ के 'अंतिम अद्यतन' तिथि पर प्रदर्शित होगी।",
+        sec9Title: "9. संपर्क करें",
+        sec9Desc: "यदि इस गोपनीयता नीति के संबंध में आपका कोई प्रश्न या सुझाव है, तो कृपया हमसे संपर्क करें:"
+      },
+      en: {
+        policyTitle: "Privacy Policy",
+        policyLastUpdated: "Last Updated: 13-Aug-2026",
+        policyIntro: "Welcome to <strong>Kavya Sagar & Stories</strong>. We respect your privacy and are committed to protecting the personal information you share with us. This Privacy Policy explains what information we collect, how we use it, and your rights regarding your data.",
+        sec1Title: "1. Information We Collect",
+        sec1SubA: "A. Personal Information You Provide",
+        sec1DescA: "When you register for an account or interact with the platform, we may collect:",
+        sec1ListA: [
+          "<strong>Account Details:</strong> Username, email address, and secure password.",
+          "<strong>Profile Information:</strong> Profile avatar, bio, and creative background you choose to add.",
+          "<strong>User Content:</strong> Stories, poems, diary entries, and comments you publish."
+        ],
+        sec1SubB: "B. Automatically Collected Technical Data",
+        sec1DescB: "When you visit our site, certain technical data is logged automatically:",
+        sec1ListB: [
+          "Your IP address, browser type, operating system, device details, and pages visited."
+        ],
+        sec2Title: "2. How We Use Your Information",
+        sec2Desc: "We use the collected information for the following purposes:",
+        sec2List: [
+          "To create, manage, and secure your author account.",
+          "To allow you to post creative writing, save bookmarks, and comment.",
+          "To improve site performance, fix bugs, and prevent unauthorized activity.",
+          "To serve relevant advertisements through Google AdSense."
+        ],
+        sec3Title: "3. Cookies & Advertising Technologies",
+        sec3Desc: "Our platform uses cookies and tracking technologies to enhance user experience and serve advertisements.",
+        sec3SubA: "Google AdSense & Third-Party Cookies",
+        sec3ListA: [
+          "We use Google AdSense to serve advertisements on our site.",
+          "Google uses cookies (such as the DART cookie) to serve ads based on your visits to this and other websites.",
+          "Users may opt out of personalized advertising by visiting Google Ads Settings."
+        ],
+        sec4Title: "4. Information Sharing & Disclosure",
+        sec4Desc: "We do not sell, trade, or rent your personal identification information. We only share information under these conditions:",
+        sec4List: [
+          "<strong>Public Content:</strong> Any poems, stories, or comments you publish publicly can be viewed by all visitors.",
+          "<strong>Trusted Providers:</strong> Hosting and infrastructure partners bound by confidentiality agreements.",
+          "<strong>Legal Compliance:</strong> If required by law or legal process to protect safety and rights."
+        ],
+        sec5Title: "5. Data Security & Storage",
+        sec5Desc: "We implement standard security practices to protect your data. However, no transmission over the internet is completely infallible.",
+        sec5Note: "<strong>Important Note:</strong> We strongly advise authors to maintain local backups of their written works.",
+        sec6Title: "6. Your Rights & Choices",
+        sec6Desc: "Regarding your data, you hold the following rights:",
+        sec6List: [
+          "<strong>Access & Update:</strong> Review and update your credentials in account settings.",
+          "<strong>Account Deletion:</strong> Request permanent removal of your account and saved items.",
+          "<strong>Cookie Control:</strong> Configure your browser to reject cookies."
+        ],
+        sec7Title: "7. Children's Privacy",
+        sec7Desc: "Our platform is not directed at children under the age of 13. We do not knowingly collect personal data from children under 13.",
+        sec8Title: "8. Changes to This Privacy Policy",
+        sec8Desc: "We may update this Privacy Policy periodically. Revisions will be reflected in the 'Last Updated' date at the top.",
+        sec9Title: "9. Contact Us",
+        sec9Desc: "If you have any questions or feedback regarding this Privacy Policy, please reach out to us at:"
+      }
+    };
+
+    function renderPolicyPage() {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const data = policyContent[currentLang] || policyContent.hi;
+
+      document.getElementById('policyTitle').innerText = data.policyTitle;
+      document.getElementById('policyLastUpdated').innerText = data.policyLastUpdated;
+      document.getElementById('policyIntro').innerHTML = data.policyIntro;
+
+      document.getElementById('sec1Title').innerText = data.sec1Title;
+      document.getElementById('sec1SubA').innerText = data.sec1SubA;
+      document.getElementById('sec1DescA').innerText = data.sec1DescA;
+      document.getElementById('sec1ListA').innerHTML = data.sec1ListA.map(item => `<li>${item}</li>`).join('');
+
+      document.getElementById('sec1SubB').innerText = data.sec1SubB;
+      document.getElementById('sec1DescB').innerText = data.sec1DescB;
+      document.getElementById('sec1ListB').innerHTML = data.sec1ListB.map(item => `<li>${item}</li>`).join('');
+
+      document.getElementById('sec2Title').innerText = data.sec2Title;
+      document.getElementById('sec2Desc').innerText = data.sec2Desc;
+      document.getElementById('sec2List').innerHTML = data.sec2List.map(item => `<li>${item}</li>`).join('');
+
+      document.getElementById('sec3Title').innerText = data.sec3Title;
+      document.getElementById('sec3Desc').innerText = data.sec3Desc;
+      document.getElementById('sec3SubA').innerText = data.sec3SubA;
+      document.getElementById('sec3ListA').innerHTML = data.sec3ListA.map(item => `<li>${item}</li>`).join('');
+
+      document.getElementById('sec4Title').innerText = data.sec4Title;
+      document.getElementById('sec4Desc').innerText = data.sec4Desc;
+      document.getElementById('sec4List').innerHTML = data.sec4List.map(item => `<li>${item}</li>`).join('');
+
+      document.getElementById('sec5Title').innerText = data.sec5Title;
+      document.getElementById('sec5Desc').innerText = data.sec5Desc;
+      document.getElementById('sec5Note').innerHTML = data.sec5Note;
+
+      document.getElementById('sec6Title').innerText = data.sec6Title;
+      document.getElementById('sec6Desc').innerText = data.sec6Desc;
+      document.getElementById('sec6List').innerHTML = data.sec6List.map(item => `<li>${item}</li>`).join('');
+
+      document.getElementById('sec7Title').innerText = data.sec7Title;
+      document.getElementById('sec7Desc').innerText = data.sec7Desc;
+
+      document.getElementById('sec8Title').innerText = data.sec8Title;
+      document.getElementById('sec8Desc').innerText = data.sec8Desc;
+
+      document.getElementById('sec9Title').innerText = data.sec9Title;
+      document.getElementById('sec9Desc').innerText = data.sec9Desc;
+    }
+
+    // --- 2. DYNAMIC AUTH HEADER (GUEST VS USER) ---
+    function renderAuthHeader() {
+      const container = document.getElementById('userAuthContainer');
+      if (!container) return;
+
+      const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+
+      if (isLoggedIn) {
+        const rawName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
+        const userName = rawName.trim();
+        const userInitial = userName.charAt(0).toUpperCase() || 'A';
+
+        container.innerHTML = `
+          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+            <span class="avatar-icon">${userInitial}</span>
+            <span>${userName}</span>
+            <small>▼</small>
+          </button>
+          <div class="dropdown-content" id="userDropdown">
+            <a href="profile.html" data-lang-key="myProfile">My Profile</a>
+            <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
+            <a href="my-work.html" data-lang-key="myWorks">My Works</a>
+            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+            <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
+          </div>
+        `;
+      } else {
+        const guestLabel = currentLang === 'hi' ? 'अतिथि (Guest)' : 'Guest';
+        const signInLabel = currentLang === 'hi' ? 'साइन इन करें' : 'Sign In';
+
+        container.innerHTML = `
+          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+            <span class="avatar-icon guest-avatar">G</span>
+            <span>${guestLabel}</span>
+            <small>▼</small>
+          </button>
+          <div class="dropdown-content" id="userDropdown">
+            <a href="login.html" style="color:#d4a017; font-weight:600;">🔑 ${signInLabel}</a>
+            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+          </div>
+        `;
+      }
+
+      if (typeof translations !== 'undefined' && translations[currentLang]) {
+        const dict = translations[currentLang];
+        container.querySelectorAll('[data-lang-key]').forEach(el => {
+          const key = el.getAttribute('data-lang-key');
+          if (dict[key]) el.innerText = dict[key];
+        });
+      }
+    }
+
+    function toggleUserDropdown(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) dropdown.classList.toggle('show');
+    }
+
+    function handleUserLogout() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userName');
+      sessionStorage.clear();
+      window.location.reload();
+    }
+
+    // --- 3. UI EVENT LISTENERS ---
+    window.addEventListener('click', (e) => {
+      const userMenuBtn = document.getElementById('userMenuBtn');
+      const userDropdown = document.getElementById('userDropdown');
+      const otherLinksBtn = document.getElementById('otherLinksBtn');
+      const socialPopup = document.getElementById('socialPopup');
+
+      if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
+        userDropdown.classList.remove('show');
+      }
+
+      if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
+        socialPopup.classList.remove('active');
+        otherLinksBtn.classList.remove('active');
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+        otherLinksBtn.innerText = dict ? dict.otherLinks : 'Other Links';
+      }
+    });
+
+    const otherLinksBtn = document.getElementById('otherLinksBtn');
+    const socialPopup = document.getElementById('socialPopup');
+
+    otherLinksBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = socialPopup.classList.toggle('active');
+      otherLinksBtn.classList.toggle('active');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+      if (dict) {
+        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+      } else {
+        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+      }
+    });
+
+    // Re-render when language changes globally
+    window.addEventListener('languageChanged', () => {
+      renderAuthHeader();
+      renderPolicyPage();
+    });
+
+    // Initial Load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAuthHeader();
+      renderPolicyPage();
+    });
+  </script>
+
+</body>
+</html>

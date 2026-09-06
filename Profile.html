@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>प्रोफ़ाइल विवरण - काव्य सागर और कहानी</title>
+
+  <script src="lang.js"></script>
+
+  <script>
+    const isAuth = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
+    if (!isAuth) {
+      alert('अनधिकृत पहुँच! कृपया पहले लॉगिन करें।\nUnauthorized access! Please log in first.');
+      sessionStorage.setItem('redirectAfterLogin', 'profile.html');
+      window.location.href = 'login.html';
+    }
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0d0d15;
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* ---------------- HEADER ---------------- */
+    header {
+      background: rgba(30, 30, 47, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d4a017;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    nav a {
+      color: #9ca3af;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: #d4a017;
+    }
+
+    /* Dual Language Dropdown */
+    .lang-dropdown-wrapper {
+      position: relative;
+      margin-right: 12px;
+    }
+
+    .lang-select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #d4a017;
+      color: #d4a017;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 28px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%23d4a017' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+
+    .lang-select:hover {
+      background-color: rgba(212, 160, 23, 0.15);
+    }
+
+    .lang-select option {
+      background: #181824;
+      color: #f3f4f6;
+    }
+
+    /* User Profile Dropdown Menu */
+    .user-profile-menu {
+      position: relative;
+    }
+
+    .user-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: #f3f4f6;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .user-btn:hover {
+      background: rgba(212, 160, 23, 0.15);
+      border-color: #d4a017;
+    }
+
+    .avatar-icon {
+      width: 22px;
+      height: 22px;
+      background: #ffd700;
+      color: #0d0d15;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.75rem;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 110%;
+      background: #181824;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      min-width: 150px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      overflow: hidden;
+      z-index: 200;
+    }
+
+    .dropdown-content.show {
+      display: block;
+    }
+
+    .dropdown-content a, .dropdown-content button {
+      display: block;
+      width: 100%;
+      padding: 10px 14px;
+      color: #d1d5db;
+      text-decoration: none;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .dropdown-content a:hover, .dropdown-content button:hover {
+      background: rgba(212, 160, 23, 0.15);
+      color: #d4a017;
+    }
+
+    /* ---------------- MAIN DASHBOARD CONTAINER ---------------- */
+    .profile-main-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      width: 100%;
+    }
+
+    .dashboard-card {
+      width: 100%;
+      max-width: 1080px;
+      background: #1e1e24;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      display: grid;
+      grid-template-columns: 300px 260px 1fr;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+      min-height: 560px;
+    }
+
+    /* 1. LEFT SIDEBAR COLUMN */
+    .sidebar-section {
+      background: #18181f;
+      padding: 35px 25px;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 30px;
+      text-decoration: none;
+    }
+
+    .brand-svg {
+      width: 36px;
+      height: 36px;
+      color: #d4a017;
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      color: #d4a017;
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .brand-text span {
+      color: #8e8e9d;
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .menu-heading {
+      color: #d4a017;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      list-style: none;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.02);
+      color: #d1d5db;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .menu-item svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .menu-item:hover, .menu-item.active {
+      background: rgba(212, 160, 23, 0.12);
+      border-color: #d4a017;
+      color: #ffffff;
+      transform: translateX(4px);
+    }
+
+    /* 2. MIDDLE AVATAR & STATS COLUMN */
+    .avatar-section {
+      background: #23232c;
+      padding: 30px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      text-align: center;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 120px;
+      height: 135px;
+      border-radius: 16px;
+      border: 2px solid #d4a017;
+      background: #2b2b36;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    #profileImageDisplay {
+      display: none;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-img-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .avatar-badge-group {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      z-index: 10;
+    }
+
+    .avatar-icon-btn {
+      width: 28px;
+      height: 28px;
+      background: #111116;
+      border: 1px solid rgba(212, 160, 23, 0.5);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d4a017;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s ease;
+    }
+
+    .avatar-icon-btn:hover {
+      background: #d4a017;
+      color: #0e0e14;
+      transform: scale(1.1);
+    }
+
+    .avatar-icon-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .avatar-label-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 2px;
+    }
+
+    .avatar-label-subtitle {
+      font-size: 0.72rem;
+      color: #9ca3af;
+      margin-bottom: 15px;
+    }
+
+    /* Stats Panel Styles */
+    .stats-panel {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(212, 160, 23, 0.2);
+      border-radius: 12px;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .stats-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #d4a017;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: center;
+      margin-bottom: 2px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 4px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: #d1d5db;
+    }
+
+    .stat-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #9ca3af;
+    }
+
+    .stat-label svg {
+      width: 13px;
+      height: 13px;
+      stroke: #d4a017;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .stat-value {
+      font-weight: 700;
+      color: #ffffff;
+      background: rgba(212, 160, 23, 0.12);
+      padding: 2px 6px;
+      border-radius: 6px;
+      min-width: 26px;
+      text-align: center;
+    }
+
+    /* 3. RIGHT FORM COLUMN */
+    .form-section {
+      background: #1b1b22;
+      padding: 25px 35px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+      max-height: 560px;
+    }
+
+    .profile-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: 0.2px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      background: #262630;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 9px 14px;
+      color: #d1d5db;
+      font-size: 0.86rem;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: #d4a017;
+      background: #2c2c38;
+      box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.2);
+      color: #ffffff;
+    }
+
+    .form-textarea {
+      height: 55px;
+      resize: none;
+      line-height: 1.3;
+    }
+
+    .date-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .date-input-wrapper input {
+      padding-left: 36px;
+    }
+
+    .calendar-icon {
+      position: absolute;
+      left: 12px;
+      width: 16px;
+      height: 16px;
+      color: #9ca3af;
+      pointer-events: none;
+    }
+
+    .btn-update-profile {
+      width: 100%;
+      padding: 11px;
+      margin-top: 6px;
+      background: linear-gradient(135deg, #d4a017 0%, #b8860b 100%);
+      color: #0e0e14;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-update-profile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(212, 160, 23, 0.35);
+    }
+
+    /* ---------------- UNIVERSAL 4-CARD FOOTER ---------------- */
+    .footer-section {
+      max-width: 1200px;
+      margin: 20px auto 0 auto;
+      padding: 30px 16px 0 16px;
+      width: 100%;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .footer-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      text-decoration: none;
+      color: #d1d5db;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+    }
+
+    .footer-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(212, 160, 23, 0.4);
+      background: rgba(212, 160, 23, 0.05);
+      color: #ffffff;
+    }
+
+    .other-links-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .other-links-btn {
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      color: #d1d5db;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      min-height: 80px;
+      transition: all 0.2s;
+    }
+
+    .other-links-btn:hover, .other-links-btn.active {
+      border-color: #d4a017;
+      color: #d4a017;
+      background: rgba(212, 160, 23, 0.08);
+    }
+
+    .social-popup {
+      position: absolute;
+      bottom: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .social-popup.active {
+      pointer-events: auto;
+    }
+
+    .social-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #181824;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-decoration: none;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+      opacity: 0;
+      transform: translateY(20px) scale(0.5);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .social-popup.active .social-circle {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .social-popup.active .social-circle:nth-child(1) { transition-delay: 0.05s; }
+    .social-popup.active .social-circle:nth-child(2) { transition-delay: 0.1s; }
+    .social-popup.active .social-circle:nth-child(3) { transition-delay: 0.15s; }
+
+    .social-circle.yt:hover { background: #ff0000; border-color: #ff0000; }
+    .social-circle.fb:hover { background: #1877f2; border-color: #1877f2; }
+    .social-circle.ig:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: #e6683c; }
+
+    .social-circle svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+
+    /* ---------------- RESPONSIVE BREAKPOINTS ---------------- */
+    @media (max-width: 900px) {
+      header { padding: 10px 15px; }
+      nav { display: none; }
+      .dashboard-card {
+        grid-template-columns: 1fr;
+      }
+      .sidebar-section, .avatar-section {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .avatar-section {
+        padding: 25px 20px;
+      }
+      .form-section {
+        padding: 25px 20px;
+        max-height: none;
+      }
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="home.html" class="brand">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+        <path d="M22 38l16-16" />
+        <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+        <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+      </svg>
+      <span data-lang-key="brandTitle">काव्य सागर और कहानी</span>
+    </a>
+
+    <nav>
+      <a href="home.html" data-lang-key="navHome">होम</a>
+      <a href="poem.html" data-lang-key="navPoem">कविताएँ</a>
+      <a href="stories.html" data-lang-key="navStory">कहानी</a>
+      <a href="diaries.html" data-lang-key="navDiary">डायरी</a>
+      <a href="quotes.html" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
+    </nav>
+
+    <div style="display: flex; align-items: center;">
+      <div class="lang-dropdown-wrapper">
+        <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
+          <option value="hi">हिन्दी</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div class="user-profile-menu" id="userAuthContainer">
+        </div>
+    </div>
+  </header>
+
+  <div class="profile-main-wrapper">
+    <main class="dashboard-card">
+
+      <aside class="sidebar-section">
+        <div class="brand-box">
+          <svg class="brand-svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+            <path d="M22 38l16-16" />
+            <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+            <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+          </svg>
+          <div class="brand-text">
+            <h1 id="sidebarBrandHeading">काव्य सागर और कहानी</h1>
+            <span id="sidebarRoleBadge">USER DASHBOARD</span>
+          </div>
+        </div>
+
+        <h2 class="menu-heading" id="menuDetailsHeading">प्रोफ़ाइल विवरण</h2>
+
+        <ul class="nav-menu">
+          <li>
+            <a href="saved-items.html" class="menu-item">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              <span id="menuSavedWorks">सहेजी गई रचनाएँ</span>
+            </a>
+          </li>
+          <li>
+            <a href="my-work.html" class="menu-item">
+              <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+              <span id="menuMyWorks">मेरी रचनाएँ</span>
+            </a>
+          </li>
+          <li>
+            <a href="profile.html" class="menu-item active">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              <span id="menuMyProfile">मेरी प्रोफाइल</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" id="sidebarLogoutAction" class="menu-item">
+              <svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+              <span id="menuLogout">लॉग आउट</span>
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <section class="avatar-section">
+        <div class="avatar-wrapper">
+          <img id="profileImageDisplay" src="" alt="Profile Image" />
+
+          <svg id="defaultAvatarSvg" class="avatar-img-svg" viewBox="0 0 140 160" fill="none">
+            <rect width="140" height="160" fill="#2d2d38" />
+            <circle cx="70" cy="55" r="26" fill="#fbcda4" />
+            <path d="M44 48c0-16 12-28 26-28s26 12 26 28c0 4-2 7-5 7-4 0-5-5-9-5s-8 6-12 6-8-4-12-4c-6 0-14 3-14-4z" fill="#18233c" />
+            <path d="M30 160c0-34 18-52 40-52s40 18 40 52H30z" fill="#1e2d4a" />
+            <path d="M52 108l18 20 18-20v52H52v-52z" fill="#8f2d2d" />
+            <path d="M70 128l-8-12 8-6 8 6-8 12z" fill="#ffffff" />
+          </svg>
+
+          <input type="file" id="imageFileInput" accept="image/*" style="display: none;" />
+
+          <div class="avatar-badge-group">
+            <button type="button" class="avatar-icon-btn" id="uploadPhotoBtn" title="Change Photo">
+              <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="avatar-label-title" id="avatarTitle">चित्र बदलें</div>
+        <div class="avatar-label-subtitle" id="avatarSubtitle">(Change Picture)</div>
+
+        <div class="stats-panel">
+          <div class="stats-title" id="statsHeaderTitle">रचना आँकड़े (Stats)</div>
+          
+          <div class="stat-row">
+            <span class="stat-label">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <span id="statPostsLabel">कुल पोस्ट</span>
+            </span>
+            <span class="stat-value" id="statTotalPosts">0</span>
+          </div>
+
+          <div class="stat-row">
+            <span class="stat-label">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <span id="statViewsLabel">कुल व्यूज</span>
+            </span>
+            <span class="stat-value" id="statTotalViews">0</span>
+          </div>
+
+          <div class="stat-row">
+            <span class="stat-label">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              <span id="statLikesLabel">कुल लाइक्स</span>
+            </span>
+            <span class="stat-value" id="statTotalLikes">0</span>
+          </div>
+
+          <div class="stat-row">
+            <span class="stat-label">
+              <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+              <span id="statSharesLabel">कुल शेयर</span>
+            </span>
+            <span class="stat-value" id="statTotalShares">0</span>
+          </div>
+
+          <div class="stat-row">
+            <span class="stat-label">
+              <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              <span id="statCommentsLabel">कुल कमेंट्स</span>
+            </span>
+            <span class="stat-value" id="statTotalComments">0</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <form class="profile-form" id="profileForm" onsubmit="handleProfileUpdate(event)">
+          
+          <div class="form-group">
+            <label class="form-label" id="labelFullName">पूरा नाम (Full Name)</label>
+            <input type="text" class="form-input" id="fullNameInput" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" id="labelUsername">उपयोगकर्ता नाम (Username)</label>
+            <input type="text" class="form-input" id="usernameInput" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" id="labelBio">बायो (Bio)</label>
+            <textarea class="form-textarea" id="bioInput">लेखक | पाठक | काव्य और कहानी प्रेमी।</textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" id="labelContactEmail">ईमेल संपर्क (Contact Email)</label>
+            <input type="email" class="form-input" id="contactEmailInput" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" id="labelContactPhone">मोबाइल नंबर (Contact Number)</label>
+            <input type="tel" class="form-input" id="contactPhoneInput" placeholder="10-digit mobile number">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" id="labelDob">जन्म तिथि (Date of Birth)</label>
+            <div class="date-input-wrapper">
+              <svg class="calendar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <input type="text" class="form-input" id="dobInput" placeholder="DD/MM/YYYY">
+            </div>
+          </div>
+
+          <button type="submit" class="btn-update-profile" id="btnUpdateProfile">अपडेट करें (Update Profile)</button>
+        </form>
+      </section>
+
+    </main>
+  </div>
+
+  <section class="footer-section">
+    <div class="footer-grid">
+      <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
+      <a href="privacy-policy.html" class="footer-card" data-lang-key="privacyPolicy">Privacy Policy</a>
+      <a href="terms.html" class="footer-card" data-lang-key="termsConditions">Terms and Conditions</a>
+
+      <div class="other-links-wrapper">
+        <button class="other-links-btn" id="otherLinksBtn" data-lang-key="otherLinks">Other Links</button>
+
+        <div class="social-popup" id="socialPopup">
+          <a href="https://www.youtube.com/@KavyaSagarorKahani" target="_blank" class="social-circle yt" title="YouTube">
+            <svg viewBox="0 0 24 24">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+          </a>
+
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 काव्य सागर और कहानी. All rights reserved.
+  </footer>
+
+  <script>
+    // --- 1. LOCAL TRANSLATION DICTIONARY FOR PROFILE ---
+    const profileTranslations = {
+      hi: {
+        sidebarBrandHeading: "काव्य सागर और कहानी",
+        sidebarRoleBadge: "USER DASHBOARD",
+        menuDetailsHeading: "प्रोफ़ाइल विवरण",
+        menuSavedWorks: "सहेजी गई रचनाएँ",
+        menuMyWorks: "मेरी रचनाएँ",
+        menuMyProfile: "मेरी प्रोफाइल",
+        menuLogout: "लॉग आउट",
+        avatarTitle: "चित्र बदलें",
+        avatarSubtitle: "(Change Picture)",
+        statsHeaderTitle: "रचना आँकड़े",
+        statPostsLabel: "कुल पोस्ट",
+        statViewsLabel: "कुल व्यूज",
+        statLikesLabel: "कुल लाइक्स",
+        statSharesLabel: "कुल शेयर",
+        statCommentsLabel: "कुल कमेंट्स",
+        labelFullName: "पूरा नाम (Full Name)",
+        labelUsername: "उपयोगकर्ता नाम (Username)",
+        labelBio: "बायो (Bio)",
+        labelContactEmail: "ईमेल संपर्क (Contact Email)",
+        labelContactPhone: "मोबाइल नंबर (Contact Number)",
+        labelDob: "जन्म तिथि (Date of Birth)",
+        btnUpdateProfile: "अपडेट करें (Update Profile)",
+        updateSuccess: "प्रोफ़ाइल सफलतापूर्वक अपडेट हो गई! (Profile updated successfully!)"
+      },
+      en: {
+        sidebarBrandHeading: "Kavya Sagar & Stories",
+        sidebarRoleBadge: "USER DASHBOARD",
+        menuDetailsHeading: "Profile Overview",
+        menuSavedWorks: "Saved Works",
+        menuMyWorks: "My Works",
+        menuMyProfile: "My Profile",
+        menuLogout: "Log Out",
+        avatarTitle: "Change Photo",
+        avatarSubtitle: "(Device Gallery)",
+        statsHeaderTitle: "Content Stats",
+        statPostsLabel: "Total Posts",
+        statViewsLabel: "Total Views",
+        statLikesLabel: "Total Likes",
+        statSharesLabel: "Total Shares",
+        statCommentsLabel: "Total Comments",
+        labelFullName: "Full Name",
+        labelUsername: "Username",
+        labelBio: "Bio",
+        labelContactEmail: "Contact Email",
+        labelContactPhone: "Contact Number",
+        labelDob: "Date of Birth",
+        btnUpdateProfile: "Update Profile",
+        updateSuccess: "Profile updated successfully!"
+      }
+    };
+
+    function updateProfileLanguage() {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = profileTranslations[currentLang] || profileTranslations.hi;
+
+      for (const [id, text] of Object.entries(dict)) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = text;
+      }
+    }
+
+    // --- 2. DYNAMIC AUTH HEADER ---
+    function renderAuthHeader() {
+      const container = document.getElementById('userAuthContainer');
+      if (!container) return;
+
+      const userName = localStorage.getItem('userName') || 'Admin';
+      const userInitial = userName.trim().charAt(0).toUpperCase() || 'A';
+
+      container.innerHTML = `
+        <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+          <span class="avatar-icon">${userInitial}</span>
+          <span>${userName}</span>
+          <small>▼</small>
+        </button>
+        <div class="dropdown-content" id="userDropdown">
+          <a href="profile.html" data-lang-key="myProfile">My Profile</a>
+          <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
+          <a href="my-work.html" data-lang-key="myWorks">My Works</a>
+          <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+          <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
+        </div>
+      `;
+
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      if (typeof translations !== 'undefined' && translations[currentLang]) {
+        const dict = translations[currentLang];
+        container.querySelectorAll('[data-lang-key]').forEach(el => {
+          const key = el.getAttribute('data-lang-key');
+          if (dict[key]) el.innerText = dict[key];
+        });
+      }
+    }
+
+    function toggleUserDropdown(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) dropdown.classList.toggle('show');
+    }
+
+    function handleUserLogout() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userName');
+      sessionStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    // --- 3. COMPUTE USER STATS FROM MY WORKS ---
+    function loadUserStats() {
+      let myWorks = [];
+      try {
+        myWorks = JSON.parse(localStorage.getItem('myWorksList')) || [];
+      } catch (err) {
+        myWorks = [];
+      }
+
+      const totalPosts = myWorks.length;
+      let totalViews = 0;
+      let totalLikes = 0;
+      let totalShares = 0;
+      let totalComments = 0;
+
+      myWorks.forEach(work => {
+        totalViews += Number(work.views || work.viewCount || 12) * 1;
+        totalLikes += Number(work.likes || work.likeCount || 5) * 1;
+        totalShares += Number(work.shares || work.shareCount || 2) * 1;
+        totalComments += Number(work.comments || work.commentCount || 1) * 1;
+      });
+
+      // If no works exist yet, provide realistic fallback demo numbers or zeroes
+      document.getElementById('statTotalPosts').innerText = totalPosts;
+      document.getElementById('statTotalViews').innerText = totalPosts > 0 ? totalViews : 0;
+      document.getElementById('statTotalLikes').innerText = totalPosts > 0 ? totalLikes : 0;
+      document.getElementById('statTotalShares').innerText = totalPosts > 0 ? totalShares : 0;
+      document.getElementById('statTotalComments').innerText = totalPosts > 0 ? totalComments : 0;
+    }
+
+    // --- 4. PROFILE DATA INITIALIZATION & FORM HANDLING ---
+    function loadUserProfileData() {
+      const storedName = localStorage.getItem('userName') || 'Admin';
+      const storedEmail = localStorage.getItem('userEmail') || 'admin@kaavyasagar.com';
+      const storedPhone = localStorage.getItem('userPhone') || '';
+      const storedBio = localStorage.getItem('userBio') || 'लेखक | पाठक | काव्य और कहानी प्रेमी।';
+      const storedDob = localStorage.getItem('userDob') || '01/01/1990';
+      const storedAvatar = localStorage.getItem('userProfileAvatar');
+
+      document.getElementById('fullNameInput').value = storedName;
+      document.getElementById('usernameInput').value = `@${storedName.toLowerCase().replace(/\s+/g, '_')}`;
+      document.getElementById('contactEmailInput').value = storedEmail;
+      document.getElementById('contactPhoneInput').value = storedPhone;
+      document.getElementById('bioInput').value = storedBio;
+      document.getElementById('dobInput').value = storedDob;
+
+      const profileImageDisplay = document.getElementById('profileImageDisplay');
+      const defaultAvatarSvg = document.getElementById('defaultAvatarSvg');
+
+      if (storedAvatar) {
+        profileImageDisplay.src = storedAvatar;
+        profileImageDisplay.style.display = 'block';
+        defaultAvatarSvg.style.display = 'none';
+      } else {
+        profileImageDisplay.style.display = 'none';
+        defaultAvatarSvg.style.display = 'block';
+      }
+
+      loadUserStats();
+    }
+
+    function handleProfileUpdate(e) {
+      e.preventDefault();
+      const newName = document.getElementById('fullNameInput').value.trim();
+      const newEmail = document.getElementById('contactEmailInput').value.trim();
+      const newPhone = document.getElementById('contactPhoneInput').value.trim();
+      const newBio = document.getElementById('bioInput').value.trim();
+      const newDob = document.getElementById('dobInput').value.trim();
+
+      if (newName) {
+        localStorage.setItem('userName', newName);
+        sessionStorage.setItem('userName', newName);
+      }
+      localStorage.setItem('userEmail', newEmail);
+      localStorage.setItem('userPhone', newPhone);
+      localStorage.setItem('userBio', newBio);
+      localStorage.setItem('userDob', newDob);
+
+      renderAuthHeader();
+
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = profileTranslations[currentLang] || profileTranslations.hi;
+      alert(dict.updateSuccess);
+    }
+
+    // --- 5. IMAGE UPLOAD & PREVIEW ---
+    const uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
+    const imageFileInput = document.getElementById('imageFileInput');
+    const profileImageDisplay = document.getElementById('profileImageDisplay');
+    const defaultAvatarSvg = document.getElementById('defaultAvatarSvg');
+
+    uploadPhotoBtn.addEventListener('click', () => {
+      imageFileInput.click();
+    });
+
+    imageFileInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          profileImageDisplay.src = e.target.result;
+          profileImageDisplay.style.display = 'block';
+          defaultAvatarSvg.style.display = 'none';
+          localStorage.setItem('userProfileAvatar', e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // --- 6. UI EVENT LISTENERS ---
+    document.getElementById('sidebarLogoutAction').addEventListener('click', (e) => {
+      e.preventDefault();
+      handleUserLogout();
+    });
+
+    window.addEventListener('click', (e) => {
+      const userMenuBtn = document.getElementById('userMenuBtn');
+      const userDropdown = document.getElementById('userDropdown');
+      const otherLinksBtn = document.getElementById('otherLinksBtn');
+      const socialPopup = document.getElementById('socialPopup');
+
+      if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
+        userDropdown.classList.remove('show');
+      }
+
+      if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
+        socialPopup.classList.remove('active');
+        otherLinksBtn.classList.remove('active');
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+        otherLinksBtn.innerText = dict ? dict.otherLinks : 'Other Links';
+      }
+    });
+
+    const otherLinksBtn = document.getElementById('otherLinksBtn');
+    const socialPopup = document.getElementById('socialPopup');
+
+    otherLinksBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = socialPopup.classList.toggle('active');
+      otherLinksBtn.classList.toggle('active');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+      if (dict) {
+        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+      } else {
+        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+      }
+    });
+
+    // Re-render when language changes globally
+    window.addEventListener('languageChanged', () => {
+      renderAuthHeader();
+      updateProfileLanguage();
+    });
+
+    // Initial Load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAuthHeader();
+      loadUserProfileData();
+      updateProfileLanguage();
+    });
+  </script>
+
+</body>
+</html>

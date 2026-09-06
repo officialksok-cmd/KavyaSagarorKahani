@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>कहानी संग्रह - काव्य सागर और कहानी</title>
+
+  <!-- Global Language Switcher Script -->
+  <script src="lang.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0d0d15;
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* ---------------- HEADER ---------------- */
+    header {
+      background: rgba(30, 30, 47, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d4a017;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    nav a {
+      color: #9ca3af;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: #d4a017;
+    }
+
+    /* Dual Language Dropdown */
+    .lang-dropdown-wrapper {
+      position: relative;
+      margin-right: 12px;
+    }
+
+    .lang-select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #d4a017;
+      color: #d4a017;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 28px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%23d4a017' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+
+    .lang-select:hover {
+      background-color: rgba(212, 160, 23, 0.15);
+    }
+
+    .lang-select option {
+      background: #181824;
+      color: #f3f4f6;
+    }
+
+    /* User Profile Dropdown Menu */
+    .user-profile-menu {
+      position: relative;
+    }
+
+    .user-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: #f3f4f6;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .user-btn:hover {
+      background: rgba(212, 160, 23, 0.15);
+      border-color: #d4a017;
+    }
+
+    .avatar-icon {
+      width: 22px;
+      height: 22px;
+      background: #ffd700;
+      color: #0d0d15;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.75rem;
+    }
+
+    .avatar-icon.guest-avatar {
+      background: #4b5563;
+      color: #f3f4f6;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 110%;
+      background: #181824;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      min-width: 150px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      overflow: hidden;
+      z-index: 200;
+    }
+
+    .dropdown-content.show {
+      display: block;
+    }
+
+    .dropdown-content a, .dropdown-content button {
+      display: block;
+      width: 100%;
+      padding: 10px 14px;
+      color: #d1d5db;
+      text-decoration: none;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .dropdown-content a:hover, .dropdown-content button:hover {
+      background: rgba(212, 160, 23, 0.15);
+      color: #d4a017;
+    }
+
+    /* ---------------- LAYOUT CONTAINER ---------------- */
+    .stories-container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 30px;
+      flex: 1;
+    }
+
+    /* Left Sidebar - Story List */
+    .story-list-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      height: fit-content;
+    }
+
+    .story-list-card h2 {
+      font-size: 1.25rem;
+      color: #d4a017;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .story-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .story-item {
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      color: #d1d5db;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .story-item:hover {
+      background: rgba(212, 160, 23, 0.1);
+      border-color: rgba(212, 160, 23, 0.3);
+      color: #ffffff;
+      transform: translateX(3px);
+    }
+
+    .story-item.active {
+      background: rgba(212, 160, 23, 0.2);
+      border-color: #d4a017;
+      color: #d4a017;
+    }
+
+    /* Right Section - Preview Tab */
+    .preview-card {
+      background: rgba(18, 18, 26, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      min-height: 400px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+
+    .placeholder-text {
+      color: #9ca3af;
+      font-size: 1.1rem;
+    }
+
+    .story-preview-content {
+      display: none;
+      width: 100%;
+      text-align: left;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .preview-title {
+      font-size: 1.65rem;
+      color: #ffffff;
+    }
+
+    .btn-read-story {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #d4a017 0%, #b8860b 100%);
+      color: #0d0d15;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-read-story:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 160, 23, 0.4);
+    }
+
+    .summary-box {
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 4px solid #d4a017;
+      padding: 22px;
+      border-radius: 4px 10px 10px 4px;
+      margin-top: 15px;
+    }
+
+    .summary-title {
+      font-size: 1rem;
+      color: #d4a017;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .summary-text {
+      color: #d1d5db;
+      line-height: 1.8;
+      font-size: 1.05rem;
+    }
+
+    .story-actions-bar {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      flex-wrap: wrap;
+    }
+
+    .story-act-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #d1d5db;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .story-act-btn:hover {
+      background: rgba(212, 160, 23, 0.2);
+      border-color: #d4a017;
+      color: #ffffff;
+    }
+
+    /* ---------------- STORY MODAL READER ---------------- */
+    .story-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .story-modal.show {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .story-modal-card {
+      background: #181822;
+      border: 1px solid rgba(212, 160, 23, 0.3);
+      border-radius: 20px;
+      max-width: 750px;
+      width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-header {
+      padding: 20px 25px;
+      background: #23232c;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      color: #ffd700;
+      font-size: 1.3rem;
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: #9ca3af;
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+
+    .modal-close-btn:hover {
+      color: #ffd700;
+    }
+
+    .modal-body {
+      padding: 25px;
+      overflow-y: auto;
+      font-size: 1.05rem;
+      line-height: 2;
+      color: #e5e7eb;
+      white-space: pre-line;
+    }
+
+    .modal-footer {
+      padding: 15px 25px;
+      background: #23232c;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* ---------------- UNIVERSAL 4-CARD FOOTER ---------------- */
+    .footer-section {
+      max-width: 1200px;
+      margin: 40px auto 0 auto;
+      padding: 30px 16px 0 16px;
+      width: 100%;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .footer-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      text-decoration: none;
+      color: #d1d5db;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+    }
+
+    .footer-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(212, 160, 23, 0.4);
+      background: rgba(212, 160, 23, 0.05);
+      color: #ffffff;
+    }
+
+    .other-links-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .other-links-btn {
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      color: #d1d5db;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      min-height: 80px;
+      transition: all 0.2s;
+    }
+
+    .other-links-btn:hover, .other-links-btn.active {
+      border-color: #d4a017;
+      color: #d4a017;
+      background: rgba(212, 160, 23, 0.08);
+    }
+
+    .social-popup {
+      position: absolute;
+      bottom: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .social-popup.active {
+      pointer-events: auto;
+    }
+
+    .social-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #181824;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-decoration: none;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+      opacity: 0;
+      transform: translateY(20px) scale(0.5);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .social-popup.active .social-circle {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .social-popup.active .social-circle:nth-child(1) { transition-delay: 0.05s; }
+    .social-popup.active .social-circle:nth-child(2) { transition-delay: 0.1s; }
+    .social-popup.active .social-circle:nth-child(3) { transition-delay: 0.15s; }
+
+    .social-circle.yt:hover { background: #ff0000; border-color: #ff0000; }
+    .social-circle.fb:hover { background: #1877f2; border-color: #1877f2; }
+    .social-circle.ig:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: #e6683c; }
+
+    .social-circle svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .stories-container { grid-template-columns: 1fr; }
+      header { padding: 10px 15px; }
+      nav { display: none; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header>
+    <a href="home.html" class="brand">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+        <path d="M22 38l16-16" />
+        <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+        <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+      </svg>
+      <span data-lang-key="brandTitle">काव्य सागर और कहानी</span>
+    </a>
+
+    <nav>
+      <a href="home.html" data-lang-key="navHome">होम</a>
+      <a href="poem.html" data-lang-key="navPoem">कविताएँ</a>
+      <a href="stories.html" class="active" data-lang-key="navStory">कहानी</a>
+      <a href="diaries.html" data-lang-key="navDiary">डायरी</a>
+      <a href="quotes.html" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
+    </nav>
+
+    <div style="display: flex; align-items: center;">
+      <div class="lang-dropdown-wrapper">
+        <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
+          <option value="hi">हिन्दी</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div class="user-profile-menu" id="userAuthContainer"></div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="stories-container">
+    <div class="story-list-card">
+      <h2 data-lang-key="storyListTitle">कहानी सूची</h2>
+      <ul class="story-list" id="storyList">
+        <li class="story-item" onclick="showStory('fox', this)" id="item-fox">1. The Cunning Fox (चालाक लोमड़ी)</li>
+        <li class="story-item" onclick="showStory('crow', this)" id="item-crow">2. The Thirsty Crow (प्यासा कौआ)</li>
+        <li class="story-item" onclick="showStory('lion', this)" id="item-lion">3. The Lion and the Mouse (शेर और चूहा)</li>
+      </ul>
+    </div>
+
+    <div class="preview-card">
+      <div id="placeholder" class="placeholder-text" data-lang-key="storyPlaceholder">
+        पढ़ने के लिए बाईं ओर से किसी कहानी पर क्लिक करें।
+      </div>
+
+      <div id="storyPreview" class="story-preview-content">
+        <div class="preview-header">
+          <h2 id="storyTitle" class="preview-title"></h2>
+          <button class="btn-read-story" onclick="openFullStoryModal()" id="btnOpenModal">पूरी कहानी पढ़ें →</button>
+        </div>
+
+        <div class="summary-box">
+          <div class="summary-title" data-lang-key="summaryHeading">सारांश (Summary)</div>
+          <p id="storySummary" class="summary-text"></p>
+        </div>
+
+        <div class="story-actions-bar">
+          <button class="story-act-btn" onclick="handleProtectedStoryAction('Saved')">🔖 <span data-lang-key="btnSave">सहेजें</span></button>
+          <button class="story-act-btn" onclick="handleShareStory()">🔗 <span data-lang-key="btnShare">साझा करें</span></button>
+          <button class="story-act-btn" onclick="handleCommentStory()">💬 <span data-lang-key="btnComment">टिप्पणी</span></button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Full Story Reader Modal -->
+  <div class="story-modal" id="storyModal" onclick="closeStoryModalOnOutside(event)">
+    <div class="story-modal-card">
+      <div class="modal-header">
+        <h3 id="modalStoryTitle">Story Title</h3>
+        <button class="modal-close-btn" onclick="closeFullStoryModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalStoryFullContent"></div>
+      <div class="modal-footer">
+        <button class="btn-read-story" onclick="closeFullStoryModal()">बंद करें (Close)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Universal 4-Card Footer -->
+  <section class="footer-section">
+    <div class="footer-grid">
+      <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
+      <a href="privacy-policy.html" class="footer-card" data-lang-key="privacyPolicy">Privacy Policy</a>
+      <a href="terms.html" class="footer-card" data-lang-key="termsConditions">Terms and Conditions</a>
+
+      <div class="other-links-wrapper">
+        <button class="other-links-btn" id="otherLinksBtn" data-lang-key="otherLinks">Other Links</button>
+
+        <div class="social-popup" id="socialPopup">
+          <a href="https://www.youtube.com/@KavyaSagarorKahani" target="_blank" class="social-circle yt" title="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 काव्य सागर और कहानी. All rights reserved.
+  </footer>
+
+  <script>
+    // --- 1. LOCAL TRANSLATION DICTIONARY ---
+    const localDict = {
+      hi: {
+        storyListTitle: "कहानी सूची",
+        storyPlaceholder: "पढ़ने के लिए बाईं ओर से किसी कहानी पर क्लिक करें।",
+        readStoryBtn: "पूरी कहानी पढ़ें →",
+        summaryHeading: "सारांश (Summary)"
+      },
+      en: {
+        storyListTitle: "Story Collection",
+        storyPlaceholder: "Click on any story from the left to read preview.",
+        readStoryBtn: "Read Full Story →",
+        summaryHeading: "Summary"
+      }
+    };
+
+    // --- 2. BILINGUAL STORY DATASET WITH FULL CONTENT ---
+    const storiesData = {
+      fox: {
+        hi: {
+          listLabel: "1. चालाक लोमड़ी (The Cunning Fox)",
+          title: "The Cunning Fox Story (चालाक लोमड़ी)",
+          summary: "एक भूखी लोमड़ी भोजन की तलाश में जंगल में भटक रही थी। उसे एक पेड़ पर बैठा कौआ दिखाई दिया जिसके मुंह में पनीर का टुकड़ा था। लोमड़ी ने चालाकी से कौए की प्रशंसा की और उससे गाना गाने को कहा। जैसे ही कौए ने गाने के लिए मुंह खोला, पनीर का टुकड़ा नीचे गिर गया और चालाक लोमड़ी उसे लेकर भाग गई।",
+          fullStory: "एक समय की बात है, एक घने जंगल में एक बहुत चालाक लोमड़ी रहती थी। कई दिनों से उसे कोई भोजन नहीं मिला था और उसकी भूख बढ़ती जा रही थी।\n\nभोजन की तलाश में वह जंगल में इधर-उधर भटक रही थी। अचानक उसकी नज़र एक ऊँचे पेड़ की डाल पर बैठे कौए पर पड़ी। कौए की चोंच में एक स्वादिष्ट पनीर का बड़ा टुकड़ा था।\n\nलोमड़ी के मुंह में पानी आ गया। उसने सोचा, 'मुझे किसी भी तरह यह पनीर का टुकड़ा हासिल करना होगा।' लोमड़ी पेड़ के नीचे गई और मधुर स्वर में बोली, 'अरे कौए भाई! आप कितने सुंदर लग रहे हैं! आपके पंख कितने चमकदार हैं और आपकी आँखें कितनी प्यारी हैं। मैंने सुना है कि आपकी आवाज़ पूरे जंगल में सबसे सुरीली है। क्या आप मेरे लिए एक मधुर गीत नहीं गाएंगे?'\n\nकौआ अपनी झूठी प्रशंसा सुनकर गर्व से फूला न समाया। अपनी सुरीली आवाज़ का प्रदर्शन करने के लिए उसने जैसे ही 'काँव-काँव' करने के लिए अपनी चोंच खोली, पनीर का टुकड़ा नीचे गिर गया।\n\nलोमड़ी ने लपक कर पनीर का टुकड़ा उठा लिया और हँसते हुए जंगल की ओर भाग गई।\n\nसीख: झूठी चापलूसी करने वालों से हमेशा सावधान रहना चाहिए।"
+        },
+        en: {
+          listLabel: "1. The Cunning Fox",
+          title: "The Cunning Fox Story",
+          summary: "A hungry fox was wandering through the forest in search of food. She saw a crow perched on a branch holding a piece of cheese in its beak. Flattering the crow, the fox praised its voice and asked for a song. As soon as the crow opened its beak to sing, the cheese fell down, and the clever fox ran away with it.",
+          fullStory: "Once upon a time in a dense woodland, a clever fox had been searching for food for several days without success.\n\nAs she wandered near an oak tree, she spotted a crow perched on a high branch holding a rich piece of cheese in its beak.\n\nThe fox decided to use flattery to get the cheese. She walked up beneath the tree and said warmly, 'Good morning, noble bird! How magnificent your feathers look, and how bright your eyes shine! I have heard that your voice is the sweetest in the entire forest. Would you grace me with a song?'\n\nOvercome with vanity, the crow opened its beak wide to caw aloud. The instant it opened its beak, the cheese slipped and fell straight down.\n\nThe cunning fox caught it swiftly, smiled, and trotted away into the forest.\n\nMoral: Never trust flatterers who flatter for selfish gain."
+        }
+      },
+      crow: {
+        hi: {
+          listLabel: "2. प्यासा कौआ (The Thirsty Crow)",
+          title: "The Thirsty Crow (प्यासा कौआ)",
+          summary: "एक प्यासा कौआ पानी की तलाश में उड़ रहा था। उसे एक घड़ा मिला जिसमें पानी बहुत नीचे था। कौए ने अपनी बुद्धिमत्ता का परिचय देते हुए एक-एक करके छोटे कंकड़ घड़े में डाले, जिससे पानी ऊपर आ गया और उसने अपनी प्यास बुझाई।",
+          fullStory: "गर्मियों के दिन थे और सूरज की तेज धूप में एक कौआ पानी की तलाश में बहुत देर से उड़ रहा था। उसे बहुत तेज प्यास लगी थी और वह थक चुका था।\n\nउड़ते-उड़ते उसे एक बगीचे में एक मिट्टी का घड़ा दिखाई दिया। वह तुरंत खुशी-खुशी घड़े के पास पहुँचा। जब उसने घड़े के अंदर झाँका, तो देखा कि उसमें पानी बहुत कम था और उसकी चोंच पानी तक नहीं पहुँच पा रही थी।\n\nकौआ निराश नहीं हुआ। उसने चारों तरफ देखा और उसे ज़मीन पर छोटे-छोटे कंकड़ पड़े दिखाई दिए। उसने एक योजना बनाई।\n\nकौए ने एक-एक करके कंकड़ अपनी चोंच में उठाए और घड़े में डालना शुरू किया। जैसे-जैसे कंकड़ नीचे बैठते गए, पानी धीरे-धीरे ऊपर आता गया। कुछ ही देर में पानी घड़े के मुंह तक आ गया।\n\nकौए ने जी भरकर पानी पिया और खुशी से उड़ गया।\n\nसीख: जहाँ चाह, वहाँ राह। कठिन परिस्थिति में बुद्धि और धैर्य से हर समस्या का समाधान निकलता है।"
+        },
+        en: {
+          listLabel: "2. The Thirsty Crow",
+          title: "The Thirsty Crow Story",
+          summary: "A thirsty crow flew across the fields looking for water. He found a pitcher with water low at the bottom. Using his clever thinking, he picked up small pebbles one by one and dropped them into the jug until the water rose to the brim, allowing him to quench his thirst.",
+          fullStory: "On a scorching summer afternoon, a thirsty crow flew over the dried-up fields searching desperately for water.\n\nHe spotted a pitcher in a garden courtyard and swooped down with excitement. Looking inside, he found only a small amount of water remaining at the bottom, far below the reach of his beak.\n\nInstead of giving up in despair, the crow looked around and noticed small pebbles scattered across the ground.\n\nHe picked up the pebbles one by one with his beak and dropped them into the pitcher. As the pebbles accumulated at the bottom, the water level steadily rose.\n\nSoon, the water reached the top. The wise crow drank his fill and flew away happily into the sky.\n\nMoral: Where there is a will and thoughtful effort, there is always a way."
+        }
+      },
+      lion: {
+        hi: {
+          listLabel: "3. शेर और चूहा (The Lion and the Mouse)",
+          title: "The Lion and the Mouse (शेर और चूहा)",
+          summary: "एक नन्हे चूहे ने गलती से एक सोते हुए शेर को जगा दिया। शेर ने उसे छोड़ दिया। कुछ समय बाद शेर एक शिकारी के जाल में फंस गया। चूहे ने अपने नुकीले दांतों से जाल काटकर शेर की जान बचाई और साबित किया कि छोटा जीव भी बड़े काम आ सकता है।",
+          fullStory: "एक दोपहर जब जंगल का राजा शेर एक पेड़ की छाँव में गहरी नींद में सो रहा था, एक नन्हा चूहा वहाँ खेल रहा था। खेलते-खेलते चूहा गलती से शेर की पीठ पर चढ़ गया।\n\nशेर की नींद टूट गई और उसने गुस्से में आकर चूहे को अपने विशाल पंजे में दबोच लिया। शेर ने दहाड़ते हुए कहा, 'तुझे मेरी नींद खराब करने की सज़ा मिलेगी!'\n\nचूहा डर से कांपते हुए बोला, 'हे वनराज! मुझे क्षमा कर दीजिए। यदि आप मुझे छोड़ देंगे, तो मैं आपके इस उपकार को कभी नहीं भूलूँगा और संकट के समय आपके काम आऊँगा।'\n\nशेर चूहे की बात सुनकर हँसा और उस पर दया करके उसे छोड़ दिया।\n\nकुछ दिनों बाद, एक शिकारी ने शेर को पकड़ने के लिए मजबूत जाल बिछाया और शेर उसमें फँस गया। शेर की लाचार दहाड़ सुनकर वह छोटा चूहा तुरंत वहाँ पहुँचा। चूहे ने अपने नुकीले दांतों से शिकारी के जाल की रस्सियों को काट दिया और शेर को आज़ाद करा दिया।\n\nसीख: कोई भी जीव छोटा या कमज़ोर नहीं होता। दयालुता का फल हमेशा अच्छा होता है।"
+        },
+        en: {
+          listLabel: "3. The Lion and the Mouse",
+          title: "The Lion and the Mouse",
+          summary: "A tiny mouse accidentally woke up a sleeping lion. The lion showed mercy and let him go. Sometime later, the lion was caught in a hunter's net. The little mouse gnawed through the ropes with his sharp teeth and set the lion free, proving that even small friends can be of great help.",
+          fullStory: "One warm afternoon, while the king of the jungle lay sleeping under a shady tree, a little mouse was scampering around and accidentally ran over the lion's nose.\n\nThe lion woke up with a roar and trapped the little mouse under his heavy paw. 'How dare you disturb my slumber!' the lion growled.\n\nThe mouse trembled and pleaded, 'Please spare me, O King! If you let me go, I will be forever grateful, and perhaps one day I may help you in return.'\n\nAmused by the thought that a tiny mouse could ever assist a mighty lion, the lion laughed and generously released him.\n\nA few weeks later, the lion was ensnared in a hunter's rope trap. Hearing the lion's roar of distress, the tiny mouse ran to the spot. Using his sharp teeth, he gnawed through the thick ropes and freed the lion.\n\nMoral: An act of kindness is never wasted, and small friends can prove to be of immense help."
+        }
+      }
+    };
+
+    let selectedStoryKey = 'fox';
+
+    function renderStoryList() {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = localDict[currentLang] || localDict.hi;
+
+      document.querySelector('[data-lang-key="storyListTitle"]').innerText = dict.storyListTitle;
+      document.querySelector('[data-lang-key="storyPlaceholder"]').innerText = dict.storyPlaceholder;
+      document.getElementById('btnOpenModal').innerText = dict.readStoryBtn;
+      document.querySelector('[data-lang-key="summaryHeading"]').innerText = dict.summaryHeading;
+
+      document.getElementById('item-fox').innerText = storiesData.fox[currentLang].listLabel;
+      document.getElementById('item-crow').innerText = storiesData.crow[currentLang].listLabel;
+      document.getElementById('item-lion').innerText = storiesData.lion[currentLang].listLabel;
+
+      if (selectedStoryKey) {
+        const story = storiesData[selectedStoryKey];
+        const localized = story[currentLang] || story.hi;
+        document.getElementById('storyTitle').innerText = localized.title;
+        document.getElementById('storySummary').innerText = localized.summary;
+      }
+    }
+
+    function showStory(key, el) {
+      selectedStoryKey = key;
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const story = storiesData[key];
+      if (!story) return;
+
+      document.querySelectorAll('.story-item').forEach(item => item.classList.remove('active'));
+      if (el) el.classList.add('active');
+
+      document.getElementById('placeholder').style.display = 'none';
+      const preview = document.getElementById('storyPreview');
+      preview.style.display = 'block';
+
+      const localized = story[currentLang] || story.hi;
+      document.getElementById('storyTitle').innerText = localized.title;
+      document.getElementById('storySummary').innerText = localized.summary;
+    }
+
+    // Modal Interactive Logic
+    function openFullStoryModal() {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const story = storiesData[selectedStoryKey];
+      if (!story) return;
+
+      const localized = story[currentLang] || story.hi;
+      document.getElementById('modalStoryTitle').innerText = localized.title;
+      document.getElementById('modalStoryFullContent').innerText = localized.fullStory;
+      document.getElementById('storyModal').classList.add('show');
+    }
+
+    function closeFullStoryModal() {
+      document.getElementById('storyModal').classList.remove('show');
+    }
+
+    function closeStoryModalOnOutside(e) {
+      if (e.target.id === 'storyModal') {
+        closeFullStoryModal();
+      }
+    }
+
+    // Protected Actions
+    function handleProtectedStoryAction(actionName) {
+      const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
+      if (!isLoggedIn) {
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const msg = currentLang === 'hi'
+          ? 'कहानी को सहेजने के लिए कृपया पहले लॉगिन करें। क्या आप लॉगिन पृष्ठ पर जाना चाहते हैं?'
+          : 'Please log in to save stories to your dashboard. Would you like to log in now?';
+
+        if (confirm(msg)) {
+          sessionStorage.setItem('redirectAfterLogin', window.location.href);
+          window.location.href = 'login.html';
+        }
+        return;
+      }
+      alert(`कहानी सफलतापूर्वक सहेजी गई! (Story ${actionName} successfully!)`);
+    }
+
+    function handleShareStory() {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(window.location.href);
+        alert('कहानी का लिंक कॉपी हो गया है! (Story link copied!)');
+      } else {
+        alert('साझा करें (Share link triggered)');
+      }
+    }
+
+    function handleCommentStory() {
+      alert('टिप्पणी अनुभाग जल्द ही आ रहा है! (Comments section opening soon!)');
+    }
+
+    // Dynamic Auth Header
+    function renderAuthHeader() {
+      const container = document.getElementById('userAuthContainer');
+      if (!container) return;
+
+      const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+
+      if (isLoggedIn) {
+        const rawName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
+        const userName = rawName.trim();
+        const userInitial = userName.charAt(0).toUpperCase() || 'A';
+
+        container.innerHTML = `
+          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+            <span class="avatar-icon">${userInitial}</span>
+            <span>${userName}</span>
+            <small>▼</small>
+          </button>
+          <div class="dropdown-content" id="userDropdown">
+            <a href="profile.html" data-lang-key="myProfile">My Profile</a>
+            <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
+            <a href="my-work.html" data-lang-key="myWorks">My Works</a>
+            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+            <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
+          </div>
+        `;
+      } else {
+        const guestLabel = currentLang === 'hi' ? 'अतिथि (Guest)' : 'Guest';
+        const signInLabel = currentLang === 'hi' ? 'साइन इन करें' : 'Sign In';
+
+        container.innerHTML = `
+          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+            <span class="avatar-icon guest-avatar">G</span>
+            <span>${guestLabel}</span>
+            <small>▼</small>
+          </button>
+          <div class="dropdown-content" id="userDropdown">
+            <a href="login.html" style="color:#d4a017; font-weight:600;">🔑 ${signInLabel}</a>
+            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+          </div>
+        `;
+      }
+
+      if (typeof translations !== 'undefined' && translations[currentLang]) {
+        const dict = translations[currentLang];
+        container.querySelectorAll('[data-lang-key]').forEach(el => {
+          const key = el.getAttribute('data-lang-key');
+          if (dict[key]) el.innerText = dict[key];
+        });
+      }
+    }
+
+    function toggleUserDropdown(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) dropdown.classList.toggle('show');
+    }
+
+    function handleUserLogout() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userName');
+      sessionStorage.clear();
+      window.location.reload();
+    }
+
+    // UI Event Handlers
+    window.addEventListener('click', (e) => {
+      const userMenuBtn = document.getElementById('userMenuBtn');
+      const userDropdown = document.getElementById('userDropdown');
+      const otherLinksBtn = document.getElementById('otherLinksBtn');
+      const socialPopup = document.getElementById('socialPopup');
+
+      if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
+        userDropdown.classList.remove('show');
+      }
+
+      if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
+        socialPopup.classList.remove('active');
+        otherLinksBtn.classList.remove('active');
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+        otherLinksBtn.innerText = dict ? dict.otherLinks : 'Other Links';
+      }
+    });
+
+    const otherLinksBtn = document.getElementById('otherLinksBtn');
+    const socialPopup = document.getElementById('socialPopup');
+
+    otherLinksBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = socialPopup.classList.toggle('active');
+      otherLinksBtn.classList.toggle('active');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+      if (dict) {
+        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+      } else {
+        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+      }
+    });
+
+    window.addEventListener('languageChanged', () => {
+      renderAuthHeader();
+      renderStoryList();
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAuthHeader();
+      renderStoryList();
+      showStory('fox', document.getElementById('item-fox'));
+    });
+  </script>
+
+</body>
+</html>

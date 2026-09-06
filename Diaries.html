@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>डायरी संग्रह - काव्य सागर और कहानी</title>
+
+  <!-- Global Language Switcher Script -->
+  <script src="lang.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0d0d15;
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* ---------------- HEADER ---------------- */
+    header {
+      background: rgba(30, 30, 47, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d4a017;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    nav a {
+      color: #9ca3af;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: #d4a017;
+    }
+
+    /* Dual Language Dropdown */
+    .lang-dropdown-wrapper {
+      position: relative;
+      margin-right: 12px;
+    }
+
+    .lang-select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #d4a017;
+      color: #d4a017;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 28px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%23d4a017' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+
+    .lang-select:hover {
+      background-color: rgba(212, 160, 23, 0.15);
+    }
+
+    .lang-select option {
+      background: #181824;
+      color: #f3f4f6;
+    }
+
+    /* User Profile Dropdown Menu */
+    .user-profile-menu {
+      position: relative;
+    }
+
+    .user-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: #f3f4f6;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .user-btn:hover {
+      background: rgba(212, 160, 23, 0.15);
+      border-color: #d4a017;
+    }
+
+    .avatar-icon {
+      width: 22px;
+      height: 22px;
+      background: #ffd700;
+      color: #0d0d15;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.75rem;
+    }
+
+    .avatar-icon.guest-avatar {
+      background: #4b5563;
+      color: #f3f4f6;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 110%;
+      background: #181824;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      min-width: 150px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      overflow: hidden;
+      z-index: 200;
+    }
+
+    .dropdown-content.show {
+      display: block;
+    }
+
+    .dropdown-content a, .dropdown-content button {
+      display: block;
+      width: 100%;
+      padding: 10px 14px;
+      color: #d1d5db;
+      text-decoration: none;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .dropdown-content a:hover, .dropdown-content button:hover {
+      background: rgba(212, 160, 23, 0.15);
+      color: #d4a017;
+    }
+
+    /* ---------------- 3-COLUMN DIARY LAYOUT ---------------- */
+    .diaries-container {
+      max-width: 1280px;
+      margin: 30px auto;
+      padding: 0 20px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 280px 240px 1fr;
+      gap: 20px;
+      flex: 1;
+      align-items: start;
+    }
+
+    .col-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .col-header {
+      font-size: 1.1rem;
+      color: #d4a017;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Column 1: Diary List */
+    .diary-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .diary-item {
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      color: #d1d5db;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .diary-item:hover {
+      background: rgba(212, 160, 23, 0.1);
+      border-color: rgba(212, 160, 23, 0.3);
+      color: #ffffff;
+      transform: translateX(3px);
+    }
+
+    .diary-item.active {
+      background: rgba(212, 160, 23, 0.18);
+      border-color: #d4a017;
+      color: #d4a017;
+      box-shadow: 0 4px 15px rgba(212, 160, 23, 0.15);
+    }
+
+    /* Column 2: Episodes List */
+    .episodes-column {
+      background: rgba(18, 18, 26, 0.5);
+    }
+
+    .episodes-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      max-height: 440px;
+      padding-right: 4px;
+    }
+
+    .episode-item {
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      color: #9ca3af;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.88rem;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .episode-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(212, 160, 23, 0.25);
+      color: #ffffff;
+    }
+
+    .episode-item.active {
+      background: linear-gradient(135deg, rgba(212, 160, 23, 0.2) 0%, rgba(120, 53, 15, 0.2) 100%);
+      border-color: #d4a017;
+      color: #ffffff;
+    }
+
+    .ep-number {
+      font-size: 0.75rem;
+      color: #d4a017;
+      font-weight: 700;
+    }
+
+    .ep-title {
+      font-size: 0.88rem;
+      color: #e5e7eb;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Column 3: Content Workspace View */
+    .content-column {
+      background: rgba(18, 18, 26, 0.7);
+      padding: 28px;
+    }
+
+    .placeholder-view {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      min-height: 380px;
+      color: #6b7280;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .content-view {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .content-top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .content-heading-box h2 {
+      font-size: 1.5rem;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .content-meta {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      display: flex;
+      gap: 14px;
+    }
+
+    .like-action-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #9ca3af;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .like-action-btn:hover, .like-action-btn.liked {
+      border-color: #ff416c;
+      color: #ff416c;
+      background: rgba(255, 65, 108, 0.12);
+    }
+
+    .like-action-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .like-action-btn.liked svg {
+      fill: #ff416c;
+    }
+
+    .diary-body-text {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: #d1d5db;
+      white-space: pre-line;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      min-height: 280px;
+    }
+
+    .content-bottom-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .nav-ep-btn {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      color: #d4a017;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-ep-btn:hover {
+      background: #d4a017;
+      color: #0d0d15;
+    }
+
+    .nav-ep-btn:disabled {
+      opacity: 0.4;
+      pointer-events: none;
+      border-color: rgba(255, 255, 255, 0.1);
+      color: #6b7280;
+    }
+
+    /* ---------------- UNIVERSAL 4-CARD FOOTER ---------------- */
+    .footer-section {
+      max-width: 1280px;
+      margin: 40px auto 0 auto;
+      padding: 30px 20px 0 20px;
+      width: 100%;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .footer-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      text-decoration: none;
+      color: #d1d5db;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+    }
+
+    .footer-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(212, 160, 23, 0.4);
+      background: rgba(212, 160, 23, 0.05);
+      color: #ffffff;
+    }
+
+    .other-links-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .other-links-btn {
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      color: #d1d5db;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      min-height: 80px;
+      transition: all 0.2s;
+    }
+
+    .other-links-btn:hover, .other-links-btn.active {
+      border-color: #d4a017;
+      color: #d4a017;
+      background: rgba(212, 160, 23, 0.08);
+    }
+
+    .social-popup {
+      position: absolute;
+      bottom: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .social-popup.active {
+      pointer-events: auto;
+    }
+
+    .social-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #181824;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-decoration: none;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+      opacity: 0;
+      transform: translateY(20px) scale(0.5);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .social-popup.active .social-circle {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .social-popup.active .social-circle:nth-child(1) { transition-delay: 0.05s; }
+    .social-popup.active .social-circle:nth-child(2) { transition-delay: 0.1s; }
+    .social-popup.active .social-circle:nth-child(3) { transition-delay: 0.15s; }
+
+    .social-circle.yt:hover { background: #ff0000; border-color: #ff0000; }
+    .social-circle.fb:hover { background: #1877f2; border-color: #1877f2; }
+    .social-circle.ig:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: #e6683c; }
+
+    .social-circle svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 992px) {
+      .diaries-container { grid-template-columns: 1fr; gap: 20px; }
+      .col-card { min-height: auto; }
+      header { padding: 10px 15px; }
+      nav { display: none; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header>
+    <a href="home.html" class="brand">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+        <path d="M22 38l16-16" />
+        <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+        <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+      </svg>
+      <span data-lang-key="brandTitle">काव्य सागर और कहानी</span>
+    </a>
+
+    <nav>
+      <a href="home.html" data-lang-key="navHome">होम</a>
+      <a href="poem.html" data-lang-key="navPoem">कविताएँ</a>
+      <a href="stories.html" data-lang-key="navStory">कहानी</a>
+      <a href="diaries.html" class="active" data-lang-key="navDiary">डायरी</a>
+      <a href="quotes.html" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
+    </nav>
+
+    <div style="display: flex; align-items: center;">
+      <!-- Language Dropdown -->
+      <div class="lang-dropdown-wrapper">
+        <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
+          <option value="hi">हिन्दी</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <!-- Dynamic User / Guest Profile Container -->
+      <div class="user-profile-menu" id="userAuthContainer">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </div>
+  </header>
+
+  <!-- 3-Column Layout -->
+  <main class="diaries-container">
+
+    <!-- COLUMN 1: PUBLISHED DIARIES -->
+    <section class="col-card">
+      <div class="col-header">
+        <span data-lang-key="diariesTitle">प्रकाशित डायरियाँ</span>
+      </div>
+      <ul class="diary-list" id="diaryList"></ul>
+    </section>
+
+    <!-- COLUMN 2: EPISODES LIST -->
+    <section class="col-card episodes-column">
+      <div class="col-header">
+        <span data-lang-key="episodesTitle">Episodes</span>
+        <span style="font-size:0.75rem; color:#d4a017;" id="episodeCountBadge">0 भाग</span>
+      </div>
+      <ul class="episodes-list" id="episodesList"></ul>
+    </section>
+
+    <!-- COLUMN 3: WORKSPACE CONTENT -->
+    <section class="col-card content-column">
+      <div id="contentPlaceholder" class="placeholder-view">
+        <svg style="width:48px; height:48px; color:#4b5563; margin-bottom:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+        </svg>
+        <p data-lang-key="diaryPlaceholder">पढ़ने के लिए बाईं ओर से किसी एपिसोड पर क्लिक करें।</p>
+      </div>
+
+      <div id="contentView" class="content-view">
+        <div class="content-top-header">
+          <div class="content-heading-box">
+            <h2 id="viewHeading"></h2>
+            <div class="content-meta">
+              <span id="viewDate"></span>
+              <span id="viewReadTime"></span>
+            </div>
+          </div>
+
+          <button class="like-action-btn" id="diaryLikeBtn" onclick="handleProtectedDiaryLike()">
+            <svg viewBox="0 0 24 24">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <span data-lang-key="saveLike">सहेजें / Like</span>
+          </button>
+        </div>
+
+        <div class="diary-body-text" id="viewBody"></div>
+
+        <div class="content-bottom-bar">
+          <button class="nav-ep-btn" id="prevEpBtn" onclick="navigateEpisode(-1)" data-lang-key="prevEp">← पिछला भाग</button>
+          <span style="font-size:0.85rem; color:#9ca3af;" id="epPositionTracker"></span>
+          <button class="nav-ep-btn" id="nextEpBtn" onclick="navigateEpisode(1)" data-lang-key="nextEp">अगला भाग →</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Universal 4-Card Footer -->
+  <section class="footer-section">
+    <div class="footer-grid">
+      <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
+      <a href="privacy-policy.html" class="footer-card" data-lang-key="privacyPolicy">Privacy Policy</a>
+      <a href="terms.html" class="footer-card" data-lang-key="termsConditions">Terms and Conditions</a>
+
+      <div class="other-links-wrapper">
+        <button class="other-links-btn" id="otherLinksBtn" data-lang-key="otherLinks">Other Links</button>
+
+        <div class="social-popup" id="socialPopup">
+          <a href="https://www.youtube.com/@KavyaSagarorKahani" target="_blank" class="social-circle yt" title="YouTube">
+            <svg viewBox="0 0 24 24">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+          </a>
+
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 काव्य सागर और कहानी. All rights reserved.
+  </footer>
+
+  <script>
+    // --- 1. LOCAL TRANSLATION FALLBACKS ---
+    const localDict = {
+      hi: {
+        diariesTitle: "प्रकाशित डायरियाँ",
+        episodesTitle: "Episodes",
+        diaryPlaceholder: "पढ़ने के लिए बाईं ओर से किसी एपिसोड पर क्लिक करें।",
+        saveLike: "सहेजें / Like",
+        prevEp: "← पिछला भाग",
+        nextEp: "अगला भाग →"
+      },
+      en: {
+        diariesTitle: "Published Diaries",
+        episodesTitle: "Episodes",
+        diaryPlaceholder: "Click on any episode from the left to read.",
+        saveLike: "Save / Like",
+        prevEp: "← Previous Episode",
+        nextEp: "Next Episode →"
+      }
+    };
+
+    // --- 2. BILINGUAL DIARY DATABASE ---
+    const publishedDiaries = [
+      {
+        id: "kanhaiya",
+        names: {
+          hi: "कन्हैया की डायरी",
+          en: "Kanhaiya's Diary"
+        },
+        episodes: [
+          {
+            epNum: 1,
+            titles: {
+              hi: "Episode - 1 (शुरुआती सफर)",
+              en: "Episode - 1 (The Beginning)"
+            },
+            dates: {
+              hi: "10-अगस्त-2026",
+              en: "10-Aug-2026"
+            },
+            readTimes: {
+              hi: "3 मिनट पठन",
+              en: "3 min read"
+            },
+            contents: {
+              hi: "आज एक नए सफर की शुरुआत हुई है। शहर की इस तेज रफ्तार और भागदौड़ भरी जिंदगी में जब भी वक्त ठहरता है, मन पुरानी यादों की पगडंडियों पर निकल पड़ता है।\n\nकागज़ और कलम का यह रिश्ता ही तो है जो हमें खुद से जोड़कर रखता है। कमरे की खिड़की से बाहर ठंडी हवा आ रही थी और हाथ में चाय का कुल्हड़ था। तभी अचानक वो पुराना दिन याद आ गया...",
+              en: "Today marks the start of a brand new journey. In this fast-paced life of running between tasks, whenever time pauses, the mind wanders down the trails of old memories.\n\nThis bond of paper and pen is what truly keeps us connected to our authentic selves. A cool breeze drifted through the window as I held a warm cup of tea, and suddenly, that long-forgotten day flashed before my eyes..."
+            }
+          },
+          {
+            epNum: 2,
+            titles: {
+              hi: "Episode - 2 (अनकही बातें)",
+              en: "Episode - 2 (Unspoken Thoughts)"
+            },
+            dates: {
+              hi: "12-अगस्त-2026",
+              en: "12-Aug-2026"
+            },
+            readTimes: {
+              hi: "4 मिनट पठन",
+              en: "4 min read"
+            },
+            contents: {
+              hi: "कुछ बातें ऐसी होती हैं जिन्हें हम लफ्जों में कभी बयां नहीं कर पाते, पर डायरी के पन्नों पर वो खुद-ब-खुद उतर आती हैं।\n\nआज शाम जब काम खत्म हुआ तो लगा जैसे बहुत कुछ कहना बाकी रह गया था। हमने अक्सर लोगों को हँसते देखा है मगर उन आँखों के पीछे छिपे एहसासों को कोई नहीं पढ़ पाता। यही ज़िंदगी का सबसे हसीन फलसफा है।",
+              en: "Some emotions can never be spoken aloud, yet they effortlessly flow onto the pages of a journal.\n\nAs the work wrapped up this evening, a lingering feeling remained that much was left unsaid. We frequently see smiling faces everywhere, but few ever read the deep sentiments hidden behind those eyes."
+            }
+          },
+          {
+            epNum: 3,
+            titles: {
+              hi: "Episode - 3 (उम्मीद का सवेरा)",
+              en: "Episode - 3 (Dawn of Hope)"
+            },
+            dates: {
+              hi: "14-अगस्त-2026",
+              en: "14-Aug-2026"
+            },
+            readTimes: {
+              hi: "5 मिनट पठन",
+              en: "5 min read"
+            },
+            contents: {
+              hi: "अंधेरी रात जितनी गहरी होती है, सुबह का उजाला उतना ही चमकदार होता है। आज सुबह जब धूप ने कमरे को छुआ, तो दिल में एक नया विश्वास जागा।\n\nखुद पर भरोसा रखना ही सबसे बड़ी ताक़त है। जब तक हमारे पास उम्मीद की एक किरण है, कोई भी मंज़िल दूर नहीं हो सकती।",
+              en: "The darker the night, the brighter the morning light shines. When the early rays touched the room today, a renewed conviction awakened within.\n\nBelieving in oneself is the greatest power of all. As long as a ray of hope remains alive, no destination is ever out of reach."
+            }
+          }
+        ]
+      },
+      {
+        id: "prem_ujala",
+        names: {
+          hi: "प्रेम-उजाला",
+          en: "Prem-Ujala"
+        },
+        episodes: [
+          {
+            epNum: 1,
+            titles: {
+              hi: "Episode - 1 (पहली मुलाकात)",
+              en: "Episode - 1 (First Encounter)"
+            },
+            dates: {
+              hi: "05-अगस्त-2026",
+              en: "05-Aug-2026"
+            },
+            readTimes: {
+              hi: "3 मिनट पठन",
+              en: "3 min read"
+            },
+            contents: {
+              hi: "प्रेम कोई बंधन नहीं, बल्कि आत्मा का स्वतंत्र विस्तार है। उस रोज़ जब बारिश की बूँदें धरती को चूम रही थीं, एक अलग ही सुकून महसूस हुआ।\n\nजब दिल में किसी के प्रति सच्चा भाव हो तो दुनिया का हर रंग खूबसूरत लगने लगता है।",
+              en: "Love is not a restriction, but a free expansion of the soul. On that rainy day as drops kissed the earth, a deep tranquility settled in.\n\nWhen authentic feelings dwell in the heart, every single hue of the world turns vibrant."
+            }
+          },
+          {
+            epNum: 2,
+            titles: {
+              hi: "Episode - 2 (खामोशियाँ और जज़्बात)",
+              en: "Episode - 2 (Silences & Emotions)"
+            },
+            dates: {
+              hi: "08-अगस्त-2026",
+              en: "08-Aug-2026"
+            },
+            readTimes: {
+              hi: "4 मिनट पठन",
+              en: "4 min read"
+            },
+            contents: {
+              hi: "कई बार खामोशी शब्दों से कहीं ज्यादा कह जाती है। जब नज़रें मिलती हैं तो किसी ज़ुबां की ज़रूरत नहीं रहती।\n\nप्रेम-उजाला की यह कड़ी सिखाती है कि सच्चे रिश्तों की बुनियाद हमेशा विश्वास और सादगी पर टिकी होती है।",
+              en: "Often, silence speaks far louder than words. When eyes meet, no spoken language is required.\n\nThis chapter reminds us that true bonds are always anchored in simplicity and genuine trust."
+            }
+          }
+        ]
+      }
+    ];
+
+    let currentDiaryIndex = 0;
+    let currentEpisodeIndex = 0;
+
+    const diaryList = document.getElementById('diaryList');
+    const episodesList = document.getElementById('episodesList');
+    const episodeCountBadge = document.getElementById('episodeCountBadge');
+    const contentPlaceholder = document.getElementById('contentPlaceholder');
+    const contentView = document.getElementById('contentView');
+    const viewHeading = document.getElementById('viewHeading');
+    const viewDate = document.getElementById('viewDate');
+    const viewReadTime = document.getElementById('viewReadTime');
+    const viewBody = document.getElementById('viewBody');
+    const prevEpBtn = document.getElementById('prevEpBtn');
+    const nextEpBtn = document.getElementById('nextEpBtn');
+    const epPositionTracker = document.getElementById('epPositionTracker');
+    const diaryLikeBtn = document.getElementById('diaryLikeBtn');
+
+    function renderDiaries() {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = localDict[currentLang] || localDict.hi;
+
+      // Update static page labels
+      document.querySelector('[data-lang-key="diariesTitle"]').innerText = dict.diariesTitle;
+      document.querySelector('[data-lang-key="episodesTitle"]').innerText = dict.episodesTitle;
+      document.querySelector('[data-lang-key="diaryPlaceholder"]').innerText = dict.diaryPlaceholder;
+      document.querySelector('[data-lang-key="saveLike"]').innerText = dict.saveLike;
+      document.querySelector('[data-lang-key="prevEp"]').innerText = dict.prevEp;
+      document.querySelector('[data-lang-key="nextEp"]').innerText = dict.nextEp;
+
+      diaryList.innerHTML = '';
+
+      publishedDiaries.forEach((diary, idx) => {
+        const li = document.createElement('li');
+        li.className = `diary-item ${idx === currentDiaryIndex ? 'active' : ''}`;
+        const diaryName = diary.names[currentLang] || diary.names.hi;
+        li.innerHTML = `
+          <span>${diaryName}</span>
+          <span style="font-size:0.75rem; opacity:0.7;">›</span>
+        `;
+        li.onclick = () => selectDiary(idx);
+        diaryList.appendChild(li);
+      });
+
+      renderEpisodes(currentDiaryIndex);
+    }
+
+    function selectDiary(dIndex) {
+      currentDiaryIndex = dIndex;
+      currentEpisodeIndex = 0;
+
+      document.querySelectorAll('.diary-item').forEach((item, idx) => {
+        item.classList.toggle('active', idx === dIndex);
+      });
+
+      renderEpisodes(dIndex);
+    }
+
+    function renderEpisodes(dIndex) {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const diary = publishedDiaries[dIndex];
+      episodesList.innerHTML = '';
+
+      const countSuffix = currentLang === 'en' ? 'Episodes' : 'भाग';
+      episodeCountBadge.innerText = `${diary.episodes.length} ${countSuffix}`;
+
+      if (diary.episodes.length === 0) {
+        const noEpText = currentLang === 'en' ? 'No episodes available.' : 'कोई एपिसोड उपलब्ध नहीं है।';
+        episodesList.innerHTML = `<p style="color:#6b7280; font-size:0.85rem; padding:10px;">${noEpText}</p>`;
+        showPlaceholder();
+        return;
+      }
+
+      diary.episodes.forEach((ep, epIdx) => {
+        const li = document.createElement('li');
+        li.className = `episode-item ${epIdx === currentEpisodeIndex ? 'active' : ''}`;
+        const title = ep.titles[currentLang] || ep.titles.hi;
+        li.innerHTML = `
+          <span class="ep-number">Episode - ${ep.epNum}</span>
+          <span class="ep-title">${title}</span>
+        `;
+        li.onclick = () => selectEpisode(epIdx);
+        episodesList.appendChild(li);
+      });
+
+      selectEpisode(currentEpisodeIndex);
+    }
+
+    function selectEpisode(epIdx) {
+      currentEpisodeIndex = epIdx;
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const diary = publishedDiaries[currentDiaryIndex];
+      const ep = diary.episodes[epIdx];
+
+      document.querySelectorAll('.episode-item').forEach((item, idx) => {
+        item.classList.toggle('active', idx === epIdx);
+      });
+
+      contentPlaceholder.style.display = 'none';
+      contentView.style.display = 'block';
+
+      const diaryName = diary.names[currentLang] || diary.names.hi;
+      viewHeading.innerText = `${diaryName} - Ep ${ep.epNum}`;
+      viewDate.innerText = `📅 ${ep.dates[currentLang] || ep.dates.hi}`;
+      viewReadTime.innerText = `⏱️ ${ep.readTimes[currentLang] || ep.readTimes.hi}`;
+      viewBody.innerText = ep.contents[currentLang] || ep.contents.hi;
+
+      diaryLikeBtn.classList.remove('liked');
+
+      prevEpBtn.disabled = (epIdx === 0);
+      nextEpBtn.disabled = (epIdx === diary.episodes.length - 1);
+
+      if (currentLang === 'en') {
+        epPositionTracker.innerText = `Episode ${epIdx + 1} of ${diary.episodes.length}`;
+      } else {
+        epPositionTracker.innerText = `भाग ${epIdx + 1} / ${diary.episodes.length}`;
+      }
+    }
+
+    function showPlaceholder() {
+      contentPlaceholder.style.display = 'flex';
+      contentView.style.display = 'none';
+    }
+
+    function navigateEpisode(direction) {
+      const diary = publishedDiaries[currentDiaryIndex];
+      const newIdx = currentEpisodeIndex + direction;
+      if (newIdx >= 0 && newIdx < diary.episodes.length) {
+        selectEpisode(newIdx);
+      }
+    }
+
+    // --- 3. PROTECTED ACTIONS ---
+    function handleProtectedDiaryLike() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      if (!isLoggedIn) {
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const msg = currentLang === 'hi'
+          ? 'डायरी एपिसोड सहेजने/पसंद करने के लिए कृपया पहले लॉगिन करें। क्या आप लॉगिन पृष्ठ पर जाना चाहते हैं?'
+          : 'Please log in to save and like diary entries. Would you like to log in now?';
+
+        if (confirm(msg)) {
+          sessionStorage.setItem('redirectAfterLogin', window.location.href);
+          window.location.href = 'login.html';
+        }
+        return;
+      }
+      diaryLikeBtn.classList.toggle('liked');
+    }
+
+    // --- 4. DYNAMIC AUTH HEADER (GUEST VS USER) ---
+    function renderAuthHeader() {
+      const container = document.getElementById('userAuthContainer');
+      if (!container) return;
+
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+
+      if (isLoggedIn) {
+        const userName = localStorage.getItem('userName') || 'Admin';
+        const userInitial = userName.trim().charAt(0).toUpperCase() || 'A';
+
+        container.innerHTML = `
+          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+            <span class="avatar-icon">${userInitial}</span>
+            <span>${userName}</span>
+            <small>▼</small>
+          </button>
+          <div class="dropdown-content" id="userDropdown">
+            <a href="profile.html" data-lang-key="myProfile">My Profile</a>
+            <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
+            <a href="my-work.html" data-lang-key="myWorks">My Works</a>
+            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+            <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
+          </div>
+        `;
+      } else {
+        const guestLabel = currentLang === 'hi' ? 'अतिथि (Guest)' : 'Guest';
+        const signInLabel = currentLang === 'hi' ? 'साइन इन करें' : 'Sign In';
+
+        container.innerHTML = `
+          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+            <span class="avatar-icon guest-avatar">G</span>
+            <span>${guestLabel}</span>
+            <small>▼</small>
+          </button>
+          <div class="dropdown-content" id="userDropdown">
+            <a href="login.html" style="color:#d4a017; font-weight:600;">🔑 ${signInLabel}</a>
+            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+          </div>
+        `;
+      }
+
+      if (typeof translations !== 'undefined' && translations[currentLang]) {
+        const dict = translations[currentLang];
+        container.querySelectorAll('[data-lang-key]').forEach(el => {
+          const key = el.getAttribute('data-lang-key');
+          if (dict[key]) el.innerText = dict[key];
+        });
+      }
+    }
+
+    function toggleUserDropdown(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) dropdown.classList.toggle('show');
+    }
+
+    function handleUserLogout() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userName');
+      sessionStorage.clear();
+      window.location.reload();
+    }
+
+    // --- 5. UI EVENT LISTENERS ---
+    window.addEventListener('click', (e) => {
+      const userMenuBtn = document.getElementById('userMenuBtn');
+      const userDropdown = document.getElementById('userDropdown');
+      const otherLinksBtn = document.getElementById('otherLinksBtn');
+      const socialPopup = document.getElementById('socialPopup');
+
+      if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
+        userDropdown.classList.remove('show');
+      }
+
+      if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
+        socialPopup.classList.remove('active');
+        otherLinksBtn.classList.remove('active');
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+        otherLinksBtn.innerText = dict ? dict.otherLinks : 'Other Links';
+      }
+    });
+
+    const otherLinksBtn = document.getElementById('otherLinksBtn');
+    const socialPopup = document.getElementById('socialPopup');
+
+    otherLinksBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = socialPopup.classList.toggle('active');
+      otherLinksBtn.classList.toggle('active');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+      if (dict) {
+        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+      } else {
+        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+      }
+    });
+
+    // Re-render when language changes globally
+    window.addEventListener('languageChanged', () => {
+      renderAuthHeader();
+      renderDiaries();
+    });
+
+    // Initial Load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAuthHeader();
+      renderDiaries();
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Register - काव्य सागर और कहानी</title>
+
+  <script src="lang.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, #1e1e2f 0%, #0d0d15 100%);
+      color: #f3f4f6;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* ---------------- AUTH CONTAINER ---------------- */
+    .auth-main-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      display: flex;
+      width: 100%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.55);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Top Corner Language Selector inside Card */
+    .card-lang-wrapper {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      z-index: 10;
+    }
+
+    .lang-select {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid #d4a017;
+      color: #d4a017;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 28px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%23d4a017' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+
+    .lang-select:hover {
+      background-color: rgba(212, 160, 23, 0.15);
+    }
+
+    .lang-select option {
+      background: #181824;
+      color: #f3f4f6;
+    }
+
+    /* Left Side Branding */
+    .brand-section {
+      flex: 1;
+      padding: 50px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(212, 160, 23, 0.15) 0%, rgba(120, 53, 15, 0.25) 100%);
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+    }
+
+    .logo-icon {
+      width: 110px;
+      height: 110px;
+      margin-bottom: 20px;
+      color: #d4a017;
+      filter: drop-shadow(0 4px 14px rgba(212, 160, 23, 0.35));
+    }
+
+    .brand-title {
+      color: #f3f4f6;
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      line-height: 1.4;
+    }
+
+    .brand-desc {
+      color: #9ca3af;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    /* Right Side Auth Box */
+    .login-section {
+      flex: 1.1;
+      padding: 50px 40px 40px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: rgba(18, 18, 26, 0.7);
+    }
+
+    .login-header {
+      margin-bottom: 24px;
+    }
+
+    .login-header h2 {
+      color: #ffffff;
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .login-header p {
+      color: #9ca3af;
+      font-size: 0.875rem;
+    }
+
+    /* Form Switcher */
+    .form-box {
+      display: none;
+    }
+
+    .form-box.active {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #d1d5db;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 11px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      border-color: #d4a017;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.2);
+    }
+
+    /* Password Wrapper & Eye Icon */
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-wrapper input {
+      padding-right: 42px;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .toggle-password:hover {
+      color: #d4a017;
+    }
+
+    .toggle-password svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Form Options */
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      color: #9ca3af;
+      gap: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .forgot-pass {
+      color: #d4a017;
+      text-decoration: none;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+
+    .forgot-pass:hover {
+      text-decoration: underline;
+    }
+
+    .btn-submit {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #d4a017 0%, #b8860b 100%);
+      color: #0d0d15;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(212, 160, 23, 0.4);
+    }
+
+    /* Styled Toggle Button for OTP Mode */
+    .otp-toggle-btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      color: #d4a017;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .otp-toggle-btn:hover {
+      background: rgba(212, 160, 23, 0.15);
+      border-color: #d4a017;
+    }
+
+    /* Toggle Link */
+    .auth-toggle-text {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+
+    .auth-toggle-link {
+      color: #d4a017;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    .auth-toggle-link:hover {
+      text-decoration: underline;
+    }
+
+    /* ---------------- UNIVERSAL 4-CARD FOOTER ---------------- */
+    .footer-section {
+      max-width: 1200px;
+      margin: 20px auto 0 auto;
+      padding: 30px 16px 0 16px;
+      width: 100%;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .footer-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      text-decoration: none;
+      color: #d1d5db;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+    }
+
+    .footer-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(212, 160, 23, 0.4);
+      background: rgba(212, 160, 23, 0.05);
+      color: #ffffff;
+    }
+
+    .other-links-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .other-links-btn {
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      color: #d1d5db;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      min-height: 80px;
+      transition: all 0.2s;
+    }
+
+    .other-links-btn:hover, .other-links-btn.active {
+      border-color: #d4a017;
+      color: #d4a017;
+      background: rgba(212, 160, 23, 0.08);
+    }
+
+    .social-popup {
+      position: absolute;
+      bottom: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .social-popup.active {
+      pointer-events: auto;
+    }
+
+    .social-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #181824;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-decoration: none;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+      opacity: 0;
+      transform: translateY(20px) scale(0.5);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .social-popup.active .social-circle {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .social-popup.active .social-circle:nth-child(1) { transition-delay: 0.05s; }
+    .social-popup.active .social-circle:nth-child(2) { transition-delay: 0.1s; }
+    .social-popup.active .social-circle:nth-child(3) { transition-delay: 0.15s; }
+
+    .social-circle.yt:hover { background: #ff0000; border-color: #ff0000; }
+    .social-circle.fb:hover { background: #1877f2; border-color: #1877f2; }
+    .social-circle.ig:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: #e6683c; }
+
+    .social-circle svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      .brand-section {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 30px 20px;
+      }
+      .logo-icon {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 15px;
+      }
+      .brand-title {
+        font-size: 1.5rem;
+      }
+      .login-section {
+        padding: 45px 20px 30px 20px;
+      }
+      .card-lang-wrapper {
+        top: 12px;
+        right: 15px;
+      }
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-main-wrapper">
+    <div class="container">
+      
+      <div class="card-lang-wrapper">
+        <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
+          <option value="hi">हिन्दी</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div class="brand-section">
+        <svg class="logo-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+          <path d="M22 38l16-16" />
+          <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+          <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+        </svg>
+        <h1 class="brand-title" data-lang-key="brandTitle">काव्य सागर और कहानी</h1>
+        <p class="brand-desc" id="brandTagline">साहित्य, शायरी और कहानियों का सुंदर संसार</p>
+      </div>
+
+      <div class="login-section">
+        
+        <div id="loginBox" class="form-box active">
+          <div class="login-header">
+            <h2 id="loginHeading">साइन इन करें (Sign In)</h2>
+            <p id="loginSubtitle">अपने साहित्यिक खाते में प्रवेश करें</p>
+          </div>
+
+          <form id="signInForm" action="#" method="POST">
+            <div class="form-group" id="userIdentifierGroup">
+              <label for="email" id="labelUserEmail">ईमेल या उपयोगकर्ता नाम (Username)</label>
+              <input type="text" id="email" placeholder="e.g. Admin or your email/username" required>
+            </div>
+
+            <div class="form-group" id="passwordGroup">
+              <label for="password" id="labelPassword">पासवर्ड (Password)</label>
+              <div class="password-wrapper">
+                <input type="password" id="password" placeholder="••••••••">
+                <button type="button" class="toggle-password" id="togglePassword" title="Show/Hide Password">
+                  <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group" id="otpGroup" style="display: none;">
+              <label for="otpInput" id="labelOtp">ओटीपी दर्ज करें (Enter OTP)</label>
+              <div style="display: flex; gap: 10px;">
+                <input type="text" id="otpInput" placeholder="Enter 6-digit OTP" maxlength="6">
+                <button type="button" id="sendOtpBtn" class="action-btn" style="background:#d4a017; color:#0d0d15; border:none; padding:0 12px; border-radius:8px; font-weight:600; cursor:pointer; white-space:nowrap;">OTP भेजें</button>
+              </div>
+            </div>
+
+            <div class="form-options" id="formOptionsRow">
+              <label class="remember-me" id="rememberMeLabelWrapper">
+                <input type="checkbox" name="remember" id="rememberMeCheckbox">
+                <span id="labelRemember">मुझे याद रखें</span>
+              </label>
+              <a href="forget-pass.html" class="forgot-pass" id="labelForgot">पासवर्ड भूल गए?</a>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnSubmitLogin">लॉग इन करें (Log In)</button>
+            
+            <button type="button" class="otp-toggle-btn" id="toggleOtpModeBtn" onclick="toggleOtpLogin()">OTP के माध्यम से लॉगिन करें</button>
+          </form>
+
+          <div class="auth-toggle-text">
+            <span id="textNewUser">नए पाठक हैं?</span>
+            <span class="auth-toggle-link" onclick="switchForm('signup')" id="linkCreateAcc">नया खाता बनाएँ</span>
+          </div>
+        </div>
+
+        <div id="signupBox" class="form-box">
+          <div class="login-header">
+            <h2 id="signupHeading">खाता बनाएँ (Create Account)</h2>
+            <p id="signupSubtitle">आज ही हमारे साहित्य समुदाय से जुड़ें</p>
+          </div>
+
+          <form id="signUpForm" action="#" method="POST">
+            <div class="form-group">
+              <label for="signupName" id="labelFullName">पूरा नाम (Full Name)</label>
+              <input type="text" id="signupName" placeholder="अपना नाम दर्ज करें" required>
+            </div>
+
+            <div class="form-group">
+              <label for="signupEmail" id="labelRegEmail">ईमेल पता (Email Address)</label>
+              <input type="email" id="signupEmail" placeholder="name@example.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="signupPhone" id="labelRegPhone">मोबाइल नंबर (Phone Number)</label>
+              <input type="tel" id="signupPhone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
+            </div>
+
+            <div class="form-group">
+              <label for="signupPassword" id="labelRegPass">पासवर्ड (Password)</label>
+              <div class="password-wrapper">
+                <input type="password" id="signupPassword" placeholder="••••••••" required>
+                <button type="button" class="toggle-password" id="toggleSignupPassword" title="Show/Hide Password">
+                  <svg id="eyeIconSignup" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnSubmitSignup">साइन अप करें (Sign Up)</button>
+          </form>
+
+          <div class="auth-toggle-text">
+            <span id="textAlreadyAcc">पहले से खाता है?</span>
+            <span class="auth-toggle-link" onclick="switchForm('login')" id="linkSignIn">साइन इन करें</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <section class="footer-section">
+    <div class="footer-grid">
+      <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
+      <a href="privacy-policy.html" class="footer-card" data-lang-key="privacyPolicy">Privacy Policy</a>
+      <a href="terms.html" class="footer-card" data-lang-key="termsConditions">Terms and Conditions</a>
+
+      <div class="other-links-wrapper">
+        <button class="other-links-btn" id="otherLinksBtn" data-lang-key="otherLinks">Other Links</button>
+
+        <div class="social-popup" id="socialPopup">
+          <a href="https://www.youtube.com/@KavyaSagarorKahani" target="_blank" class="social-circle yt" title="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 काव्य सागर और कहानी. All rights reserved.
+  </footer>
+
+  <script>
+    // --- 1. LOCAL TRANSLATION DICTIONARY ---
+    const authTranslations = {
+      hi: {
+        brandTagline: "साहित्य, शायरी और कहानियों का सुंदर संसार",
+        loginHeading: "साइन इन करें (Sign In)",
+        loginSubtitle: "अपने साहित्यिक खाते में प्रवेश करें",
+        labelUserEmail: "ईमेल या उपयोगकर्ता नाम (Username)",
+        labelPassword: "पासवर्ड (Password)",
+        labelRemember: "मुझे याद रखें",
+        labelForgot: "पासवर्ड भूल गए?",
+        btnSubmitLogin: "लॉग इन करें (Log In)",
+        textNewUser: "नए पाठक हैं?",
+        linkCreateAcc: "नया खाता बनाएँ",
+        signupHeading: "खाता बनाएँ (Create Account)",
+        signupSubtitle: "आज ही हमारे साहित्य समुदाय से जुड़ें",
+        labelFullName: "पूरा नाम (Full Name)",
+        labelRegEmail: "ईमेल पता (Email Address)",
+        labelRegPhone: "मोबाइल नंबर (Phone Number)",
+        labelRegPass: "पासवर्ड (Password)",
+        btnSubmitSignup: "साइन अप करें (Sign Up)",
+        textAlreadyAcc: "पहले से खाता है?",
+        linkSignIn: "साइन इन करें"
+      },
+      en: {
+        brandTagline: "A beautiful universe of literature, poetry, and stories",
+        loginHeading: "Sign In",
+        loginSubtitle: "Access your literary account",
+        labelUserEmail: "Email or Username",
+        labelPassword: "Password",
+        labelRemember: "Remember me",
+        labelForgot: "Forgot Password?",
+        btnSubmitLogin: "Log In",
+        textNewUser: "New reader?",
+        linkCreateAcc: "Create an account",
+        signupHeading: "Create Account",
+        signupSubtitle: "Join our literature community today",
+        labelFullName: "Full Name",
+        labelRegEmail: "Email Address",
+        labelRegPhone: "Phone Number",
+        labelRegPass: "Password",
+        btnSubmitSignup: "Sign Up",
+        textAlreadyAcc: "Already have an account?",
+        linkSignIn: "Sign In"
+      }
+    };
+
+    let isOtpMode = false;
+
+    function updateAuthLanguage() {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = authTranslations[currentLang] || authTranslations.hi;
+
+      for (const [id, text] of Object.entries(dict)) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = text;
+      }
+      
+      const toggleBtn = document.getElementById('toggleOtpModeBtn');
+      if (toggleBtn) {
+        if (currentLang === 'hi') {
+          toggleBtn.innerText = isOtpMode ? 'पासवर्ड के माध्यम से लॉगिन करें' : 'OTP के माध्यम से लॉगिन करें';
+        } else {
+          toggleBtn.innerText = isOtpMode ? 'Login via Password' : 'Login via OTP';
+        }
+      }
+    }
+
+    // --- 2. SWITCH FORM (SIGN IN VS SIGN UP) ---
+    function switchForm(formType) {
+      const loginBox = document.getElementById('loginBox');
+      const signupBox = document.getElementById('signupBox');
+
+      if (formType === 'signup') {
+        loginBox.classList.remove('active');
+        signupBox.classList.add('active');
+      } else {
+        signupBox.classList.remove('active');
+        loginBox.classList.add('active');
+      }
+    }
+
+    // --- 3. PASSWORD VISIBILITY TOGGLES ---
+    function setupPasswordToggle(toggleBtnId, inputId, iconId) {
+      const btn = document.getElementById(toggleBtnId);
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+
+      if (btn && input && icon) {
+        btn.addEventListener('click', () => {
+          const isPassword = input.type === 'password';
+          input.type = isPassword ? 'text' : 'password';
+
+          icon.innerHTML = isPassword
+            ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>`
+            : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>`;
+        });
+      }
+    }
+
+    setupPasswordToggle('togglePassword', 'password', 'eyeIcon');
+    setupPasswordToggle('toggleSignupPassword', 'signupPassword', 'eyeIconSignup');
+
+    // --- TOGGLE OTP LOGIN SYSTEM ---
+    function toggleOtpLogin() {
+      isOtpMode = !isOtpMode;
+      const passGroup = document.getElementById('passwordGroup');
+      const otpGroup = document.getElementById('otpGroup');
+      const formOptionsRow = document.getElementById('formOptionsRow');
+      const toggleBtn = document.getElementById('toggleOtpModeBtn');
+      const emailLabel = document.getElementById('labelUserEmail');
+      const emailInput = document.getElementById('email');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+
+      if (isOtpMode) {
+        passGroup.style.display = 'none';
+        otpGroup.style.display = 'block';
+        formOptionsRow.style.display = 'none';
+        document.getElementById('password').removeAttribute('required');
+        emailLabel.innerText = currentLang === 'hi' ? 'मोबाइल नंबर (Mobile Number)' : 'Mobile Number';
+        emailInput.placeholder = 'Enter 10-digit mobile number';
+        toggleBtn.innerText = currentLang === 'hi' ? 'पासवर्ड के माध्यम से लॉगिन करें' : 'Login via Password';
+      } else {
+        passGroup.style.display = 'block';
+        otpGroup.style.display = 'none';
+        formOptionsRow.style.display = 'flex';
+        document.getElementById('password').setAttribute('required', 'required');
+        emailLabel.innerText = currentLang === 'hi' ? 'ईमेल या उपयोगकर्ता नाम (Username)' : 'Email or Username';
+        emailInput.placeholder = 'e.g. Admin or your username';
+        toggleBtn.innerText = currentLang === 'hi' ? 'OTP के माध्यम से लॉगिन करें' : 'Login via OTP';
+      }
+    }
+
+    // Send OTP Simulated Action
+    document.getElementById('sendOtpBtn').addEventListener('click', () => {
+      const mobile = document.getElementById('email').value.trim();
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      if (mobile.length < 10) {
+        alert(currentLang === 'hi' ? 'कृपया वैध मोबाइल नंबर दर्ज करें।' : 'Please enter a valid mobile number.');
+        return;
+      }
+      alert(currentLang === 'hi' ? `OTP आपके मोबाइल नंबर ${mobile} पर भेज दिया गया है!` : `OTP sent successfully to ${mobile}!`);
+    });
+
+    // --- 4. LOGIN FORM SUBMISSION ---
+    document.getElementById('signInForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const userInput = document.getElementById('email').value.trim();
+      const passInput = document.getElementById('password').value;
+      const otpInput = document.getElementById('otpInput').value.trim();
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+
+      if (isOtpMode) {
+        if (otpInput.length < 4) {
+          alert(currentLang === 'hi' ? 'कृपया सही OTP दर्ज करें।' : 'Please enter a valid OTP.');
+          return;
+        }
+        // Simulated successful OTP Login
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userName', `User_${userInput}`);
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('userName', `User_${userInput}`);
+        window.location.href = 'home.html';
+        return;
+      }
+
+      let registeredUsers = [];
+      try {
+        registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+      } catch (err) {
+        registeredUsers = [];
+      }
+
+      const foundCustomUser = registeredUsers.find(
+        u => (u.username.toLowerCase() === userInput.toLowerCase() || u.email.toLowerCase() === userInput.toLowerCase()) && u.password === passInput
+      );
+
+      // Default Admin Credentials or Registered Account
+      if ((userInput === 'Admin' && passInput === 'Kumar@123') || foundCustomUser) {
+        const displayName = foundCustomUser ? foundCustomUser.name : userInput;
+
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userName', displayName);
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('userName', displayName);
+
+        const returnUrl = sessionStorage.getItem('redirectAfterLogin');
+        if (returnUrl) {
+          sessionStorage.removeItem('redirectAfterLogin');
+          window.location.href = returnUrl;
+        } else {
+          window.location.href = 'home.html';
+        }
+      } else {
+        alert(currentLang === 'hi' 
+          ? 'गलत उपयोगकर्ता नाम या पासवर्ड! कृपया पुनः प्रयास करें।' 
+          : 'Invalid Username or Password! Please try again.'
+        );
+      }
+    });
+
+    // --- 5. SIGN UP FORM SUBMISSION ---
+    document.getElementById('signUpForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const phone = document.getElementById('signupPhone').value.trim();
+      const password = document.getElementById('signupPassword').value;
+
+      let registeredUsers = [];
+      try {
+        registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+      } catch (err) {
+        registeredUsers = [];
+      }
+
+      registeredUsers.push({ name, email, phone, username: name, password });
+      localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      alert(currentLang === 'hi'
+        ? `${name} के लिए खाता सफलतापूर्वक बनाया गया! कृपया साइन इन करें।`
+        : `Account created successfully for ${name}! Please sign in.`
+      );
+
+      switchForm('login');
+      document.getElementById('email').value = name;
+      document.getElementById('password').value = '';
+    });
+
+    // --- 6. FOOTER OTHER LINKS POPUP ---
+    const otherLinksBtn = document.getElementById('otherLinksBtn');
+    const socialPopup = document.getElementById('socialPopup');
+
+    otherLinksBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = socialPopup.classList.toggle('active');
+      otherLinksBtn.classList.toggle('active');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+      if (dict) {
+        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+      } else {
+        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+      }
+    });
+
+    window.addEventListener('click', (e) => {
+      if (!otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
+        socialPopup.classList.remove('active');
+        otherLinksBtn.classList.remove('active');
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+        otherLinksBtn.innerText = dict ? dict.otherLinks : 'Other Links';
+      }
+    });
+
+    // Language change listener
+    window.addEventListener('languageChanged', updateAuthLanguage);
+
+    // Initial Load
+    window.addEventListener('DOMContentLoaded', updateAuthLanguage);
+  </script>
+
+</body>
+</html>

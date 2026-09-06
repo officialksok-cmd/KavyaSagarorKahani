@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>नियम एवं शर्तें - काव्य सागर और कहानी</title>
+
+  <!-- Global Language Switcher Script -->
+  <script src="lang.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0d0d15;
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* ---------------- HEADER ---------------- */
+    header {
+      background: rgba(30, 30, 47, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d4a017;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    nav a {
+      color: #9ca3af;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: #d4a017;
+    }
+
+    /* Dual Language Dropdown */
+    .lang-dropdown-wrapper {
+      position: relative;
+      margin-right: 12px;
+    }
+
+    .lang-select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #d4a017;
+      color: #d4a017;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 28px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%23d4a017' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+
+    .lang-select:hover {
+      background-color: rgba(212, 160, 23, 0.15);
+    }
+
+    .lang-select option {
+      background: #181824;
+      color: #f3f4f6;
+    }
+
+    /* User Profile Dropdown Menu */
+    .user-profile-menu {
+      position: relative;
+    }
+
+    .user-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: #f3f4f6;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .user-btn:hover {
+      background: rgba(212, 160, 23, 0.15);
+      border-color: #d4a017;
+    }
+
+    .avatar-icon {
+      width: 22px;
+      height: 22px;
+      background: #ffd700;
+      color: #0d0d15;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.75rem;
+    }
+
+    .avatar-icon.guest-avatar {
+      background: #4b5563;
+      color: #f3f4f6;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 110%;
+      background: #181824;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      min-width: 150px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      overflow: hidden;
+      z-index: 200;
+    }
+
+    .dropdown-content.show {
+      display: block;
+    }
+
+    .dropdown-content a, .dropdown-content button {
+      display: block;
+      width: 100%;
+      padding: 10px 14px;
+      color: #d1d5db;
+      text-decoration: none;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .dropdown-content a:hover, .dropdown-content button:hover {
+      background: rgba(212, 160, 23, 0.15);
+      color: #d4a017;
+    }
+
+    /* ---------------- TERMS CONTAINER ---------------- */
+    .terms-container {
+      max-width: 920px;
+      margin: 40px auto;
+      padding: 0 20px;
+      width: 100%;
+      flex: 1;
+    }
+
+    .terms-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 45px 40px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+    }
+
+    .page-title {
+      font-size: 2.2rem;
+      color: #d4a017;
+      margin-bottom: 8px;
+    }
+
+    .last-updated {
+      color: #9ca3af;
+      font-size: 0.875rem;
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .intro-text {
+      color: #d1d5db;
+      line-height: 1.8;
+      font-size: 1.05rem;
+      margin-bottom: 30px;
+      padding-bottom: 25px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .terms-section {
+      margin-bottom: 35px;
+    }
+
+    .terms-section h2 {
+      font-size: 1.35rem;
+      color: #ffffff;
+      margin-bottom: 14px;
+    }
+
+    .terms-section p {
+      color: #9ca3af;
+      line-height: 1.8;
+      font-size: 0.98rem;
+      margin-bottom: 12px;
+    }
+
+    .terms-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-left: 5px;
+    }
+
+    .terms-list li {
+      color: #d1d5db;
+      line-height: 1.7;
+      font-size: 0.98rem;
+      position: relative;
+      padding-left: 22px;
+    }
+
+    .terms-list li::before {
+      content: "•";
+      color: #d4a017;
+      font-weight: bold;
+      font-size: 1.3rem;
+      position: absolute;
+      left: 0;
+      top: -3px;
+    }
+
+    .sub-list {
+      list-style: none;
+      margin-top: 10px;
+      margin-left: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sub-list li {
+      padding-left: 22px;
+      color: #9ca3af;
+    }
+
+    .sub-list li::before {
+      content: "▫";
+      color: #d4a017;
+      font-size: 1.1rem;
+    }
+
+    .contact-info {
+      background: rgba(212, 160, 23, 0.06);
+      border: 1px solid rgba(212, 160, 23, 0.25);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-top: 15px;
+    }
+
+    .contact-info p {
+      color: #d1d5db;
+      margin-bottom: 8px;
+      font-size: 0.98rem;
+    }
+
+    .contact-info p:last-child {
+      margin-bottom: 0;
+    }
+
+    .contact-info a {
+      color: #ffd700;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .contact-info a:hover {
+      text-decoration: underline;
+    }
+
+    /* ---------------- UNIVERSAL 4-CARD FOOTER ---------------- */
+    .footer-section {
+      max-width: 1200px;
+      margin: 40px auto 0 auto;
+      padding: 30px 16px 0 16px;
+      width: 100%;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .footer-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      text-decoration: none;
+      color: #d1d5db;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+    }
+
+    .footer-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(212, 160, 23, 0.4);
+      background: rgba(212, 160, 23, 0.05);
+      color: #ffffff;
+    }
+
+    .other-links-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .other-links-btn {
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      color: #d1d5db;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      min-height: 80px;
+      transition: all 0.2s;
+    }
+
+    .other-links-btn:hover, .other-links-btn.active {
+      border-color: #d4a017;
+      color: #d4a017;
+      background: rgba(212, 160, 23, 0.08);
+    }
+
+    .social-popup {
+      position: absolute;
+      bottom: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .social-popup.active {
+      pointer-events: auto;
+    }
+
+    .social-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #181824;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-decoration: none;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+      opacity: 0;
+      transform: translateY(20px) scale(0.5);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .social-popup.active .social-circle {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .social-popup.active .social-circle:nth-child(1) { transition-delay: 0.05s; }
+    .social-popup.active .social-circle:nth-child(2) { transition-delay: 0.1s; }
+    .social-popup.active .social-circle:nth-child(3) { transition-delay: 0.15s; }
+
+    .social-circle.yt:hover { background: #ff0000; border-color: #ff0000; }
+    .social-circle.fb:hover { background: #1877f2; border-color: #1877f2; }
+    .social-circle.ig:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: #e6683c; }
+
+    .social-circle svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 10px 15px; }
+      nav { display: none; }
+      .terms-container { padding: 0 12px; margin: 20px auto; }
+      .terms-card { padding: 28px 20px; }
+      .page-title { font-size: 1.75rem; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header>
+    <a href="home.html" class="brand">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+        <path d="M22 38l16-16" />
+        <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+        <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+      </svg>
+      <span data-lang-key="brandTitle">काव्य सागर और कहानी</span>
+    </a>
+
+    <nav>
+      <a href="home.html" data-lang-key="navHome">होम</a>
+      <a href="poem.html" data-lang-key="navPoem">कविताएँ</a>
+      <a href="stories.html" data-lang-key="navStory">कहानी</a>
+      <a href="diaries.html" data-lang-key="navDiary">डायरी</a>
+      <a href="quotes.html" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
+    </nav>
+
+    <div style="display: flex; align-items: center;">
+      <!-- Language Dropdown -->
+      <div class="lang-dropdown-wrapper">
+        <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
+          <option value="hi">हिन्दी</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <!-- Dynamic User / Guest Profile Container -->
+      <div class="user-profile-menu" id="userAuthContainer">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Terms Content -->
+  <main class="terms-container">
+    <div class="terms-card">
+      <h1 class="page-title" id="termsTitle">नियम एवं शर्तें (Terms and Conditions)</h1>
+      <span class="last-updated" id="termsLastUpdated">अंतिम अद्यतन: 13-अगस्त-2026</span>
+
+      <p class="intro-text" id="termsIntro">
+        <strong>काव्य सागर और कहानी</strong> में आपका स्वागत है। खाता बनाकर या हमारे मंच का उपयोग करके, आप इन नियमों और शर्तों ("Terms") का पालन करने के लिए सहमत होते हैं। कृपया इन्हें ध्यान से पढ़ें।
+      </p>
+
+      <!-- Section 1 -->
+      <div class="terms-section">
+        <h2 id="sec1Heading">1. उपयोगकर्ता खाते (User Accounts)</h2>
+        <ul class="terms-list" id="sec1List">
+          <li><strong>खाता निर्माण:</strong> खाता बनाते समय आपको सटीक जानकारी प्रदान करनी होगी। आप अपने पासवर्ड और क्रेडेंशियल्स की सुरक्षा के लिए स्वयं जिम्मेदार हैं।</li>
+          <li><strong>खाता उत्तरदायित्व:</strong> आपके खाते के तहत होने वाली सभी गतिविधियों के लिए आप पूरी तरह उत्तरदायी हैं।</li>
+          <li><strong>समाप्ति:</strong> इन शर्तों का उल्लंघन करने या अभद्र व्यवहार करने वाले खातों को बिना पूर्व सूचना के निलंबित या समाप्त करने का अधिकार हमारे पास सुरक्षित है।</li>
+        </ul>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="terms-section">
+        <h2 id="sec2Heading">2. उपयोगकर्ता द्वारा निर्मित सामग्री और स्वामित्व (Content Ownership)</h2>
+        <ul class="terms-list" id="sec2List">
+          <li><strong>आपका अधिकार:</strong> आपके द्वारा लिखी गई मूल रचनाओं (कविता, कहानी, डायरी प्रविष्टियाँ) पर आपका पूर्ण कॉपीराइट और स्वामित्व रहेगा।</li>
+          <li><strong>मंच को लाइसेंस:</strong> सामग्री प्रकाशित करके, आप हमें वेबसाइट के संचालन और प्रचार के उद्देश्य से सामग्री को प्रदर्शित और वितरित करने का रॉयल्टी-मुक्त लाइसेंस देते हैं।</li>
+          <li>
+            <strong id="prohibitLabel">प्रतिबंधित सामग्री:</strong> आप निम्नलिखित प्रकार की सामग्री पोस्ट न करने के लिए सहमत हैं:
+            <ul class="sub-list" id="sec2SubList">
+              <li>किसी अन्य व्यक्ति के कॉपीराइट या बौद्धिक संपदा का उल्लंघन करने वाली सामग्री।</li>
+              <li>घृणास्पद भाषण, उत्पीड़न, अश्लीलता या गैरकानूनी सामग्री।</li>
+              <li>किसी व्यक्ति की निजता या व्यक्तिगत अधिकारों का हनन करने वाली सामग्री।</li>
+            </ul>
+          </li>
+          <li><strong>सामग्री हटाना:</strong> हम नियमों का उल्लंघन करने वाली किसी भी सामग्री को हटाने या संपादित करने का अधिकार सुरक्षित रखते हैं।</li>
+        </ul>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="terms-section">
+        <h2 id="sec3Heading">3. स्वीकार्य उपयोग और टिप्पणियाँ (Acceptable Use)</h2>
+        <ul class="terms-list" id="sec3List">
+          <li><strong>सभ्य बातचीत:</strong> टिप्पणियाँ और प्रतिक्रियाएँ सम्मानजनक होनी चाहिए। स्पैमिंग या अनुचित प्रचार करने पर खाता निलंबित किया जा सकता है।</li>
+          <li><strong>प्लेटफ़ॉर्म सुरक्षा:</strong> आप वेबसाइट के कोड, सुरक्षा प्रणालियों या सर्वर में अनधिकृत हस्तक्षेप करने का प्रयास नहीं करेंगे।</li>
+        </ul>
+      </div>
+
+      <!-- Section 4 -->
+      <div class="terms-section">
+        <h2 id="sec4Heading">4. विज्ञापन और तृतीय-पक्ष सेवाएँ (Advertising)</h2>
+        <ul class="terms-list" id="sec4List">
+          <li><strong>विज्ञापन:</strong> मंच संचालन हेतु Google AdSense जैसे तृतीय-पक्ष विज्ञापनों को प्रदर्शित कर सकता है। हम तृतीय-पक्ष विज्ञापनों के उत्पादों का समर्थन नहीं करते।</li>
+          <li><strong>बाहरी लिंक:</strong> तृतीय-पक्ष लिंक पर क्लिक करने पर आप बाहरी वेबसाइटों पर पहुँच जाते हैं, जिनकी गोपनीयता नीतियों के लिए हम जिम्मेदार नहीं हैं।</li>
+        </ul>
+      </div>
+
+      <!-- Section 5 -->
+      <div class="terms-section">
+        <h2 id="sec5Heading">5. शुल्क और भविष्य की सुविधाएँ</h2>
+        <ul class="terms-list" id="sec5List">
+          <li><strong>मुफ़्त पहुँच:</strong> वर्तमान में यह मंच उपयोग और पठन के लिए पूरी तरह मुफ़्त है।</li>
+          <li><strong>भविष्य में बदलाव:</strong> भविष्य में प्रीमियम सुविधाओं या योजनाओं को पेश करने का अधिकार हमारे पास सुरक्षित है। किसी भी बदलाव की पूर्व सूचना दी जाएगी।</li>
+        </ul>
+      </div>
+
+      <!-- Section 6 -->
+      <div class="terms-section">
+        <h2 id="sec6Heading">6. अस्वीकरण और देयता सीमा (Disclaimers)</h2>
+        <ul class="terms-list" id="sec6List">
+          <li><strong>सामग्री अस्वीकरण:</strong> उपयोगकर्ताओं द्वारा प्रकाशित रचनाओं में व्यक्त विचार पूरी तरह उनके अपने हैं और वे हमारे विचारों का प्रतिनिधित्व नहीं करते।</li>
+          <li><strong>"जैसा है" सेवा:</strong> वेबसाइट "जैसी है" के आधार पर प्रदान की जाती है। हम तकनीकी रुकावटों से मुक्त रहने की पूर्ण गारंटी नहीं देते। कृपया अपनी रचनाओं का बैकअप अवश्य रखें।</li>
+          <li><strong>देयता सीमा:</strong> मंच के उपयोग से होने वाले किसी भी अप्रत्यक्ष डेटा नुकसान के लिए काव्य सागर और कहानी उत्तरदायी नहीं होगा।</li>
+        </ul>
+      </div>
+
+      <!-- Section 7 -->
+      <div class="terms-section">
+        <h2 id="sec7Heading">7. लागू कानून (Governing Law)</h2>
+        <p id="sec7Desc">
+          ये नियम और शर्तें भारत के कानूनों के अनुसार शासित और व्याख्यायित की जाएँगी।
+        </p>
+      </div>
+
+      <!-- Section 8 -->
+      <div class="terms-section">
+        <h2 id="sec8Heading">8. संपर्क करें</h2>
+        <p id="sec8Desc">
+          यदि इन नियमों और शर्तों या कॉपीराइट उल्लंघन की रिपोर्ट करने के लिए आपका कोई प्रश्न है, तो कृपया संपर्क करें:
+        </p>
+        <div class="contact-info">
+          <p><strong>Email:</strong> <a href="mailto:official.ksok@gmail.com">official.ksok@gmail.com</a></p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Universal 4-Card Footer Section -->
+  <section class="footer-section">
+    <div class="footer-grid">
+      <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
+      <a href="privacy-policy.html" class="footer-card" data-lang-key="privacyPolicy">Privacy Policy</a>
+      <a href="terms.html" class="footer-card" data-lang-key="termsConditions">Terms and Conditions</a>
+
+      <!-- Other Links Button with Pop-up Social Badges -->
+      <div class="other-links-wrapper">
+        <button class="other-links-btn" id="otherLinksBtn" data-lang-key="otherLinks">Other Links</button>
+
+        <!-- Pop-up Circle Social Icons -->
+        <div class="social-popup" id="socialPopup">
+          <a href="https://www.youtube.com/@KavyaSagarorKahani" target="_blank" class="social-circle yt" title="YouTube">
+            <svg viewBox="0 0 24 24">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+          </a>
+
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 काव्य सागर और कहानी. All rights reserved.
+  </footer>
+
+  <script>
+    // --- 1. LOCAL BILINGUAL TERMS DATA ---
+    const termsContent = {
+      hi: {
+        termsTitle: "नियम एवं शर्तें (Terms and Conditions)",
+        termsLastUpdated: "अंतिम अद्यतन: 13-अगस्त-2026",
+        termsIntro: "<strong>काव्य सागर और कहानी</strong> में आपका स्वागत है। खाता बनाकर या हमारे मंच का उपयोग करके, आप इन नियमों और शर्तों ('Terms') का पालन करने के लिए सहमत होते हैं। कृपया इन्हें ध्यान से पढ़ें।",
+        sec1Heading: "1. उपयोगकर्ता खाते (User Accounts)",
+        sec1List: [
+          "<strong>खाता निर्माण:</strong> खाता बनाते समय आपको सटीक जानकारी प्रदान करनी होगी। आप अपने पासवर्ड और क्रेडेंशियल्स की सुरक्षा के लिए स्वयं जिम्मेदार हैं।",
+          "<strong>खाता उत्तरदायित्व:</strong> आपके खाते के तहत होने वाली सभी गतिविधियों के लिए आप पूरी तरह उत्तरदायी हैं।",
+          "<strong>समाप्ति:</strong> इन शर्तों का उल्लंघन करने या अभद्र व्यवहार करने वाले खातों को बिना पूर्व सूचना के निलंबित या समाप्त करने का अधिकार हमारे पास सुरक्षित है।"
+        ],
+        sec2Heading: "2. उपयोगकर्ता द्वारा निर्मित सामग्री और स्वामित्व (Content Ownership)",
+        sec2List: [
+          "<strong>आपका अधिकार:</strong> आपके द्वारा लिखी गई मूल रचनाओं (कविता, कहानी, डायरी प्रविष्टियाँ) पर आपका पूर्ण कॉपीराइट और स्वामित्व रहेगा।",
+          "<strong>मंच को लाइसेंस:</strong> सामग्री प्रकाशित करके, आप हमें वेबसाइट के संचालन और प्रचार के उद्देश्य से सामग्री को प्रदर्शित और वितरित करने का रॉयल्टी-मुक्त लाइसेंस देते हैं।",
+          "सामग्री हटाना: हम नियमों का उल्लंघन करने वाली किसी भी सामग्री को हटाने या संपादित करने का अधिकार सुरक्षित रखते हैं।"
+        ],
+        prohibitLabel: "प्रतिबंधित सामग्री:",
+        sec2SubList: [
+          "किसी अन्य व्यक्ति के कॉपीराइट या बौद्धिक संपदा का उल्लंघन करने वाली सामग्री।",
+          "घृणास्पद भाषण, उत्पीड़न, अश्लीलता या गैरकानूनी सामग्री।",
+          "किसी व्यक्ति की निजता या व्यक्तिगत अधिकारों का हनन करने वाली सामग्री।"
+        ],
+        sec3Heading: "3. स्वीकार्य उपयोग और टिप्पणियाँ (Acceptable Use)",
+        sec3List: [
+          "<strong>सभ्य बातचीत:</strong> टिप्पणियाँ और प्रतिक्रियाएँ सम्मानजनक होनी चाहिए। स्पैमिंग या अनुचित प्रचार करने पर खाता निलंबित किया जा सकता है।",
+          "<strong>प्लेटफ़ॉर्म सुरक्षा:</strong> आप वेबसाइट के कोड, सुरक्षा प्रणालियों या सर्वर में अनधिकृत हस्तक्षेप करने का प्रयास नहीं करेंगे।"
+        ],
+        sec4Heading: "4. विज्ञापन और तृतीय-पक्ष सेवाएँ (Advertising)",
+        sec4List: [
+          "<strong>विज्ञापन:</strong> मंच संचालन हेतु Google AdSense जैसे तृतीय-पक्ष विज्ञापनों को प्रदर्शित कर सकता है। हम तृतीय-पक्ष विज्ञापनों के उत्पादों का समर्थन नहीं करते।",
+          "<strong>बाहरी लिंक:</strong> तृतीय-पक्ष लिंक पर क्लिक करने पर आप बाहरी वेबसाइटों पर पहुँच जाते हैं, जिनकी गोपनीयता नीतियों के लिए हम जिम्मेदार नहीं हैं।"
+        ],
+        sec5Heading: "5. शुल्क और भविष्य की सुविधाएँ",
+        sec5List: [
+          "<strong>मुफ़्त पहुँच:</strong> वर्तमान में यह मंच उपयोग और पठन के लिए पूरी तरह मुफ़्त है।",
+          "<strong>भविष्य में बदलाव:</strong> भविष्य में प्रीमियम सुविधाओं या योजनाओं को पेश करने का अधिकार हमारे पास सुरक्षित है। किसी भी बदलाव की पूर्व सूचना दी जाएगी।"
+        ],
+        sec6Heading: "6. अस्वीकरण और देयता सीमा (Disclaimers)",
+        sec6List: [
+          "<strong>सामग्री अस्वीकरण:</strong> उपयोगकर्ताओं द्वारा प्रकाशित रचनाओं में व्यक्त विचार पूरी तरह उनके अपने हैं और वे हमारे विचारों का प्रतिनिधित्व नहीं करते।",
+          "<strong>'जैसा है' सेवा:</strong> वेबसाइट 'जैसी है' के आधार पर प्रदान की जाती है। हम तकनीकी रुकावटों से मुक्त रहने की पूर्ण गारंटी नहीं देते। कृपया अपनी रचनाओं का बैकअप अवश्य रखें।",
+          "<strong>देयता सीमा:</strong> मंच के उपयोग से होने वाले किसी भी अप्रत्यक्ष डेटा नुकसान के लिए काव्य सागर और कहानी उत्तरदायी नहीं होगा।"
+        ],
+        sec7Heading: "7. लागू कानून (Governing Law)",
+        sec7Desc: "ये नियम और शर्तें भारत के कानूनों के अनुसार शासित और व्याख्यायित की जाएँगी।",
+        sec8Heading: "8. संपर्क करें",
+        sec8Desc: "यदि इन नियमों और शर्तों या कॉपीराइट उल्लंघन की रिपोर्ट करने के लिए आपका कोई प्रश्न है, तो कृपया संपर्क करें:"
+      },
+      en: {
+        termsTitle: "Terms and Conditions",
+        termsLastUpdated: "Last Updated: 13-Aug-2026",
+        termsIntro: "Welcome to <strong>Kavya Sagar & Stories</strong>. By creating an account or using our platform, you agree to abide by these Terms and Conditions ('Terms'). Please read them carefully.",
+        sec1Heading: "1. User Accounts",
+        sec1List: [
+          "<strong>Account Creation:</strong> You must provide accurate information when creating an account. You are responsible for keeping your login credentials secure.",
+          "<strong>Account Responsibility:</strong> You are fully responsible for all activities that occur under your account.",
+          "<strong>Termination:</strong> We reserve the right to suspend or terminate accounts that violate these Terms or engage in abusive behaviour, without prior notice."
+        ],
+        sec2Heading: "2. User-Generated Content & Ownership",
+        sec2List: [
+          "<strong>Your Rights:</strong> You retain full ownership and copyright of the original content (poetry, stories, diary entries) you write and upload to the Site.",
+          "<strong>License to Us:</strong> By posting content, you grant us a non-exclusive, worldwide, royalty-free license to host, display, and distribute your content solely for operating and promoting the Site.",
+          "<strong>Content Removal:</strong> We reserve the right to review, edit, or delete any user content or comments that breach these rules."
+        ],
+        prohibitLabel: "Content Prohibitions:",
+        sec2SubList: [
+          "Infringes on someone else's copyright, trademark, or intellectual property.",
+          "Contains hate speech, harassment, defamation, explicit threats, or illegal material.",
+          "Violates the privacy or personal rights of any individual."
+        ],
+        sec3Heading: "3. Acceptable Use & Comments",
+        sec3List: [
+          "<strong>Respectful Interaction:</strong> Comments and community posts must remain respectful. Spamming or self-promotion will result in removal or account suspension.",
+          "<strong>Platform Security:</strong> You may not attempt to hack, scrape, or disrupt the Site’s functionality, code, or servers."
+        ],
+        sec4Heading: "4. Advertising & Third-Party Content",
+        sec4List: [
+          "<strong>Advertisements:</strong> The Site may display third-party advertisements (such as Google AdSense). We do not endorse or guarantee products advertised by third parties.",
+          "<strong>External Links:</strong> Clicking on third-party links takes you away from our Site. We are not responsible for the privacy practices or content of external websites."
+        ],
+        sec5Heading: "5. Subscriptions & Future Pricing",
+        sec5List: [
+          "<strong>Free Access:</strong> The Site is currently free to access and use.",
+          "<strong>Future Changes:</strong> We reserve the right to introduce premium features in the future. Any structural changes will be announced with advance notice."
+        ],
+        sec6Heading: "6. Disclaimers & Limitation of Liability",
+        sec6List: [
+          "<strong>Content Disclaimer:</strong> Views expressed in user-submitted stories or poems belong solely to the original authors and do not represent our views.",
+          "<strong>'As-Is' Service:</strong> The Site is provided on an 'as-is' and 'as-available' basis. Authors are strongly advised to keep personal backups of their work.",
+          "<strong>Limitation of Liability:</strong> To the maximum extent permitted by law, Kavya Sagar & Stories shall not be held liable for any indirect damages or data loss."
+        ],
+        sec7Heading: "7. Governing Law",
+        sec7Desc: "These Terms are governed by and construed in accordance with the laws of India, without regard to its conflict of law principles.",
+        sec8Heading: "8. Contact Us",
+        sec8Desc: "If you have any questions or need to report copyright violations or inappropriate content, please contact us at:"
+      }
+    };
+
+    function renderTermsPage() {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const data = termsContent[currentLang] || termsContent.hi;
+
+      document.getElementById('termsTitle').innerText = data.termsTitle;
+      document.getElementById('termsLastUpdated').innerText = data.termsLastUpdated;
+      document.getElementById('termsIntro').innerHTML = data.termsIntro;
+
+      document.getElementById('sec1Heading').innerText = data.sec1Heading;
+      document.getElementById('sec1List').innerHTML = data.sec1List.map(li => `<li>${li}</li>`).join('');
+
+      document.getElementById('sec2Heading').innerText = data.sec2Heading;
+      document.getElementById('prohibitLabel').innerText = data.prohibitLabel;
+      document.getElementById('sec2SubList').innerHTML = data.sec2SubList.map(li => `<li>${li}</li>`).join('');
+
+      document.getElementById('sec3Heading').innerText = data.sec3Heading;
+      document.getElementById('sec3List').innerHTML = data.sec3List.map(li => `<li>${li}</li>`).join('');
+
+      document.getElementById('sec4Heading').innerText = data.sec4Heading;
+      document.getElementById('sec4List').innerHTML = data.sec4List.map(li => `<li>${li}</li>`).join('');
+
+      document.getElementById('sec5Heading').innerText = data.sec5Heading;
+      document.getElementById('sec5List').innerHTML = data.sec5List.map(li => `<li>${li}</li>`).join('');
+
+      document.getElementById('sec6Heading').innerText = data.sec6Heading;
+      document.getElementById('sec6List').innerHTML = data.sec6List.map(li => `<li>${li}</li>`).join('');
+
+      document.getElementById('sec7Heading').innerText = data.sec7Heading;
+      document.getElementById('sec7Desc').innerText = data.sec7Desc;
+
+      document.getElementById('sec8Heading').innerText = data.sec8Heading;
+      document.getElementById('sec8Desc').innerText = data.sec8Desc;
+    }
+
+    // --- 2. DYNAMIC AUTH HEADER (GUEST VS USER) ---
+    function renderAuthHeader() {
+      const container = document.getElementById('userAuthContainer');
+      if (!container) return;
+
+      const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+
+      if (isLoggedIn) {
+        const rawName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
+        const userName = rawName.trim();
+        const userInitial = userName.charAt(0).toUpperCase() || 'A';
+
+        container.innerHTML = `
+          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+            <span class="avatar-icon">${userInitial}</span>
+            <span>${userName}</span>
+            <small>▼</small>
+          </button>
+          <div class="dropdown-content" id="userDropdown">
+            <a href="profile.html" data-lang-key="myProfile">My Profile</a>
+            <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
+            <a href="my-work.html" data-lang-key="myWorks">My Works</a>
+            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+            <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
+          </div>
+        `;
+      } else {
+        const guestLabel = currentLang === 'hi' ? 'अतिथि (Guest)' : 'Guest';
+        const signInLabel = currentLang === 'hi' ? 'साइन इन करें' : 'Sign In';
+
+        container.innerHTML = `
+          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+            <span class="avatar-icon guest-avatar">G</span>
+            <span>${guestLabel}</span>
+            <small>▼</small>
+          </button>
+          <div class="dropdown-content" id="userDropdown">
+            <a href="login.html" style="color:#d4a017; font-weight:600;">🔑 ${signInLabel}</a>
+            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+          </div>
+        `;
+      }
+
+      if (typeof translations !== 'undefined' && translations[currentLang]) {
+        const dict = translations[currentLang];
+        container.querySelectorAll('[data-lang-key]').forEach(el => {
+          const key = el.getAttribute('data-lang-key');
+          if (dict[key]) el.innerText = dict[key];
+        });
+      }
+    }
+
+    function toggleUserDropdown(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) dropdown.classList.toggle('show');
+    }
+
+    function handleUserLogout() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userName');
+      sessionStorage.clear();
+      window.location.reload();
+    }
+
+    // --- 3. UI EVENT LISTENERS ---
+    window.addEventListener('click', (e) => {
+      const userMenuBtn = document.getElementById('userMenuBtn');
+      const userDropdown = document.getElementById('userDropdown');
+      const otherLinksBtn = document.getElementById('otherLinksBtn');
+      const socialPopup = document.getElementById('socialPopup');
+
+      if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
+        userDropdown.classList.remove('show');
+      }
+
+      if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
+        socialPopup.classList.remove('active');
+        otherLinksBtn.classList.remove('active');
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+        otherLinksBtn.innerText = dict ? dict.otherLinks : 'Other Links';
+      }
+    });
+
+    const otherLinksBtn = document.getElementById('otherLinksBtn');
+    const socialPopup = document.getElementById('socialPopup');
+
+    otherLinksBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = socialPopup.classList.toggle('active');
+      otherLinksBtn.classList.toggle('active');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+      if (dict) {
+        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+      } else {
+        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+      }
+    });
+
+    // Re-render when language changes globally
+    window.addEventListener('languageChanged', () => {
+      renderAuthHeader();
+      renderTermsPage();
+    });
+
+    // Initial Load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAuthHeader();
+      renderTermsPage();
+    });
+  </script>
+
+</body>
+</html>

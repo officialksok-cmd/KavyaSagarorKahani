@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>सहेजी गई रचनाएँ - काव्य सागर और कहानी</title>
+
+  <!-- Global Language Switcher Script -->
+  <script src="lang.js"></script>
+
+  <!-- Strict Session Protection Check -->
+  <script>
+    const isAuth = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
+    if (!isAuth) {
+      alert('अनधिकृत पहुँच! कृपया पहले लॉगिन करें।\nUnauthorized access! Please log in first.');
+      sessionStorage.setItem('redirectAfterLogin', 'saved-items.html');
+      window.location.href = 'login.html';
+    }
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0d0d15;
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* ---------------- HEADER ---------------- */
+    header {
+      background: rgba(30, 30, 47, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d4a017;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+
+    .brand svg { width: 28px; height: 28px; flex-shrink: 0; }
+
+    nav { display: flex; gap: 20px; }
+    nav a {
+      color: #9ca3af; text-decoration: none; font-size: 0.95rem; transition: color 0.2s;
+    }
+    nav a:hover, nav a.active { color: #d4a017; }
+
+    /* Dual Language Dropdown */
+    .lang-dropdown-wrapper { position: relative; margin-right: 12px; }
+    .lang-select {
+      background: rgba(255, 255, 255, 0.05); border: 1px solid #d4a017; color: #d4a017;
+      padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; outline: none; transition: all 0.2s ease; appearance: none;
+      -webkit-appearance: none; padding-right: 28px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%23d4a017' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat; background-position: right 8px center;
+    }
+    .lang-select:hover { background-color: rgba(212, 160, 23, 0.15); }
+    .lang-select option { background: #181824; color: #f3f4f6; }
+
+    /* User Profile Dropdown Menu */
+    .user-profile-menu { position: relative; }
+    .user-btn {
+      display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4); padding: 6px 12px; border-radius: 20px;
+      color: #f3f4f6; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+    }
+    .user-btn:hover { background: rgba(212, 160, 23, 0.15); border-color: #d4a017; }
+    .avatar-icon {
+      width: 22px; height: 22px; background: #ffd700; color: #0d0d15; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem;
+    }
+
+    .dropdown-content {
+      display: none; position: absolute; right: 0; top: 110%; background: #181824;
+      border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; min-width: 150px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5); overflow: hidden; z-index: 200;
+    }
+    .dropdown-content.show { display: block; }
+    .dropdown-content a, .dropdown-content button {
+      display: block; width: 100%; padding: 10px 14px; color: #d1d5db; text-decoration: none;
+      background: none; border: none; text-align: left; font-size: 0.85rem; cursor: pointer;
+    }
+    .dropdown-content a:hover, .dropdown-content button:hover { background: rgba(212, 160, 23, 0.15); color: #d4a017; }
+
+    /* ---------------- MAIN DASHBOARD CARD ---------------- */
+    .dashboard-container {
+      max-width: 1240px;
+      margin: 35px auto;
+      padding: 0 20px;
+      width: 100%;
+      flex: 1;
+    }
+
+    .dashboard-card {
+      width: 100%;
+      background: #1e1e24;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+      min-height: 620px;
+    }
+
+    /* Left Sidebar */
+    .sidebar-section {
+      background: #18181f;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 25px;
+      text-decoration: none;
+    }
+
+    .brand-svg {
+      width: 34px;
+      height: 34px;
+      color: #d4a017;
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      color: #d4a017;
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .brand-text span {
+      color: #8e8e9d;
+      font-size: 0.7rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .current-section-badge {
+      background: rgba(212, 160, 23, 0.1);
+      border: 1px dashed rgba(212, 160, 23, 0.35);
+      padding: 10px 14px;
+      border-radius: 12px;
+      color: #d4a017;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 22px;
+      text-align: center;
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      list-style: none;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.02);
+      color: #d1d5db;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .menu-item svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .menu-item:hover, .menu-item.active {
+      background: rgba(212, 160, 23, 0.15);
+      border-color: #d4a017;
+      color: #ffffff;
+      transform: translateX(4px);
+    }
+
+    /* Right Main Panel */
+    .saved-panel {
+      background: #1b1b22;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 20px 25px;
+      background: #23232c;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-title-row h2 {
+      font-size: 1.3rem;
+      color: #ffffff;
+    }
+
+    .saved-count-badge {
+      font-size: 0.8rem;
+      color: #d4a017;
+      background: rgba(212, 160, 23, 0.1);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(212, 160, 23, 0.3);
+    }
+
+    /* Category Tabs Row */
+    .category-tabs-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .cat-pill {
+      padding: 8px 20px;
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.03);
+      color: #9ca3af;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .cat-pill:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .cat-pill.active {
+      background: linear-gradient(135deg, rgba(212, 160, 23, 0.25), rgba(184, 134, 11, 0.4));
+      color: #ffd700;
+      border-color: #d4a017;
+      box-shadow: 0 4px 15px rgba(212, 160, 23, 0.2);
+    }
+
+    /* Two-Column Body */
+    .saved-body {
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* List Column (Oval list items) */
+    .item-list-column {
+      background: #181820;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+      max-height: 500px;
+    }
+
+    .saved-oval-item {
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 35px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #d1d5db;
+    }
+
+    .saved-oval-item:hover {
+      background: rgba(212, 160, 23, 0.1);
+      border-color: rgba(212, 160, 23, 0.4);
+      color: #ffffff;
+      transform: translateX(4px);
+    }
+
+    .saved-oval-item.active {
+      background: linear-gradient(135deg, rgba(212, 160, 23, 0.2), rgba(120, 53, 15, 0.3));
+      border-color: #d4a017;
+      color: #ffd700;
+      box-shadow: 0 4px 12px rgba(212, 160, 23, 0.15);
+    }
+
+    .item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      overflow: hidden;
+      padding-right: 8px;
+    }
+
+    .item-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-meta {
+      font-size: 0.72rem;
+      color: #9ca3af;
+    }
+
+    .item-arrow {
+      font-size: 0.9rem;
+      color: #d4a017;
+      flex-shrink: 0;
+    }
+
+    /* Workspace / Preview Viewer */
+    .item-viewer-column {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #1b1b22;
+      overflow-y: auto;
+    }
+
+    .viewer-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      min-height: 350px;
+      color: #6b7280;
+      text-align: center;
+      gap: 12px;
+    }
+
+    .viewer-placeholder svg {
+      width: 48px;
+      height: 48px;
+      stroke: #4b5563;
+    }
+
+    .viewer-content-card {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .viewer-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .viewer-title {
+      font-size: 1.5rem;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .viewer-meta-tags {
+      display: flex;
+      gap: 14px;
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    .btn-remove-saved {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-remove-saved:hover {
+      background: #ef4444;
+      color: #ffffff;
+    }
+
+    .viewer-body-text {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: #d1d5db;
+      white-space: pre-line;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 24px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      min-height: 250px;
+      margin-bottom: 20px;
+    }
+
+    .viewer-bottom-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 15px;
+    }
+
+    .btn-read-full {
+      padding: 9px 20px;
+      background: linear-gradient(135deg, #d4a017 0%, #b8860b 100%);
+      color: #0e0e14;
+      font-weight: 700;
+      font-size: 0.88rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-read-full:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(212, 160, 23, 0.35);
+    }
+
+    /* ---------------- UNIVERSAL 4-CARD FOOTER ---------------- */
+    .footer-section {
+      max-width: 1240px; margin: 40px auto 0 auto; padding: 30px 20px 0 20px; width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .footer-card {
+      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 20px; text-align: center; text-decoration: none; color: #d1d5db; font-weight: 600; font-size: 1rem; transition: transform 0.2s, border-color 0.2s, background 0.2s; display: flex; align-items: center; justify-content: center; min-height: 80px;
+    }
+    .footer-card:hover { transform: translateY(-4px); border-color: rgba(212, 160, 23, 0.4); background: rgba(212, 160, 23, 0.05); color: #ffffff; }
+
+    .other-links-wrapper { position: relative; display: flex; justify-content: center; align-items: center; }
+    .other-links-btn {
+      width: 100%; height: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #d1d5db; font-weight: 600; font-size: 1rem; cursor: pointer; min-height: 80px; transition: all 0.2s;
+    }
+    .other-links-btn:hover, .other-links-btn.active { border-color: #d4a017; color: #d4a017; background: rgba(212, 160, 23, 0.08); }
+
+    .social-popup {
+      position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); display: flex; gap: 16px; pointer-events: none; z-index: 50;
+    }
+    .social-popup.active { pointer-events: auto; }
+    .social-circle {
+      width: 50px; height: 50px; border-radius: 50%; background: #181824; border: 2px solid rgba(255, 255, 255, 0.15); display: flex; align-items: center; justify-content: center; color: #ffffff; text-decoration: none; box-shadow: 0 10px 20px rgba(0,0,0,0.6); opacity: 0; transform: translateY(20px) scale(0.5); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .social-popup.active .social-circle { opacity: 1; transform: translateY(0) scale(1); }
+    .social-popup.active .social-circle:nth-child(1) { transition-delay: 0.05s; }
+    .social-popup.active .social-circle:nth-child(2) { transition-delay: 0.1s; }
+    .social-popup.active .social-circle:nth-child(3) { transition-delay: 0.15s; }
+    .social-circle.yt:hover { background: #ff0000; border-color: #ff0000; }
+    .social-circle.fb:hover { background: #1877f2; border-color: #1877f2; }
+    .social-circle.ig:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: #e6683c; }
+    .social-circle svg { width: 24px; height: 24px; fill: currentColor; }
+
+    footer { text-align: center; padding: 30px 20px; color: #6b7280; font-size: 0.85rem; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 900px) {
+      .dashboard-card { grid-template-columns: 1fr; }
+      .sidebar-section { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+      .saved-body { grid-template-columns: 1fr; }
+      .item-list-column { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.06); max-height: 250px; }
+      header { padding: 10px 15px; } nav { display: none; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header>
+    <a href="home.html" class="brand">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+        <path d="M22 38l16-16" />
+        <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+        <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+      </svg>
+      <span data-lang-key="brandTitle">काव्य सागर और कहानी</span>
+    </a>
+
+    <nav>
+      <a href="home.html" data-lang-key="navHome">होम</a>
+      <a href="poem.html" data-lang-key="navPoem">कविताएँ</a>
+      <a href="stories.html" data-lang-key="navStory">कहानी</a>
+      <a href="diaries.html" data-lang-key="navDiary">डायरी</a>
+      <a href="quotes.html" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
+    </nav>
+
+    <div style="display: flex; align-items: center;">
+      <!-- Language Dropdown -->
+      <div class="lang-dropdown-wrapper">
+        <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
+          <option value="hi">हिन्दी</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <!-- Dynamic User Profile Container -->
+      <div class="user-profile-menu" id="userAuthContainer">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dashboard View -->
+  <main class="dashboard-container">
+    <div class="dashboard-card">
+
+      <!-- LEFT SIDEBAR -->
+      <aside class="sidebar-section">
+        <a href="home.html" class="brand-box">
+          <svg class="brand-svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+            <path d="M22 38l16-16" />
+            <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+            <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+          </svg>
+          <div class="brand-text">
+            <h1 data-lang-key="brandTitle">काव्य सागर और कहानी</h1>
+            <span id="sidebarRoleBadge">USER DASHBOARD</span>
+          </div>
+        </a>
+
+        <!-- Current Tab Indicator -->
+        <div class="current-section-badge" id="currentTabBadge">
+          सहेजी गई रचनाएँ (Saved Items)
+        </div>
+
+        <ul class="nav-menu">
+          <li>
+            <a href="saved-items.html" class="menu-item active">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              <span id="labelSavedMenu">सहेजी गई रचनाएँ</span>
+            </a>
+          </li>
+          <li>
+            <a href="my-work.html" class="menu-item">
+              <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+              <span id="labelWorksMenu">मेरी रचनाएँ</span>
+            </a>
+          </li>
+          <li>
+            <a href="profile.html" class="menu-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              <span id="labelProfileMenu">मेरी प्रोफ़ाइल</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" id="sidebarLogoutBtn" class="menu-item">
+              <svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+              <span id="labelLogoutMenu">लॉग आउट</span>
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- RIGHT MAIN PANEL -->
+      <section class="saved-panel">
+        
+        <!-- Header with 4 Category Tabs -->
+        <div class="panel-header">
+          <div class="panel-title-row">
+            <h2 id="savedHeadingTitle">सहेजी गई रचनाएँ</h2>
+            <span class="saved-count-badge" id="savedCountBadge">0 सहेजे गए</span>
+          </div>
+
+          <div class="category-tabs-row">
+            <button class="cat-pill active" id="tab-kavita" onclick="switchCategory('kavita')">कविता (Poems)</button>
+            <button class="cat-pill" id="tab-kahani" onclick="switchCategory('kahani')">कहानी (Stories)</button>
+            <button class="cat-pill" id="tab-diary" onclick="switchCategory('diary')">डायरी (Diary)</button>
+            <button class="cat-pill" id="tab-quotes" onclick="switchCategory('quotes')">प्रेरणादायक बातें (Inspirational Quotes)</button>
+          </div>
+        </div>
+
+        <!-- 2-Column Content Layout (List + Viewer) -->
+        <div class="saved-body">
+          
+          <div class="item-list-column" id="savedItemsList"></div>
+
+          <!-- Viewer Column -->
+          <div class="item-viewer-column">
+            
+            <div id="viewerPlaceholder" class="viewer-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+              <p id="placeholderText">पढ़ने के लिए बाईं ओर से किसी सहेजी गई रचना पर क्लिक करें।</p>
+            </div>
+
+            <div id="viewerContent" class="viewer-content-card">
+              <div class="viewer-top-bar">
+                <div>
+                  <h3 class="viewer-title" id="viewTitle"></h3>
+                  <div class="viewer-meta-tags">
+                    <span id="viewDate"></span>
+                    <span id="viewCategory"></span>
+                  </div>
+                </div>
+                <button class="btn-remove-saved" onclick="removeCurrentItem()" id="btnRemove">✕ हटाएँ (Remove)</button>
+              </div>
+
+              <div class="viewer-body-text" id="viewBody"></div>
+
+              <div class="viewer-bottom-actions">
+                <a href="#" class="btn-read-full" id="btnGoToPage">पूर्ण रूप से पढ़ें →</a>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Universal 4-Card Footer Section -->
+  <section class="footer-section">
+    <div class="footer-grid">
+      <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
+      <a href="privacy-policy.html" class="footer-card" data-lang-key="privacyPolicy">Privacy Policy</a>
+      <a href="terms.html" class="footer-card" data-lang-key="termsConditions">Terms and Conditions</a>
+
+      <!-- Other Links Button with Pop-up Social Badges -->
+      <div class="other-links-wrapper">
+        <button class="other-links-btn" id="otherLinksBtn" data-lang-key="otherLinks">Other Links</button>
+
+        <!-- Pop-up Circle Social Icons -->
+        <div class="social-popup" id="socialPopup">
+          <a href="https://www.youtube.com/@KavyaSagarorKahani" target="_blank" class="social-circle yt" title="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 काव्य सागर और कहानी. All rights reserved.
+  </footer>
+
+  <script>
+    // --- 1. LOCAL TRANSLATION DICTIONARY ---
+    const localDict = {
+      hi: {
+        savedHeadingTitle: "सहेजी गई रचनाएँ",
+        tabKavita: "कविता (Poems)",
+        tabKahani: "कहानी (Stories)",
+        tabDiary: "डायरी (Diary)",
+        tabQuotes: "प्रेरणादायक बातें (Quotes)",
+        labelSavedMenu: "सहेजी गई रचनाएँ",
+        labelWorksMenu: "मेरी रचनाएँ",
+        labelProfileMenu: "मेरी प्रोफ़ाइल",
+        labelLogoutMenu: "लॉग आउट",
+        placeholderText: "पढ़ने के लिए बाईं ओर से किसी सहेजी गई रचना पर क्लिक करें।",
+        btnRemove: "✕ हटाएँ (Remove)",
+        btnReadFull: "पूर्ण रूप से पढ़ें →",
+        countSuffix: "सहेजे गए",
+        noItemsText: "इस श्रेणी में कोई सहेजी गई रचना नहीं है।"
+      },
+      en: {
+        savedHeadingTitle: "Saved Items",
+        tabKavita: "Poems",
+        tabKahani: "Stories",
+        tabDiary: "Diary",
+        tabQuotes: "Quotes",
+        labelSavedMenu: "Saved Items",
+        labelWorksMenu: "My Works",
+        labelProfileMenu: "My Profile",
+        labelLogoutMenu: "Logout",
+        placeholderText: "Click on any saved creation from the left to read preview.",
+        btnRemove: "✕ Remove",
+        btnReadFull: "Read Complete →",
+        countSuffix: "Items Saved",
+        noItemsText: "No saved items in this category."
+      }
+    };
+
+    // --- 2. BILINGUAL SAVED ITEMS DATABASE ---
+    let savedDatabase = {
+      kavita: [
+        {
+          id: "k1",
+          date: "14-Aug-2026",
+          pageUrl: "poem.html",
+          hi: {
+            title: "प्रेम शायरी - चाँद और तन्हाई",
+            body: "तेरे नाम से जुड़ी हर शाम सुहानी लगती है,\nतेरी मुस्कुराहट ही मेरी ज़िंदगानी लगती है।\n\nदिल की धड़कन बनकर तुम समाए हो,\nसांसों में महक बनकर तुम छाए हो।"
+          },
+          en: {
+            title: "Love Poetry - Moon and Solitude",
+            body: "Every evening linked with your name feels pleasant,\nYour warm smile alone feels like my whole life.\n\nYou dwell within me as the beat of my heart,\nYou surround me like a fragrance in every breath."
+          }
+        },
+        {
+          id: "k2",
+          date: "10-Aug-2026",
+          pageUrl: "poem.html",
+          hi: {
+            title: "प्रकृति का संगीत",
+            body: "हरियाली की चादर ओढ़े धरती मुस्काती है,\nसुबह की पहली किरण नया सवेरा लाती है।\nनदियों का बहना, हवाओं का चलना,\nप्रकृति सिखाती है हर हाल में ढलना।"
+          },
+          en: {
+            title: "Music of Nature",
+            body: "Draped in lush green, the earth smiles with grace,\nThe first morning ray brings a new beginning to embrace.\nFlowing rivers and gentle winds that softly pass,\nNature teaches us resilience in every circumstance."
+          }
+        }
+      ],
+      kahani: [
+        {
+          id: "s1",
+          date: "12-Aug-2026",
+          pageUrl: "stories.html",
+          hi: {
+            title: "The Cunning Fox (चालाक लोमड़ी)",
+            body: "एक भूखी लोमड़ी भोजन की तलाश में जंगल में भटक रही थी। उसे एक पेड़ पर बैठा कौआ दिखाई दिया जिसके मुंह में पनीर का टुकड़ा था। लोमड़ी ने चालाकी से कौए की प्रशंसा की और उससे गाना गाने को कहा..."
+          },
+          en: {
+            title: "The Cunning Fox Story",
+            body: "A hungry fox was wandering through the forest in search of food. She saw a crow perched on a branch holding a piece of cheese in its beak. Flattering the crow, the fox praised its voice..."
+          }
+        },
+        {
+          id: "s2",
+          date: "08-Aug-2026",
+          pageUrl: "stories.html",
+          hi: {
+            title: "The Thirsty Crow (प्यासा कौआ)",
+            body: "एक प्यासा कौआ पानी की तलाश में उड़ रहा था। उसे एक घड़ा मिला जिसमें पानी बहुत नीचे था। कौए ने अपनी बुद्धिमत्ता का परिचय देते हुए एक-एक करके छोटे कंकड़ घड़े में डाले..."
+          },
+          en: {
+            title: "The Thirsty Crow Story",
+            body: "A thirsty crow flew across the fields looking for water. He found a pitcher with water low at the bottom. Using his clever thinking, he picked up small pebbles one by one..."
+          }
+        }
+      ],
+      diary: [
+        {
+          id: "d1",
+          date: "14-Aug-2026",
+          pageUrl: "diaries.html",
+          hi: {
+            title: "कन्हैया की डायरी - भाग 3",
+            body: "अंधेरी रात जितनी गहरी होती है, सुबह का उजाला उतना ही चमकदार होता है। आज सुबह जब धूप ने कमरे को छुआ, तो दिल में एक नया विश्वास जागा। खुद पर भरोसा रखना ही सबसे बड़ी ताक़त है।"
+          },
+          en: {
+            title: "Kanhaiya's Diary - Episode 3",
+            body: "The darker the night, the brighter the morning light shines. When the early rays touched the room today, a renewed conviction awakened within. Believing in oneself is the greatest power of all."
+          }
+        }
+      ],
+      quotes: [
+        {
+          id: "q1",
+          date: "15-Aug-2026",
+          pageUrl: "quotes.html",
+          hi: {
+            title: "सफलता और कड़ी मेहनत",
+            body: "“मेहनत करने वालों की कभी हार नहीं होती।”\n\n~ कुमार"
+          },
+          en: {
+            title: "Success & Hardwork",
+            body: "“Those who put in hard work never face defeat.”\n\n~ Kumar"
+          }
+        },
+        {
+          id: "q2",
+          date: "11-Aug-2026",
+          pageUrl: "quotes.html",
+          hi: {
+            title: "आध्यात्म और जीवन दर्शन",
+            body: "“आत्मा का असली सुख शांति में है, बाहरी दिखावे में नहीं।”\n\n~ कुमार"
+          },
+          en: {
+            title: "Spiritual & Life Philosophy",
+            body: "“The true joy of the soul lies in peace, not in pretense.”\n\n~ Kumar"
+          }
+        }
+      ]
+    };
+
+    let activeCategory = 'kavita';
+    let selectedItemId = null;
+
+    function switchCategory(catKey) {
+      activeCategory = catKey;
+      selectedItemId = null;
+
+      document.querySelectorAll('.cat-pill').forEach(pill => pill.classList.remove('active'));
+      document.getElementById(`tab-${catKey}`).classList.add('active');
+
+      renderSavedList();
+      hideViewer();
+    }
+
+    function renderSavedList() {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = localDict[currentLang] || localDict.hi;
+
+      // Update text labels
+      document.getElementById('savedHeadingTitle').innerText = dict.savedHeadingTitle;
+      document.getElementById('tab-kavita').innerText = dict.tabKavita;
+      document.getElementById('tab-kahani').innerText = dict.tabKahani;
+      document.getElementById('tab-diary').innerText = dict.tabDiary;
+      document.getElementById('tab-quotes').innerText = dict.tabQuotes;
+      document.getElementById('labelSavedMenu').innerText = dict.labelSavedMenu;
+      document.getElementById('labelWorksMenu').innerText = dict.labelWorksMenu;
+      document.getElementById('labelProfileMenu').innerText = dict.labelProfileMenu;
+      document.getElementById('labelLogoutMenu').innerText = dict.labelLogoutMenu;
+      document.getElementById('placeholderText').innerText = dict.placeholderText;
+      document.getElementById('btnRemove').innerText = dict.btnRemove;
+      document.getElementById('btnGoToPage').innerText = dict.btnReadFull;
+
+      const items = savedDatabase[activeCategory] || [];
+      document.getElementById('savedCountBadge').innerText = `${items.length} ${dict.countSuffix}`;
+
+      const listContainer = document.getElementById('savedItemsList');
+      listContainer.innerHTML = '';
+
+      if (items.length === 0) {
+        listContainer.innerHTML = `<p style="color:#6b7280; font-size:0.85rem; text-align:center; padding:20px 5px;">${dict.noItemsText}</p>`;
+        hideViewer();
+        return;
+      }
+
+      items.forEach(item => {
+        const itemContent = item[currentLang] || item.hi;
+        const oval = document.createElement('div');
+        oval.className = `saved-oval-item ${item.id === selectedItemId ? 'active' : ''}`;
+        oval.onclick = () => selectSavedItem(item.id);
+
+        oval.innerHTML = `
+          <div class="item-info">
+            <span class="item-title">${itemContent.title}</span>
+            <span class="item-meta">📅 ${item.date}</span>
+          </div>
+          <span class="item-arrow">›</span>
+        `;
+        listContainer.appendChild(oval);
+      });
+
+      if (selectedItemId) {
+        const found = items.find(i => i.id === selectedItemId);
+        if (found) loadItemToViewer(found);
+      }
+    }
+
+    function selectSavedItem(id) {
+      selectedItemId = id;
+      const items = savedDatabase[activeCategory] || [];
+      const item = items.find(i => i.id === id);
+
+      document.querySelectorAll('.saved-oval-item').forEach(el => el.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      if (item) {
+        loadItemToViewer(item);
+      }
+    }
+
+    function loadItemToViewer(item) {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const itemContent = item[currentLang] || item.hi;
+
+      document.getElementById('viewerPlaceholder').style.display = 'none';
+      const viewer = document.getElementById('viewerContent');
+      viewer.style.display = 'block';
+
+      document.getElementById('viewTitle').innerText = itemContent.title;
+      document.getElementById('viewDate').innerText = `📅 ${item.date}`;
+      document.getElementById('viewCategory').innerText = `🏷️ ${activeCategory.toUpperCase()}`;
+      document.getElementById('viewBody').innerText = itemContent.body;
+      document.getElementById('btnGoToPage').href = item.pageUrl;
+    }
+
+    function hideViewer() {
+      document.getElementById('viewerPlaceholder').style.display = 'flex';
+      document.getElementById('viewerContent').style.display = 'none';
+    }
+
+    function removeCurrentItem() {
+      if (!selectedItemId) return;
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const confirmMsg = currentLang === 'en' ? 'Remove this item from your saved list?' : 'क्या आप इस रचना को सहेजी गई सूची से हटाना चाहते हैं?';
+      
+      if (confirm(confirmMsg)) {
+        savedDatabase[activeCategory] = savedDatabase[activeCategory].filter(i => i.id !== selectedItemId);
+        selectedItemId = null;
+        renderSavedList();
+        hideViewer();
+      }
+    }
+
+    // --- 3. DYNAMIC AUTH HEADER ---
+    function renderAuthHeader() {
+      const container = document.getElementById('userAuthContainer');
+      if (!container) return;
+
+      const userName = localStorage.getItem('userName') || 'Admin';
+      const userInitial = userName.trim().charAt(0).toUpperCase() || 'A';
+
+      container.innerHTML = `
+        <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+          <span class="avatar-icon">${userInitial}</span>
+          <span>${userName}</span>
+          <small>▼</small>
+        </button>
+        <div class="dropdown-content" id="userDropdown">
+          <a href="profile.html" data-lang-key="myProfile">My Profile</a>
+          <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
+          <a href="my-work.html" data-lang-key="myWorks">My Works</a>
+          <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+          <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
+        </div>
+      `;
+
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      if (typeof translations !== 'undefined' && translations[currentLang]) {
+        const dict = translations[currentLang];
+        container.querySelectorAll('[data-lang-key]').forEach(el => {
+          const key = el.getAttribute('data-lang-key');
+          if (dict[key]) el.innerText = dict[key];
+        });
+      }
+    }
+
+    function toggleUserDropdown(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) dropdown.classList.toggle('show');
+    }
+
+    function handleUserLogout() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userName');
+      sessionStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    // --- 4. UI EVENT LISTENERS ---
+    document.getElementById('sidebarLogoutBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      handleUserLogout();
+    });
+
+    window.addEventListener('click', (e) => {
+      const userMenuBtn = document.getElementById('userMenuBtn');
+      const userDropdown = document.getElementById('userDropdown');
+      const otherLinksBtn = document.getElementById('otherLinksBtn');
+      const socialPopup = document.getElementById('socialPopup');
+
+      if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
+        userDropdown.classList.remove('show');
+      }
+
+      if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
+        socialPopup.classList.remove('active');
+        otherLinksBtn.classList.remove('active');
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+        otherLinksBtn.innerText = dict ? dict.otherLinks : 'Other Links';
+      }
+    });
+
+    const otherLinksBtn = document.getElementById('otherLinksBtn');
+    const socialPopup = document.getElementById('socialPopup');
+
+    otherLinksBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = socialPopup.classList.toggle('active');
+      otherLinksBtn.classList.toggle('active');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+      if (dict) {
+        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+      } else {
+        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+      }
+    });
+
+    // Re-render when language changes globally
+    window.addEventListener('languageChanged', () => {
+      renderAuthHeader();
+      renderSavedList();
+    });
+
+    // Initial Load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAuthHeader();
+      renderSavedList();
+    });
+  </script>
+
+</body>
+</html>

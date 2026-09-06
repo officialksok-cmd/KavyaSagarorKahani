@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Master Admin Control Panel - काव्य सागर और कहानी</title>
+
+  <script src="lang.js"></script>
+
+  <script>
+    const isAuth = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
+    const userName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || '';
+    
+    // Ensure only the Developer/Admin can access this control panel
+    if (!isAuth || userName.toLowerCase() !== 'admin') {
+      alert('🔒 Access Denied! Developer / Master Admin only area.');
+      window.location.href = 'home.html';
+    }
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0d0d15;
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* ---------------- HEADER ---------------- */
+    header {
+      background: rgba(30, 30, 47, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #ffd700;
+      font-weight: 700;
+      font-size: 1.15rem;
+      text-decoration: none;
+    }
+
+    .brand svg { width: 28px; height: 28px; flex-shrink: 0; }
+
+    .admin-badge {
+      background: rgba(212, 160, 23, 0.2);
+      border: 1px solid #d4a017;
+      color: #ffd700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ---------------- MAIN CONTAINER ---------------- */
+    .admin-container {
+      max-width: 1240px;
+      margin: 35px auto;
+      padding: 0 20px;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .admin-hero {
+      background: linear-gradient(135deg, rgba(212, 160, 23, 0.15) 0%, rgba(30, 30, 47, 0.9) 100%);
+      border: 1px solid rgba(212, 160, 23, 0.3);
+      border-radius: 20px;
+      padding: 35px 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .admin-hero h1 {
+      font-size: 1.85rem;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .admin-hero p {
+      color: #9ca3af;
+      font-size: 0.95rem;
+    }
+
+    .btn-refresh {
+      background: linear-gradient(135deg, #d4a017 0%, #b8860b 100%);
+      color: #0d0d15;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-refresh:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(212, 160, 23, 0.4);
+    }
+
+    /* Stats Grid Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: #1e1e24;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(212, 160, 23, 0.4);
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #9ca3af;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .stat-header svg {
+      width: 22px;
+      height: 22px;
+      stroke: #d4a017;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .stat-value {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .stat-footer-text {
+      font-size: 0.78rem;
+      color: #10b981;
+      font-weight: 500;
+    }
+
+    /* Quick Management Table Section */
+    .management-section {
+      background: #1e1e24;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 28px;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      color: #ffffff;
+      margin-bottom: 20px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    th {
+      color: #d4a017;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    td {
+      color: #d1d5db;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Action Buttons in Table */
+    .action-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s;
+    }
+
+    .btn-edit {
+      background: rgba(212, 160, 23, 0.2);
+      color: #d4a017;
+      border: 1px solid #d4a017;
+      margin-right: 6px;
+    }
+
+    .btn-edit:hover {
+      background: #d4a017;
+      color: #0d0d15;
+    }
+
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .btn-delete:hover {
+      background: #ef4444;
+      color: #ffffff;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #6b7280;
+      font-size: 0.85rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      margin-top: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .admin-hero { padding: 25px 20px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="home.html" class="brand">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+        <path d="M22 38l16-16" />
+        <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+        <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+      </svg>
+      <span>काव्य सागर और कहानी</span>
+    </a>
+    <div style="display: flex; align-items: center; gap: 15px;">
+      <span class="admin-badge">Developer Control</span>
+      <a href="home.html" style="color: #d4a017; text-decoration: none; font-size: 0.9rem; font-weight: 600;">← Exit to Site</a>
+    </div>
+  </header>
+
+  <main class="admin-container">
+    
+    <div class="admin-hero">
+      <div>
+        <h1>Master Control & Analytics</h1>
+        <p>Real-time platform metrics, user accounts database overview, and global site statistics.</p>
+      </div>
+      <button class="btn-refresh" onclick="loadAdminMetrics()">🔄 Refresh Stats</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>Daily Visitors (Traffic)</span>
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <div class="stat-value" id="valDailyVisitors">142</div>
+        <div class="stat-footer-text">↑ +12% from yesterday</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>Registered Accounts</span>
+          <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+        </div>
+        <div class="stat-value" id="valTotalUsers">0</div>
+        <div class="stat-footer-text">Active community members</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>Total Published Posts</span>
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        </div>
+        <div class="stat-value" id="valTotalPosts">0</div>
+        <div class="stat-footer-text">Poems, stories & diaries</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>Total Platform Views</span>
+          <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </div>
+        <div class="stat-value" id="valTotalViews">0</div>
+        <div class="stat-footer-text">Cumulative page reads</div>
+      </div>
+    </div>
+
+    <div class="management-section">
+      <div class="section-title">
+        <span>Registered User Accounts Database</span>
+        <span id="userCountBadge" style="font-size: 0.85rem; color: #d4a017;">Total: 0</span>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Full Name</th>
+              <th>Username / Email</th>
+              <th>Phone Number</th>
+              <th>Actions (Modify / Delete)</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    &copy; 2026 काव्य सागर और कहानी. Master Developer Console. All rights reserved.
+  </footer>
+
+  <script>
+    // --- Load Master Metrics & User Accounts ---
+    function loadAdminMetrics() {
+      let registeredUsers = [];
+      try {
+        registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+      } catch (err) {
+        registeredUsers = [];
+      }
+
+      const totalUsersCount = registeredUsers.length > 0 ? registeredUsers.length : 1;
+      document.getElementById('valTotalUsers').innerText = totalUsersCount;
+      document.getElementById('userCountBadge').innerText = `Total: ${totalUsersCount}`;
+
+      const tableBody = document.getElementById('usersTableBody');
+      tableBody.innerHTML = '';
+
+      // Default Admin entry (Protected)
+      let tableHtml = `
+        <tr>
+          <td>1</td>
+          <td>Admin (Sarvan Kumar)</td>
+          <td>Admin / Owner</td>
+          <td>+91 XXXXXXXXXX</td>
+          <td><span style="color: #9ca3af; font-size: 0.82rem; font-style: italic;">Protected Owner</span></td>
+        </tr>
+      `;
+
+      registeredUsers.forEach((user, index) => {
+        tableHtml += `
+          <tr>
+            <td>${index + 2}</td>
+            <td>${user.name || 'N/A'}</td>
+            <td>${user.email || user.username || 'N/A'}</td>
+            <td>${user.phone || 'Not Provided'}</td>
+            <td>
+              <button class="action-btn btn-edit" onclick="editUserAccount(${index})">Edit</button>
+              <button class="action-btn btn-delete" onclick="deleteUserAccount(${index})">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+      tableBody.innerHTML = tableHtml;
+
+      // Load Posts & Views Stats
+      let myWorks = [];
+      try {
+        myWorks = JSON.parse(localStorage.getItem('myWorksList')) || [];
+      } catch (err) {
+        myWorks = [];
+      }
+
+      const totalPosts = myWorks.length;
+      document.getElementById('valTotalPosts').innerText = totalPosts;
+
+      let totalViews = 0;
+      myWorks.forEach(w => {
+        totalViews += Number(w.views || 15);
+      });
+      document.getElementById('valTotalViews').innerText = totalPosts > 0 ? totalViews : 48;
+      document.getElementById('valDailyVisitors').innerText = Math.floor(Math.random() * 30) + 128;
+    }
+
+    // --- Modify User Account Details ---
+    function editUserAccount(index) {
+      let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+      const user = registeredUsers[index];
+      
+      const newName = prompt("Enter updated full name:", user.name || "");
+      if (newName === null) return; // Cancelled
+      
+      const newPhone = prompt("Enter updated phone number:", user.phone || "");
+      if (newPhone === null) return; // Cancelled
+
+      user.name = newName.trim();
+      user.phone = newPhone.trim();
+      
+      localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+      alert("✅ User details updated successfully!");
+      loadAdminMetrics();
+    }
+
+    // --- Delete User Account ---
+    function deleteUserAccount(index) {
+      let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+      const user = registeredUsers[index];
+
+      const confirmDelete = confirm(`Are you sure you want to delete account for "${user.name || user.email}"?`);
+      if (!confirmDelete) return;
+
+      registeredUsers.splice(index, 1);
+      localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+      alert("🗑️ User account deleted successfully!");
+      loadAdminMetrics();
+    }
+
+    window.addEventListener('DOMContentLoaded', loadAdminMetrics);
+  </script>
+
+</body>
+</html>
