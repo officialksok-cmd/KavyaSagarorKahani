@@ -88,4 +88,12 @@ function applyLanguage(lang) {
 document.addEventListener('DOMContentLoaded', () => {
   const savedLang = localStorage.getItem('site_lang') || 'hi';
   applyLanguage(savedLang);
+
+  // Automatically normalize all internal links to lowercase to prevent 404 case-sensitivity errors
+  document.querySelectorAll("a").forEach(link => {
+    const href = link.getAttribute("href");
+    if (href && !href.startsWith("http") && !href.startsWith("#") && !href.startsWith("mailto:")) {
+      link.setAttribute("href", href.toLowerCase());
+    }
+  });
 });
