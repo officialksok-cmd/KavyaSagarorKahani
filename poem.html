@@ -295,7 +295,6 @@
     }
 
     /* CARD POSITION STATES */
-    /* 1. Center Active */
     .custom-slide-card.active {
       transform: translateX(0) scale(1) translateZ(50px);
       opacity: 1;
@@ -303,7 +302,6 @@
       cursor: default;
     }
 
-    /* 2. Left Inactive Card */
     .custom-slide-card.prev {
       transform: translateX(-190px) scale(0.84) rotateY(8deg);
       opacity: 0.32;
@@ -311,7 +309,6 @@
       filter: blur(0.5px);
     }
 
-    /* 3. Right Inactive Card */
     .custom-slide-card.next {
       transform: translateX(190px) scale(0.84) rotateY(-8deg);
       opacity: 0.32;
@@ -319,7 +316,6 @@
       filter: blur(0.5px);
     }
 
-    /* 4. Hidden Far Left/Right */
     .custom-slide-card.hidden-left {
       transform: translateX(-320px) scale(0.65);
       opacity: 0;
@@ -691,9 +687,6 @@
           <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
             <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           </a>
-          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
-            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-          </a>
         </div>
       </div>
     </div>
@@ -703,8 +696,10 @@
     &copy; 2026 काव्य सागर और कहानी. All rights reserved.
   </footer>
 
-  <script>
-    const poemsMultilingualData = {
+  <script type="module">
+    import { db, collection, getDocs } from "./firebase.js";
+
+    const basePoemsData = {
       love: {
         themeClass: "theme-love",
         titles: { hi: "प्रेम शायरी", en: "Love Poetry" },
@@ -779,11 +774,41 @@
       }
     };
 
+    let poemsMultilingualData = JSON.parse(JSON.stringify(basePoemsData));
     let currentCategory = 'love';
     let currentSlideIndex = 0;
 
+    // --- FETCH PUBLISHED POEMS FROM FIREBASE CLOUD ---
+    async function loadPublishedPoemsFromCloud() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "works"));
+        
+        // Reset to base template before injecting cloud items
+        poemsMultilingualData = JSON.parse(JSON.stringify(basePoemsData));
+
+        querySnapshot.forEach((docSnap) => {
+          const item = docSnap.data();
+          // Check if it's published and belongs to poem category (kavita)
+          if (item.stage === 'published' && item.category === 'kavita') {
+            // Map to one of our available tabs (default to 'love' if tag doesn't match)
+            const targetCat = poemsMultilingualData[item.subCategory] ? item.subCategory : 'love';
+            
+            if (item.content && item.content.trim() !== '') {
+              poemsMultilingualData[targetCat].items.hi.unshift(item.content);
+              poemsMultilingualData[targetCat].items.en.unshift(item.content); // Fallback content for English view
+            }
+          }
+        });
+
+        renderWidget();
+      } catch (error) {
+        console.error("Error fetching published poems from cloud:", error);
+        renderWidget();
+      }
+    }
+
     // --- NATIVE 3D CARD ENGINE ---
-    function renderWidget() {
+    window.renderWidget = function() {
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const catData = poemsMultilingualData[currentCategory];
       const stage = document.getElementById('cardDeckStage');
@@ -866,7 +891,7 @@
       document.getElementById('counterText').innerText = `${currentSlideIndex + 1} / ${total}`;
     }
 
-    function navigateDeck(dir) {
+    window.navigateDeck = function(dir) {
       const items = (poemsMultilingualData[currentCategory].items.hi) || [];
       const total = items.length;
       if (total <= 1) return;
@@ -875,7 +900,7 @@
       updateCardPositions();
     }
 
-    function selectCategory(catKey, el) {
+    window.selectCategory = function(catKey, el) {
       currentCategory = catKey;
       currentSlideIndex = 0;
       document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
@@ -884,7 +909,7 @@
     }
 
     // --- PROTECTED INTERACTIONS ---
-    function handleProtectedLike(e, btn) {
+    window.handleProtectedLike = function(e, btn) {
       e.stopPropagation();
       const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
       if (!isLoggedIn) {
@@ -902,7 +927,7 @@
       btn.classList.toggle('liked');
     }
 
-    function handleSaveAction(e, label) {
+    window.handleSaveAction = function(e, label) {
       e.stopPropagation();
       const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
       if (!isLoggedIn) {
@@ -920,7 +945,7 @@
       alert(`${label} successfully!`);
     }
 
-    function handleShareAction(e, label) {
+    window.handleShareAction = function(e, label) {
       e.stopPropagation();
       if (navigator.clipboard) {
         navigator.clipboard.writeText(window.location.href);
@@ -930,7 +955,7 @@
       }
     }
 
-    function handleCommentAction(e, label) {
+    window.handleCommentAction = function(e, label) {
       e.stopPropagation();
       alert('टिप्पणी अनुभाग जल्द ही आ रहा है! (Comments section opening soon!)');
     }
@@ -957,7 +982,7 @@
           <div class="dropdown-content" id="userDropdown">
             <a href="profile.html" data-lang-key="myProfile">My Profile</a>
             <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
-            <a href="my-works.html" data-lang-key="myWorks">My Works</a>
+            <a href="my-work.html" data-lang-key="myWorks">My Works</a>
             <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
             <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
           </div>
@@ -988,13 +1013,13 @@
       }
     }
 
-    function toggleUserDropdown(event) {
+    window.toggleUserDropdown = function(event) {
       event.stopPropagation();
       const dropdown = document.getElementById('userDropdown');
       if (dropdown) dropdown.classList.toggle('show');
     }
 
-    function handleUserLogout() {
+    window.handleUserLogout = function() {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userName');
       sessionStorage.clear();
@@ -1050,7 +1075,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
-      renderWidget();
+      loadPublishedPoemsFromCloud();
     });
   </script>
 
