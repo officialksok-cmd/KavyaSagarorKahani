@@ -743,7 +743,9 @@
     &copy; 2026 काव्य सागर और कहानी. All rights reserved.
   </footer>
 
-  <script>
+  <script type="module">
+    import { db, collection, getDocs, doc, setDoc } from "./firebase.js";
+
     // --- 1. LOCAL TRANSLATION DICTIONARY (FOR UI ONLY) ---
     const localDict = {
       hi: {
@@ -804,83 +806,56 @@
       }
     };
 
-    // --- 2. PERSISTENT WORKS DATABASE ---
-    const defaultWorks = {
-      draft: [
-        { 
-          id: 1, 
-          category: "kavita", 
-          date: "14-Aug-2026",
-          title: "चाँद और मेरी तन्हाई",
-          snippet: "रात के सन्नाटे में जब चाँद निकलता है...",
-          content: "रात के सन्नाटे में जब चाँद निकलता है,\nदिल पुरानी यादों के दीप जलाता है।\nअनकहे अल्फ़ाज़ हवाओं में तैरते हैं,\nऔर ख़्वाब चुपके से मुस्कुराते हैं।"
-        },
-        { 
-          id: 2, 
-          category: "kahani", 
-          date: "12-Aug-2026",
-          title: "अधूरी दास्तान - कहानी",
-          snippet: "गाँव की उस पगडंडी पर एक पुराना घर था...",
-          content: "गाँव की उस पगडंडी पर एक पुराना नीम का पेड़ था। उस पेड़ की छाँव में हर शाम बच्चे खेला करते थे। मगर उस दिन वहाँ कुछ अजीब खामोशी थी..."
-        },
-        { 
-          id: 3, 
-          category: "diary", 
-          date: "11-Aug-2026",
-          title: "एक शांत शाम की डायरी",
-          snippet: "आज शाम बालकनी में बैठकर चाय पी...",
-          content: "आज शाम बालकनी में बैठकर चाय पीते हुए महसूस हुआ कि ज़िंदगी की सबसे खूबसूरत चीज़ें कितनी सरल होती हैं।"
-        },
-        { 
-          id: 4, 
-          category: "prerna", 
-          date: "09-Aug-2026",
-          title: "असफलता ही सफलता की सीढ़ी है",
-          snippet: "हर हार हमें कुछ नया सिखाती है...",
-          content: "जब तक आप कोशिश करना नहीं छोड़ते, तब तक आप कभी पराजित नहीं होते। संघर्ष ही मनुष्य को निखारता है।"
-        }
-      ],
-      finished: [
-        { 
-          id: 5, 
-          category: "kavita", 
-          date: "08-Aug-2026",
-          title: "प्रेम का अहसास",
-          snippet: "जब धड़कनें गीत गाने लगें...",
-          content: "जब धड़कनें गीत गाने लगें,\nऔर हर नज़र में तू ही नज़र आए,\nसमझ लेना यही वो मोहब्बत है,\nजो रूह को रूह से मिलाए।"
-        },
-        { 
-          id: 6, 
-          category: "kahani", 
-          date: "06-Aug-2026",
-          title: "चालाक लोमड़ी का सच",
-          snippet: "जंगल के राजा ने एक दिन सभा बुलाई...",
-          content: "जंगल के राजा ने एक दिन सभी जानवरों की सभा बुलाई। लोमड़ी ने अपनी चालाकी से सबका ध्यान खींचा..."
-        }
-      ],
-      published: [
-        { 
-          id: 7, 
-          category: "kavita", 
-          date: "01-Aug-2026",
-          title: "प्रकृति का संगीत",
-          snippet: "नदियों की कलकल, हवा की सरसराहट...",
-          content: "नदियों की कलकल, हवा की सरसराहट,\nपहाड़ों की ऊँचाई और वादियों की मुस्कुराहट।\nप्रकृति हमें सिखाती है निस्वार्थ प्रेम,\nजिसमें छुपा है जीवन का सारा रस।"
-        }
-      ]
+    // --- 2. PERSISTENT WORKS DATABASE (CLOUD FIRESTORE) ---
+    let worksData = {
+      draft: [],
+      finished: [],
+      published: []
     };
 
-    // Load user's saved data from localStorage or fallback to defaults
-    let worksData = null;
-    try {
-      const stored = localStorage.getItem('user_my_works_data');
-      worksData = stored ? JSON.parse(stored) : defaultWorks;
-    } catch(e) {
-      worksData = defaultWorks;
-    }
+    async function loadWorksFromCloud() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "works"));
+        const cloudWorks = { draft: [], finished: [], published: [] };
 
-    function saveWorksToStorage() {
-      localStorage.setItem('user_my_works_data', JSON.stringify(worksData));
+        querySnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const stage = data.stage && cloudWorks[data.stage] ? data.stage : 'draft';
+          cloudWorks[stage].push({ id: docSnap.id, ...data });
+        });
+
+        // If cloud is completely empty, populate initial default data once
+        if (querySnapshot.empty) {
+          const defaultWorks = {
+            draft: [
+              { id: 1, category: "kavita", stage: "draft", date: "14-Aug-2026", title: "चाँद और मेरी तन्हाई", snippet: "रात के सन्नाटे में जब चाँद निकलता है...", content: "रात के सन्नाटे में जब चाँद निकलता है,\nदिल पुरानी यादों के दीप जलाता है।\nअनकहे अल्फ़ाज़ हवाओं में तैरते हैं,\nऔर ख़्वाब चुपके से मुस्कुराते हैं।" },
+              { id: 2, category: "kahani", stage: "draft", date: "12-Aug-2026", title: "अधूरी दास्तान - कहानी", snippet: "गाँव की उस पगडंडी पर एक पुराना घर था...", content: "गाँव की उस पगडंडी पर एक पुराना नीम का पेड़ था। उस पेड़ की छाँव में हर शाम बच्चे खेला करते थे। मगर उस दिन वहाँ कुछ अजीब खामोशी थी..." },
+              { id: 3, category: "diary", stage: "draft", date: "11-Aug-2026", title: "एक शांत शाम की डायरी", snippet: "आज शाम बालकनी में बैठकर चाय पी...", content: "आज शाम बालकनी में बैठकर चाय पीते हुए महसूस हुआ कि ज़िंदगी की सबसे खूबसूरत चीज़ें कितनी सरल होती हैं।" },
+              { id: 4, category: "prerna", stage: "draft", date: "09-Aug-2026", title: "असफलता ही सफलता की सीढ़ी है", snippet: "हर हार हमें कुछ नया सिखाती है...", content: "जब तक आप कोशिश करना नहीं छोड़ते, तब तक आप कभी पराजित नहीं होते। संघर्ष ही मनुष्य को निखारता है।" }
+            ],
+            finished: [
+              { id: 5, category: "kavita", stage: "finished", date: "08-Aug-2026", title: "प्रेम का अहसास", snippet: "जब धड़कनें गीत गाने लगें...", content: "जब धड़कनें गीत गाने लगें,\nऔर हर नज़र में तू ही नज़र आए,\nसमझ लेना यही वो मोहब्बत है,\nजो रूह को रूह से मिलाए।" },
+              { id: 6, category: "kahani", stage: "finished", date: "06-Aug-2026", title: "चालाक लोमड़ी का सच", snippet: "जंगल के राजा ने एक दिन सभा बुलाई...", content: "जंगल के राजा ने एक दिन सभी जानवरों की सभा बुलाई। लोमड़ी ने अपनी चालाकी से सबका ध्यान खींचा..." }
+            ],
+            published: [
+              { id: 7, category: "kavita", stage: "published", date: "01-Aug-2026", title: "प्रकृति का संगीत", snippet: "नदियों की कलकल, हवा की सरसराहट...", content: "नदियों की कलकल, हवा की सरसराहट,\nपहाड़ों की ऊँचाई और वादियों की मुस्कुराहट।\nप्रकृति हमें सिखाती है निस्वार्थ प्रेम,\nजिसमें छुपा है जीवन का सारा रस।" }
+            ]
+          };
+
+          for (const stage of Object.keys(defaultWorks)) {
+            for (const item of defaultWorks[stage]) {
+              await setDoc(doc(db, "works", String(item.id)), item);
+            }
+          }
+          worksData = defaultWorks;
+        } else {
+          worksData = cloudWorks;
+        }
+
+        renderTaskList();
+      } catch (error) {
+        console.error("Error loading works from cloud:", error);
+      }
     }
 
     let activeCategory = 'kavita';
@@ -895,7 +870,7 @@
     const actionGroup = document.getElementById('actionGroup');
 
     // --- 3. CATEGORY & STAGE SWITCHING ---
-    function switchContentCategory(catKey) {
+    window.switchContentCategory = function(catKey) {
       activeCategory = catKey;
       document.querySelectorAll('.cat-pill').forEach(btn => btn.classList.remove('active'));
       document.getElementById(`cat-${catKey}`).classList.add('active');
@@ -904,7 +879,7 @@
       renderActionButtons();
     }
 
-    function switchStage(stageKey) {
+    window.switchStage = function(stageKey) {
       activeStage = stageKey;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById(`tab-${stageKey}`).classList.add('active');
@@ -988,7 +963,7 @@
         taskCard.innerHTML = `
           <div class="task-card-header">
             <span class="task-number">Task #${index + 1}</span>
-            <span class="task-date">${item.date}</span>
+            <span class="task-date">${item.date || 'Today'}</span>
           </div>
           <div class="task-item-title">${item.title || 'Untitled'}</div>
           <div class="task-item-snippet">${item.snippet || '...'}</div>
@@ -1040,7 +1015,7 @@
 
     workContent.addEventListener('input', updateWordCount);
 
-    function saveCurrentWork() {
+    window.saveCurrentWork = async function() {
       const allStageItems = worksData[activeStage] || [];
       const item = allStageItems.find(i => i.id === currentSelectedId);
       const currentLang = localStorage.getItem('site_lang') || 'hi';
@@ -1049,44 +1024,55 @@
         item.title = workTitle.value.trim() || (currentLang === 'hi' ? 'शीर्षक हीन' : 'Untitled');
         item.content = workContent.value;
         item.snippet = item.content.slice(0, 35).replace(/\n/g, ' ') + '...';
+        item.stage = activeStage;
 
-        saveWorksToStorage();
-        renderTaskList();
-        alert(currentLang === 'hi' ? 'रचना सफलतापूर्वक सहेजी गई!' : 'Work saved successfully!');
+        try {
+          await setDoc(doc(db, "works", String(item.id)), item);
+          renderTaskList();
+          alert(currentLang === 'hi' ? 'रचना सफलतापूर्वक सहेजी गई!' : 'Work saved successfully!');
+        } catch (error) {
+          console.error("Error saving to cloud:", error);
+          alert("Failed to save work.");
+        }
       }
     }
 
-    function promoteWork(targetStage) {
+    window.promoteWork = async function(targetStage) {
       const currentList = worksData[activeStage];
       const itemIndex = currentList.findIndex(i => i.id === currentSelectedId);
       if (itemIndex === -1) return;
 
-      const [itemToMove] = currentList.splice(itemIndex, 1);
+      const itemToMove = currentList[itemIndex];
       const currentLang = localStorage.getItem('site_lang') || 'hi';
 
       itemToMove.title = workTitle.value.trim() || (currentLang === 'hi' ? 'शीर्षक हीन' : 'Untitled');
       itemToMove.content = workContent.value;
       itemToMove.snippet = itemToMove.content.slice(0, 35).replace(/\n/g, ' ') + '...';
+      itemToMove.stage = targetStage;
 
-      worksData[targetStage].push(itemToMove);
-      saveWorksToStorage();
+      try {
+        await setDoc(doc(db, "works", String(itemToMove.id)), itemToMove);
+        await loadWorksFromCloud();
 
-      const stageLabels = {
-        draft: currentLang === 'hi' ? 'ड्राफ्ट (Draft)' : 'Draft',
-        finished: currentLang === 'hi' ? 'पूर्ण (Finished)' : 'Finished',
-        published: currentLang === 'hi' ? 'प्रकाशित (Published)' : 'Published'
-      };
+        const stageLabels = {
+          draft: currentLang === 'hi' ? 'ड्राफ्ट (Draft)' : 'Draft',
+          finished: currentLang === 'hi' ? 'पूर्ण (Finished)' : 'Finished',
+          published: currentLang === 'hi' ? 'प्रकाशित (Published)' : 'Published'
+        };
 
-      alert(currentLang === 'hi' 
-        ? `रचना को सफलतापूर्वक '${stageLabels[targetStage]}' में स्थानांतरित कर दिया गया है!` 
-        : `Work moved to '${stageLabels[targetStage]}' successfully!`
-      );
+        alert(currentLang === 'hi' 
+          ? `रचना को सफलतापूर्वक '${stageLabels[targetStage]}' में स्थानांतरित कर दिया गया है!` 
+          : `Work moved to '${stageLabels[targetStage]}' successfully!`
+        );
 
-      switchStage(targetStage);
-      selectTask(itemToMove.id);
+        switchStage(targetStage);
+        selectTask(itemToMove.id);
+      } catch (error) {
+        console.error("Error promoting work:", error);
+      }
     }
 
-    function createNewWork() {
+    window.createNewWork = async function() {
       const newId = Date.now();
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const defaultTitle = currentLang === 'hi' ? "नई रचना" : "New Creation";
@@ -1094,16 +1080,21 @@
       const newItem = {
         id: newId,
         category: activeCategory,
+        stage: 'draft',
         date: "Today",
         title: defaultTitle,
         snippet: currentLang === 'hi' ? "यहाँ अपनी रचना लिखना शुरू करें..." : "Start writing here...",
         content: ""
       };
 
-      worksData.draft.unshift(newItem);
-      saveWorksToStorage();
-      switchStage('draft');
-      selectTask(newId);
+      try {
+        await setDoc(doc(db, "works", String(newId)), newItem);
+        await loadWorksFromCloud();
+        switchStage('draft');
+        selectTask(newId);
+      } catch (error) {
+        console.error("Error creating new work:", error);
+      }
     }
 
     // --- 4. DYNAMIC AUTH HEADER ---
@@ -1139,13 +1130,13 @@
       }
     }
 
-    function toggleUserDropdown(event) {
+    window.toggleUserDropdown = function(event) {
       event.stopPropagation();
       const dropdown = document.getElementById('userDropdown');
       if (dropdown) dropdown.classList.toggle('show');
     }
 
-    function handleUserLogout() {
+    window.handleUserLogout = function() {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userName');
       sessionStorage.clear();
@@ -1203,7 +1194,9 @@
     // Initial Load
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
-      switchStage('finished');
+      loadWorksFromCloud().then(() => {
+        switchStage('published');
+      });
     });
   </script>
 
