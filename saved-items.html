@@ -294,7 +294,7 @@
       overflow: hidden;
     }
 
-    /* List Column (Oval list items) */
+    /* List Column */
     .item-list-column {
       background: #181820;
       border-right: 1px solid rgba(255, 255, 255, 0.06);
@@ -551,9 +551,7 @@
       </div>
 
       <!-- Dynamic User Profile Container -->
-      <div class="user-profile-menu" id="userAuthContainer">
-        <!-- Rendered dynamically by JavaScript -->
-      </div>
+      <div class="user-profile-menu" id="userAuthContainer"></div>
     </div>
   </header>
 
@@ -576,7 +574,6 @@
           </div>
         </a>
 
-        <!-- Current Tab Indicator -->
         <div class="current-section-badge" id="currentTabBadge">
           सहेजी गई रचनाएँ (Saved Items)
         </div>
@@ -596,7 +593,7 @@
           </li>
           <li>
             <a href="profile.html" class="menu-item">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
               <span id="labelProfileMenu">मेरी प्रोफ़ाइल</span>
             </a>
           </li>
@@ -612,7 +609,6 @@
       <!-- RIGHT MAIN PANEL -->
       <section class="saved-panel">
         
-        <!-- Header with 4 Category Tabs -->
         <div class="panel-header">
           <div class="panel-title-row">
             <h2 id="savedHeadingTitle">सहेजी गई रचनाएँ</h2>
@@ -627,14 +623,10 @@
           </div>
         </div>
 
-        <!-- 2-Column Content Layout (List + Viewer) -->
         <div class="saved-body">
-          
           <div class="item-list-column" id="savedItemsList"></div>
 
-          <!-- Viewer Column -->
           <div class="item-viewer-column">
-            
             <div id="viewerPlaceholder" class="viewer-placeholder">
               <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -660,9 +652,7 @@
                 <a href="#" class="btn-read-full" id="btnGoToPage">पूर्ण रूप से पढ़ें →</a>
               </div>
             </div>
-
           </div>
-
         </div>
 
       </section>
@@ -677,20 +667,15 @@
       <a href="privacy-policy.html" class="footer-card" data-lang-key="privacyPolicy">Privacy Policy</a>
       <a href="terms.html" class="footer-card" data-lang-key="termsConditions">Terms and Conditions</a>
 
-      <!-- Other Links Button with Pop-up Social Badges -->
       <div class="other-links-wrapper">
         <button class="other-links-btn" id="otherLinksBtn" data-lang-key="otherLinks">Other Links</button>
 
-        <!-- Pop-up Circle Social Icons -->
         <div class="social-popup" id="socialPopup">
           <a href="https://www.youtube.com/@KavyaSagarorKahani" target="_blank" class="social-circle yt" title="YouTube">
             <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </a>
           <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
             <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-          </a>
-          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
-            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
           </a>
         </div>
       </div>
@@ -701,7 +686,9 @@
     &copy; 2026 काव्य सागर और कहानी. All rights reserved.
   </footer>
 
-  <script>
+  <script type="module">
+    import { db, collection, getDocs, deleteDoc, doc } from "./firebase.js";
+
     // --- 1. LOCAL TRANSLATION DICTIONARY ---
     const localDict = {
       hi: {
@@ -738,113 +725,41 @@
       }
     };
 
-    // --- 2. BILINGUAL SAVED ITEMS DATABASE ---
     let savedDatabase = {
-      kavita: [
-        {
-          id: "k1",
-          date: "14-Aug-2026",
-          pageUrl: "poem.html",
-          hi: {
-            title: "प्रेम शायरी - चाँद और तन्हाई",
-            body: "तेरे नाम से जुड़ी हर शाम सुहानी लगती है,\nतेरी मुस्कुराहट ही मेरी ज़िंदगानी लगती है।\n\nदिल की धड़कन बनकर तुम समाए हो,\nसांसों में महक बनकर तुम छाए हो।"
-          },
-          en: {
-            title: "Love Poetry - Moon and Solitude",
-            body: "Every evening linked with your name feels pleasant,\nYour warm smile alone feels like my whole life.\n\nYou dwell within me as the beat of my heart,\nYou surround me like a fragrance in every breath."
-          }
-        },
-        {
-          id: "k2",
-          date: "10-Aug-2026",
-          pageUrl: "poem.html",
-          hi: {
-            title: "प्रकृति का संगीत",
-            body: "हरियाली की चादर ओढ़े धरती मुस्काती है,\nसुबह की पहली किरण नया सवेरा लाती है।\nनदियों का बहना, हवाओं का चलना,\nप्रकृति सिखाती है हर हाल में ढलना।"
-          },
-          en: {
-            title: "Music of Nature",
-            body: "Draped in lush green, the earth smiles with grace,\nThe first morning ray brings a new beginning to embrace.\nFlowing rivers and gentle winds that softly pass,\nNature teaches us resilience in every circumstance."
-          }
-        }
-      ],
-      kahani: [
-        {
-          id: "s1",
-          date: "12-Aug-2026",
-          pageUrl: "stories.html",
-          hi: {
-            title: "The Cunning Fox (चालाक लोमड़ी)",
-            body: "एक भूखी लोमड़ी भोजन की तलाश में जंगल में भटक रही थी। उसे एक पेड़ पर बैठा कौआ दिखाई दिया जिसके मुंह में पनीर का टुकड़ा था। लोमड़ी ने चालाकी से कौए की प्रशंसा की और उससे गाना गाने को कहा..."
-          },
-          en: {
-            title: "The Cunning Fox Story",
-            body: "A hungry fox was wandering through the forest in search of food. She saw a crow perched on a branch holding a piece of cheese in its beak. Flattering the crow, the fox praised its voice..."
-          }
-        },
-        {
-          id: "s2",
-          date: "08-Aug-2026",
-          pageUrl: "stories.html",
-          hi: {
-            title: "The Thirsty Crow (प्यासा कौआ)",
-            body: "एक प्यासा कौआ पानी की तलाश में उड़ रहा था। उसे एक घड़ा मिला जिसमें पानी बहुत नीचे था। कौए ने अपनी बुद्धिमत्ता का परिचय देते हुए एक-एक करके छोटे कंकड़ घड़े में डाले..."
-          },
-          en: {
-            title: "The Thirsty Crow Story",
-            body: "A thirsty crow flew across the fields looking for water. He found a pitcher with water low at the bottom. Using his clever thinking, he picked up small pebbles one by one..."
-          }
-        }
-      ],
-      diary: [
-        {
-          id: "d1",
-          date: "14-Aug-2026",
-          pageUrl: "diaries.html",
-          hi: {
-            title: "कन्हैया की डायरी - भाग 3",
-            body: "अंधेरी रात जितनी गहरी होती है, सुबह का उजाला उतना ही चमकदार होता है। आज सुबह जब धूप ने कमरे को छुआ, तो दिल में एक नया विश्वास जागा। खुद पर भरोसा रखना ही सबसे बड़ी ताक़त है।"
-          },
-          en: {
-            title: "Kanhaiya's Diary - Episode 3",
-            body: "The darker the night, the brighter the morning light shines. When the early rays touched the room today, a renewed conviction awakened within. Believing in oneself is the greatest power of all."
-          }
-        }
-      ],
-      quotes: [
-        {
-          id: "q1",
-          date: "15-Aug-2026",
-          pageUrl: "quotes.html",
-          hi: {
-            title: "सफलता और कड़ी मेहनत",
-            body: "“मेहनत करने वालों की कभी हार नहीं होती।”\n\n~ कुमार"
-          },
-          en: {
-            title: "Success & Hardwork",
-            body: "“Those who put in hard work never face defeat.”\n\n~ Kumar"
-          }
-        },
-        {
-          id: "q2",
-          date: "11-Aug-2026",
-          pageUrl: "quotes.html",
-          hi: {
-            title: "आध्यात्म और जीवन दर्शन",
-            body: "“आत्मा का असली सुख शांति में है, बाहरी दिखावे में नहीं।”\n\n~ कुमार"
-          },
-          en: {
-            title: "Spiritual & Life Philosophy",
-            body: "“The true joy of the soul lies in peace, not in pretense.”\n\n~ Kumar"
-          }
-        }
-      ]
+      kavita: [],
+      kahani: [],
+      diary: [],
+      quotes: []
     };
 
     let activeCategory = 'kavita';
     let selectedItemId = null;
+    const currentAuthorName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
 
-    function switchCategory(catKey) {
+    async function loadSavedItemsFromCloud() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "saved_items"));
+        const cloudSaved = { kavita: [], kahani: [], diary: [], quotes: [] };
+
+        querySnapshot.forEach((docSnap) => {
+          const item = docSnap.data();
+          const owner = item.user || 'Admin';
+          
+          // Filter by logged-in user so new accounts start completely empty
+          if (owner.toLowerCase() === currentAuthorName.toLowerCase()) {
+            const cat = item.category && cloudSaved[item.category] ? item.category : 'kavita';
+            cloudSaved[cat].push({ id: docSnap.id, ...item });
+          }
+        });
+
+        savedDatabase = cloudSaved;
+        renderSavedList();
+      } catch (error) {
+        console.error("Error loading saved items from cloud:", error);
+      }
+    }
+
+    window.switchCategory = function(catKey) {
       activeCategory = catKey;
       selectedItemId = null;
 
@@ -855,11 +770,10 @@
       hideViewer();
     }
 
-    function renderSavedList() {
+    window.renderSavedList = function() {
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const dict = localDict[currentLang] || localDict.hi;
 
-      // Update text labels
       document.getElementById('savedHeadingTitle').innerText = dict.savedHeadingTitle;
       document.getElementById('tab-kavita').innerText = dict.tabKavita;
       document.getElementById('tab-kahani').innerText = dict.tabKahani;
@@ -886,15 +800,14 @@
       }
 
       items.forEach(item => {
-        const itemContent = item[currentLang] || item.hi;
         const oval = document.createElement('div');
         oval.className = `saved-oval-item ${item.id === selectedItemId ? 'active' : ''}`;
         oval.onclick = () => selectSavedItem(item.id);
 
         oval.innerHTML = `
           <div class="item-info">
-            <span class="item-title">${itemContent.title}</span>
-            <span class="item-meta">📅 ${item.date}</span>
+            <span class="item-title">${item.title || 'Untitled'}</span>
+            <span class="item-meta">📅 ${item.date || 'Today'}</span>
           </div>
           <span class="item-arrow">›</span>
         `;
@@ -921,18 +834,15 @@
     }
 
     function loadItemToViewer(item) {
-      const currentLang = localStorage.getItem('site_lang') || 'hi';
-      const itemContent = item[currentLang] || item.hi;
-
       document.getElementById('viewerPlaceholder').style.display = 'none';
       const viewer = document.getElementById('viewerContent');
       viewer.style.display = 'block';
 
-      document.getElementById('viewTitle').innerText = itemContent.title;
-      document.getElementById('viewDate').innerText = `📅 ${item.date}`;
+      document.getElementById('viewTitle').innerText = item.title || 'Untitled';
+      document.getElementById('viewDate').innerText = `📅 ${item.date || 'Today'}`;
       document.getElementById('viewCategory').innerText = `🏷️ ${activeCategory.toUpperCase()}`;
-      document.getElementById('viewBody').innerText = itemContent.body;
-      document.getElementById('btnGoToPage').href = item.pageUrl;
+      document.getElementById('viewBody').innerText = item.body || '';
+      document.getElementById('btnGoToPage').href = item.pageUrl || 'home.html';
     }
 
     function hideViewer() {
@@ -940,25 +850,30 @@
       document.getElementById('viewerContent').style.display = 'none';
     }
 
-    function removeCurrentItem() {
+    window.removeCurrentItem = async function() {
       if (!selectedItemId) return;
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const confirmMsg = currentLang === 'en' ? 'Remove this item from your saved list?' : 'क्या आप इस रचना को सहेजी गई सूची से हटाना चाहते हैं?';
       
       if (confirm(confirmMsg)) {
-        savedDatabase[activeCategory] = savedDatabase[activeCategory].filter(i => i.id !== selectedItemId);
-        selectedItemId = null;
-        renderSavedList();
-        hideViewer();
+        try {
+          await deleteDoc(doc(db, "saved_items", String(selectedItemId)));
+          await loadSavedItemsFromCloud();
+          selectedItemId = null;
+          hideViewer();
+        } catch (error) {
+          console.error("Error deleting saved item from cloud:", error);
+          alert("Failed to remove saved item.");
+        }
       }
     }
 
-    // --- 3. DYNAMIC AUTH HEADER ---
+    // --- DYNAMIC AUTH HEADER ---
     function renderAuthHeader() {
       const container = document.getElementById('userAuthContainer');
       if (!container) return;
 
-      const userName = localStorage.getItem('userName') || 'Admin';
+      const userName = currentAuthorName;
       const userInitial = userName.trim().charAt(0).toUpperCase() || 'A';
 
       container.innerHTML = `
@@ -975,31 +890,22 @@
           <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
         </div>
       `;
-
-      const currentLang = localStorage.getItem('site_lang') || 'hi';
-      if (typeof translations !== 'undefined' && translations[currentLang]) {
-        const dict = translations[currentLang];
-        container.querySelectorAll('[data-lang-key]').forEach(el => {
-          const key = el.getAttribute('data-lang-key');
-          if (dict[key]) el.innerText = dict[key];
-        });
-      }
     }
 
-    function toggleUserDropdown(event) {
+    window.toggleUserDropdown = function(event) {
       event.stopPropagation();
       const dropdown = document.getElementById('userDropdown');
       if (dropdown) dropdown.classList.toggle('show');
     }
 
-    function handleUserLogout() {
+    window.handleUserLogout = function() {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userName');
       sessionStorage.clear();
       window.location.href = 'login.html';
     }
 
-    // --- 4. UI EVENT LISTENERS ---
+    // --- UI LISTENERS ---
     document.getElementById('sidebarLogoutBtn').addEventListener('click', (e) => {
       e.preventDefault();
       handleUserLogout();
@@ -1040,16 +946,14 @@
       }
     });
 
-    // Re-render when language changes globally
     window.addEventListener('languageChanged', () => {
       renderAuthHeader();
       renderSavedList();
     });
 
-    // Initial Load
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
-      renderSavedList();
+      loadSavedItemsFromCloud();
     });
   </script>
 
