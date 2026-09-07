@@ -840,6 +840,9 @@
     const wordCountText = document.getElementById('wordCountText');
     const actionGroup = document.getElementById('actionGroup');
 
+    // Get currently logged-in author name
+    const currentAuthorName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
+
     // Sub-category mappings for dropdowns
     const subCategoriesMap = {
       kavita: [
@@ -871,8 +874,13 @@
 
         querySnapshot.forEach((docSnap) => {
           const data = docSnap.data();
-          const stage = data.stage && cloudWorks[data.stage] ? data.stage : 'draft';
-          cloudWorks[stage].push({ id: docSnap.id, ...data });
+          // Only pull works created by this specific logged-in user
+          // (Admin can see all, or each user sees their own works)
+          const author = data.author || 'Admin';
+          if (currentAuthorName.toLowerCase() === 'admin' || author.toLowerCase() === currentAuthorName.toLowerCase()) {
+            const stage = data.stage && cloudWorks[data.stage] ? data.stage : 'draft';
+            cloudWorks[stage].push({ id: docSnap.id, ...data });
+          }
         });
 
         worksData = cloudWorks;
@@ -1062,6 +1070,7 @@
         item.stage = activeStage;
         item.category = activeCategory;
         item.subCategory = subCategorySelect.value;
+        item.author = currentAuthorName;
 
         try {
           await setDoc(doc(db, "works", String(item.id)), item);
@@ -1088,6 +1097,7 @@
       itemToMove.stage = targetStage;
       itemToMove.category = activeCategory;
       itemToMove.subCategory = subCategorySelect.value;
+      itemToMove.author = currentAuthorName;
 
       try {
         await setDoc(doc(db, "works", String(itemToMove.id)), itemToMove);
@@ -1125,7 +1135,8 @@
         date: "Today",
         title: defaultTitle,
         snippet: currentLang === 'hi' ? "यहाँ अपनी रचना लिखना शुरू करें..." : "Start writing here...",
-        content: ""
+        content: "",
+        author: currentAuthorName
       };
 
       try {
@@ -1142,7 +1153,7 @@
       const container = document.getElementById('userAuthContainer');
       if (!container) return;
 
-      const userName = localStorage.getItem('userName') || 'Admin';
+      const userName = currentAuthorName;
       const userInitial = userName.trim().charAt(0).toUpperCase() || 'A';
 
       container.innerHTML = `
