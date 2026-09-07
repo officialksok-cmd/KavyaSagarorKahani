@@ -251,14 +251,14 @@
     .category-item[data-theme="religious"].active { background: linear-gradient(135deg, #ff9966, #ff5e62); color: #fff; border-color: #ff9966; box-shadow: 0 4px 15px rgba(255, 153, 102, 0.35); }
     .category-item[data-theme="sad"].active { background: linear-gradient(135deg, #4b6cb7, #182848); color: #fff; border-color: #4b6cb7; box-shadow: 0 4px 15px rgba(75, 108, 183, 0.35); }
 
-    /* ---------------- NATIVE 3D CARD CAROUSEL ---------------- */
+    /* ---------------- NATIVE 3D CARD CAROUSEL (EXPANDED) ---------------- */
     .custom-carousel-box {
       background: #15151f;
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 24px;
       padding: 35px 20px 25px 20px;
       width: 100%;
-      min-height: 480px;
+      min-height: 540px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -270,31 +270,32 @@
     .card-deck-stage {
       position: relative;
       width: 100%;
-      height: 330px;
+      height: 410px;
       display: flex;
       align-items: center;
       justify-content: center;
-      perspective: 1000px;
+      perspective: 1200px;
     }
 
     .custom-slide-card {
       position: absolute;
-      width: 350px;
-      max-width: 85%;
-      min-height: 290px;
+      width: 580px;
+      max-width: 95%;
+      min-height: 380px;
       background: #1a1a26;
       border: 1.5px solid rgba(255, 255, 255, 0.08);
       border-radius: 24px;
-      padding: 24px 20px 18px 20px;
+      padding: 28px 24px 22px 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease, box-shadow 0.45s ease, border-color 0.45s ease;
       cursor: pointer;
       user-select: none;
+      overflow-y: auto;
     }
 
-    /* CARD POSITION STATES */
+    /* CARD POSITION STATES - Adjusted offset for wider cards */
     .custom-slide-card.active {
       transform: translateX(0) scale(1) translateZ(50px);
       opacity: 1;
@@ -303,27 +304,27 @@
     }
 
     .custom-slide-card.prev {
-      transform: translateX(-190px) scale(0.84) rotateY(8deg);
-      opacity: 0.32;
+      transform: translateX(-260px) scale(0.82) rotateY(8deg);
+      opacity: 0.28;
       z-index: 5;
       filter: blur(0.5px);
     }
 
     .custom-slide-card.next {
-      transform: translateX(190px) scale(0.84) rotateY(-8deg);
-      opacity: 0.32;
+      transform: translateX(260px) scale(0.82) rotateY(-8deg);
+      opacity: 0.28;
       z-index: 5;
       filter: blur(0.5px);
     }
 
     .custom-slide-card.hidden-left {
-      transform: translateX(-320px) scale(0.65);
+      transform: translateX(-450px) scale(0.6);
       opacity: 0;
       pointer-events: none;
       z-index: 1;
     }
     .custom-slide-card.hidden-right {
-      transform: translateX(320px) scale(0.65);
+      transform: translateX(450px) scale(0.6);
       opacity: 0;
       pointer-events: none;
       z-index: 1;
@@ -360,11 +361,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .card-header-title {
-      font-size: 0.92rem;
+      font-size: 0.98rem;
       font-weight: 700;
       color: #ffffff;
       letter-spacing: 0.5px;
@@ -391,10 +392,10 @@
     }
 
     .shayari-content {
-      font-size: 1.12rem;
-      line-height: 1.85;
+      font-size: 1.08rem;
+      line-height: 1.9;
       text-align: center;
-      min-height: 105px;
+      min-height: 160px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -407,9 +408,9 @@
     .action-bar {
       display: flex;
       justify-content: center;
-      gap: 10px;
-      margin-top: 12px;
-      padding-top: 12px;
+      gap: 12px;
+      margin-top: 15px;
+      padding-top: 14px;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       flex-wrap: wrap;
     }
@@ -418,9 +419,9 @@
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.12);
       color: #d1d5db;
-      padding: 6px 14px;
+      padding: 6px 16px;
       border-radius: 20px;
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -783,19 +784,16 @@
       try {
         const querySnapshot = await getDocs(collection(db, "works"));
         
-        // Reset to base template before injecting cloud items
         poemsMultilingualData = JSON.parse(JSON.stringify(basePoemsData));
 
         querySnapshot.forEach((docSnap) => {
           const item = docSnap.data();
-          // Check if it's published and belongs to poem category (kavita)
           if (item.stage === 'published' && item.category === 'kavita') {
-            // Map to one of our available tabs (default to 'love' if tag doesn't match)
             const targetCat = poemsMultilingualData[item.subCategory] ? item.subCategory : 'love';
             
             if (item.content && item.content.trim() !== '') {
               poemsMultilingualData[targetCat].items.hi.unshift(item.content);
-              poemsMultilingualData[targetCat].items.en.unshift(item.content); // Fallback content for English view
+              poemsMultilingualData[targetCat].items.en.unshift(item.content);
             }
           }
         });
@@ -1062,7 +1060,6 @@
       }
     });
 
-    // Keyboard Arrow Navigation Support
     window.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') navigateDeck(-1);
       if (e.key === 'ArrowRight') navigateDeck(1);
