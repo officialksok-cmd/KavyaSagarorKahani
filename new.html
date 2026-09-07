@@ -556,9 +556,7 @@
         querySnapshot.forEach((docSnap) => {
           const item = docSnap.data();
           
-          // Check if published
           if (item.stage === 'published') {
-            // Check 2-day freshness window (item.id or fallback timestamp)
             const itemTime = Number(item.id) || now;
             if ((now - itemTime) <= twoDaysInMs) {
               const mappedCat = mapCategoryToLatestTab(item.category);
@@ -791,11 +789,32 @@
       }
     }
 
+    // Footer popup listeners
+    const otherLinksBtn = document.getElementById('otherLinksBtn');
+    const socialPopup = document.getElementById('socialPopup');
+
+    otherLinksBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = socialPopup.classList.toggle('active');
+      otherLinksBtn.classList.toggle('active');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+      if (dict) {
+        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+      } else {
+        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+      }
+    });
+
     window.addEventListener('click', (e) => {
       const userDropdown = document.getElementById('userDropdown');
       const userMenuBtn = document.getElementById('userMenuBtn');
       if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
         userDropdown.classList.remove('show');
+      }
+      if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
+        socialPopup.classList.remove('active');
+        otherLinksBtn.classList.remove('active');
       }
     });
 
