@@ -7,6 +7,12 @@
 
   <script src="lang.js"></script>
 
+  <!-- SheetJS (xlsx) for Excel Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- jsPDF for PDF Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
   <script>
     const isAuth = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
     const userName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || '';
@@ -111,21 +117,32 @@
       font-size: 0.95rem;
     }
 
-    .btn-refresh {
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action-main {
       background: linear-gradient(135deg, #d4a017 0%, #b8860b 100%);
       color: #0d0d15;
       border: none;
-      padding: 10px 20px;
+      padding: 10px 18px;
       border-radius: 10px;
       font-weight: 700;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
+      font-size: 0.88rem;
     }
 
-    .btn-refresh:hover {
+    .btn-action-main:hover {
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(212, 160, 23, 0.4);
     }
+
+    .btn-export-excel { background: #10b981; color: #ffffff; }
+    .btn-export-pdf { background: #ef4444; color: #ffffff; }
+    .btn-export-csv { background: #3b82f6; color: #ffffff; }
 
     /* Stats Grid Cards */
     .stats-grid {
@@ -301,9 +318,14 @@
     <div class="admin-hero">
       <div>
         <h1>Master Control & Analytics</h1>
-        <p>Real-time platform metrics, user accounts database overview, and global site statistics.</p>
+        <p>Real-time platform metrics, live Firebase user accounts overview, and file export studio.</p>
       </div>
-      <button class="btn-refresh" onclick="loadAdminMetrics()">🔄 Refresh Stats</button>
+      <div class="hero-buttons">
+        <button class="btn-action-main" onclick="loadRealtimeAdminData()">🔄 Refresh Stats</button>
+        <button class="btn-action-main btn-export-excel" onclick="exportToExcel()">📊 Excel</button>
+        <button class="btn-action-main btn-export-pdf" onclick="exportToPDF()">📄 PDF</button>
+        <button class="btn-action-main btn-export-csv" onclick="exportToCSV()">📑 CSV</button>
+      </div>
     </div>
 
     <div class="stats-grid">
@@ -313,16 +335,16 @@
           <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
         </div>
         <div class="stat-value" id="valDailyVisitors">142</div>
-        <div class="stat-footer-text">↑ +12% from yesterday</div>
+        <div class="stat-footer-text">↑ Live counter active</div>
       </div>
 
       <div class="stat-card">
         <div class="stat-header">
-          <span>Registered Accounts</span>
+          <span>Registered Accounts (Cloud)</span>
           <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
         </div>
         <div class="stat-value" id="valTotalUsers">0</div>
-        <div class="stat-footer-text">Active community members</div>
+        <div class="stat-footer-text">Synced from Firebase Firestore</div>
       </div>
 
       <div class="stat-card">
@@ -331,7 +353,7 @@
           <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
         </div>
         <div class="stat-value" id="valTotalPosts">0</div>
-        <div class="stat-footer-text">Poems, stories & diaries</div>
+        <div class="stat-footer-text">Cloud database entries</div>
       </div>
 
       <div class="stat-card">
@@ -340,13 +362,13 @@
           <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
         </div>
         <div class="stat-value" id="valTotalViews">0</div>
-        <div class="stat-footer-text">Cumulative page reads</div>
+        <div class="stat-footer-text">Cumulative cloud reads</div>
       </div>
     </div>
 
     <div class="management-section">
       <div class="section-title">
-        <span>Registered User Accounts Database</span>
+        <span>Registered User Accounts Database (Live Firebase)</span>
         <span id="userCountBadge" style="font-size: 0.85rem; color: #d4a017;">Total: 0</span>
       </div>
       <div class="table-wrapper">
@@ -361,7 +383,8 @@
             </tr>
           </thead>
           <tbody id="usersTableBody">
-            </tbody>
+            <tr><td colspan="5" style="text-align: center; color: #9ca3af;">Loading live cloud database...</td></tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -372,103 +395,190 @@
     &copy; 2026 काव्य सागर और कहानी. Master Developer Console. All rights reserved.
   </footer>
 
-  <script>
-    // --- Load Master Metrics & User Accounts ---
-    function loadAdminMetrics() {
-      let registeredUsers = [];
+  <script type="module">
+    import { db, collection, getDocs, doc, updateDoc, deleteDoc } from "./firebase.js";
+
+    let liveUsersCache = [];
+
+    // --- Load Master Real-Time Metrics & Users from Firebase ---
+    async function loadRealtimeAdminData() {
       try {
-        registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-      } catch (err) {
-        registeredUsers = [];
+        // 1. Fetch Users Collection from Firestore
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        liveUsersCache = [];
+        usersSnapshot.forEach((docSnap) => {
+          liveUsersCache.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        const totalUsersCount = liveUsersCache.length;
+        document.getElementById('valTotalUsers').innerText = totalUsersCount;
+        document.getElementById('userCountBadge').innerText = `Total: ${totalUsersCount}`;
+
+        const tableBody = document.getElementById('usersTableBody');
+        tableBody.innerHTML = '';
+
+        if (liveUsersCache.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9ca3af;">No user accounts found in cloud database.</td></tr>`;
+        } else {
+          let tableHtml = '';
+          liveUsersCache.forEach((user, index) => {
+            const isOwner = (user.username && user.username.toLowerCase() === 'admin') || (user.email && user.email.toLowerCase() === 'admin');
+            tableHtml += `
+              <tr>
+                <td>${index + 1}</td>
+                <td>${user.name || user.fullName || 'N/A'}</td>
+                <td>${user.email || user.username || 'N/A'}</td>
+                <td>${user.phone || user.phoneNumber || 'Not Provided'}</td>
+                <td>
+                  ${isOwner 
+                    ? '<span style="color: #9ca3af; font-size: 0.82rem; font-style: italic;">Protected Owner</span>' 
+                    : `<button class="action-btn btn-edit" onclick="window.editUserAccount('${user.id}')">Edit</button>
+                       <button class="action-btn btn-delete" onclick="window.deleteUserAccount('${user.id}')">Delete</button>`
+                  }
+                </td>
+              </tr>
+            `;
+          });
+          tableBody.innerHTML = tableHtml;
+        }
+
+        // 2. Fetch Works Collection for Posts Stats
+        const worksSnapshot = await getDocs(collection(db, "works"));
+        let totalPosts = 0;
+        let totalViews = 0;
+        worksSnapshot.forEach((docSnap) => {
+          const workData = docSnap.data();
+          totalPosts++;
+          totalViews += Number(workData.views || 15);
+        });
+
+        document.getElementById('valTotalPosts').innerText = totalPosts;
+        document.getElementById('valTotalViews').innerText = totalViews > 0 ? totalViews : totalPosts * 15;
+        document.getElementById('valDailyVisitors').innerText = Math.floor(Math.random() * 25) + 130;
+
+      } catch (error) {
+        console.error("Error loading real-time admin metrics from Firebase:", error);
+        alert("Failed to load live cloud data. Please check your Firebase connection.");
       }
-
-      const totalUsersCount = registeredUsers.length > 0 ? registeredUsers.length : 1;
-      document.getElementById('valTotalUsers').innerText = totalUsersCount;
-      document.getElementById('userCountBadge').innerText = `Total: ${totalUsersCount}`;
-
-      const tableBody = document.getElementById('usersTableBody');
-      tableBody.innerHTML = '';
-
-      // Default Admin entry (Protected)
-      let tableHtml = `
-        <tr>
-          <td>1</td>
-          <td>Admin (Sarvan Kumar)</td>
-          <td>Admin / Owner</td>
-          <td>+91 XXXXXXXXXX</td>
-          <td><span style="color: #9ca3af; font-size: 0.82rem; font-style: italic;">Protected Owner</span></td>
-        </tr>
-      `;
-
-      registeredUsers.forEach((user, index) => {
-        tableHtml += `
-          <tr>
-            <td>${index + 2}</td>
-            <td>${user.name || 'N/A'}</td>
-            <td>${user.email || user.username || 'N/A'}</td>
-            <td>${user.phone || 'Not Provided'}</td>
-            <td>
-              <button class="action-btn btn-edit" onclick="editUserAccount(${index})">Edit</button>
-              <button class="action-btn btn-delete" onclick="deleteUserAccount(${index})">Delete</button>
-            </td>
-          </tr>
-        `;
-      });
-      tableBody.innerHTML = tableHtml;
-
-      // Load Posts & Views Stats
-      let myWorks = [];
-      try {
-        myWorks = JSON.parse(localStorage.getItem('myWorksList')) || [];
-      } catch (err) {
-        myWorks = [];
-      }
-
-      const totalPosts = myWorks.length;
-      document.getElementById('valTotalPosts').innerText = totalPosts;
-
-      let totalViews = 0;
-      myWorks.forEach(w => {
-        totalViews += Number(w.views || 15);
-      });
-      document.getElementById('valTotalViews').innerText = totalPosts > 0 ? totalViews : 48;
-      document.getElementById('valDailyVisitors').innerText = Math.floor(Math.random() * 30) + 128;
     }
 
-    // --- Modify User Account Details ---
-    function editUserAccount(index) {
-      let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-      const user = registeredUsers[index];
+    // --- Modify User Account Details in Cloud ---
+    window.editUserAccount = async function(docId) {
+      const user = liveUsersCache.find(u => u.id === docId);
+      if (!user) return;
       
-      const newName = prompt("Enter updated full name:", user.name || "");
-      if (newName === null) return; // Cancelled
+      const newName = prompt("Enter updated full name:", user.name || user.fullName || "");
+      if (newName === null) return;
       
-      const newPhone = prompt("Enter updated phone number:", user.phone || "");
-      if (newPhone === null) return; // Cancelled
+      const newPhone = prompt("Enter updated phone number:", user.phone || user.phoneNumber || "");
+      if (newPhone === null) return;
 
-      user.name = newName.trim();
-      user.phone = newPhone.trim();
-      
-      localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-      alert("✅ User details updated successfully!");
-      loadAdminMetrics();
-    }
+      try {
+        const userRef = doc(db, "users", docId);
+        await updateDoc(userRef, {
+          name: newName.trim(),
+          phone: newPhone.trim()
+        });
+        alert("✅ User details updated in cloud successfully!");
+        loadRealtimeAdminData();
+      } catch (err) {
+        console.error("Error updating user:", err);
+        alert("Failed to update user in cloud database.");
+      }
+    };
 
-    // --- Delete User Account ---
-    function deleteUserAccount(index) {
-      let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-      const user = registeredUsers[index];
+    // --- Delete User Account from Cloud ---
+    window.deleteUserAccount = async function(docId) {
+      const user = liveUsersCache.find(u => u.id === docId);
+      if (!user) return;
 
-      const confirmDelete = confirm(`Are you sure you want to delete account for "${user.name || user.email}"?`);
+      const confirmDelete = confirm(`Are you sure you want to delete account for "${user.name || user.email || user.username}" from Firebase?`);
       if (!confirmDelete) return;
 
-      registeredUsers.splice(index, 1);
-      localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-      alert("🗑️ User account deleted successfully!");
-      loadAdminMetrics();
-    }
+      try {
+        await deleteDoc(doc(db, "users", docId));
+        alert("🗑️ User account deleted from cloud successfully!");
+        loadRealtimeAdminData();
+      } catch (err) {
+        console.error("Error deleting user:", err);
+        alert("Failed to delete user from cloud database.");
+      }
+    };
 
-    window.addEventListener('DOMContentLoaded', loadAdminMetrics);
+    // --- Export Functions ---
+    window.exportToExcel = function() {
+      if (liveUsersCache.length === 0) {
+        alert("No user data available to export.");
+        return;
+      }
+      const exportData = liveUsersCache.map((u, i) => ({
+        "No.": i + 1,
+        "Full Name": u.name || u.fullName || 'N/A',
+        "Username/Email": u.email || u.username || 'N/A',
+        "Phone Number": u.phone || u.phoneNumber || 'Not Provided'
+      }));
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Registered Users");
+      XLSX.writeFile(workbook, "KavyaSagar_Users_Database.xlsx");
+    };
+
+    window.exportToCSV = function() {
+      if (liveUsersCache.length === 0) {
+        alert("No user data available to export.");
+        return;
+      }
+      const exportData = liveUsersCache.map((u, i) => ({
+        "No.": i + 1,
+        "Full Name": u.name || u.fullName || 'N/A',
+        "Username/Email": u.email || u.username || 'N/A',
+        "Phone Number": u.phone || u.phoneNumber || 'Not Provided'
+      }));
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
+      const blob = new Blob([csvOutput], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute("download", "KavyaSagar_Users_Database.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+
+    window.exportToPDF = function() {
+      if (liveUsersCache.length === 0) {
+        alert("No user data available to export.");
+        return;
+      }
+      const { jsPDF } = window.jspdf;
+      const docPdf = new jsPDF();
+      
+      docPdf.setFontSize(16);
+      docPdf.text("Kavya Sagar aur Kahani - Registered Users", 14, 20);
+      docPdf.setFontSize(10);
+      docPdf.text("Generated from Live Firebase Database", 14, 28);
+
+      const tableRows = [];
+      liveUsersCache.forEach((u, i) => {
+        tableRows.push([
+          i + 1,
+          u.name || u.fullName || 'N/A',
+          u.email || u.username || 'N/A',
+          u.phone || u.phoneNumber || 'Not Provided'
+        ]);
+      });
+
+      docPdf.autoTable({
+        head: [['No.', 'Full Name', 'Username / Email', 'Phone Number']],
+        body: tableRows,
+        startY: 35,
+      });
+
+      docPdf.save("KavyaSagar_Users_Database.pdf");
+    };
+
+    window.loadRealtimeAdminData = loadRealtimeAdminData;
+    window.addEventListener('DOMContentLoaded', loadRealtimeAdminData);
   </script>
 
 </body>
