@@ -295,7 +295,7 @@
       overflow-y: auto;
     }
 
-    /* CARD POSITION STATES - Adjusted offset for wider cards */
+    /* CARD POSITION STATES */
     .custom-slide-card.active {
       transform: translateX(0) scale(1) translateZ(50px);
       opacity: 1;
@@ -395,7 +395,7 @@
       font-size: 1.08rem;
       line-height: 1.9;
       text-align: center;
-      min-height: 160px;
+      min-height: 140px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -431,6 +431,114 @@
       color: #0e0e14;
       border-color: #d4a017;
     }
+
+    /* ---------------- CLOUD COMMENT SECTION POPUP ---------------- */
+    .comment-cloud-modal {
+      display: none;
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 480px;
+      background: #1e1e2d;
+      border: 2px solid #d4a017;
+      border-radius: 30px;
+      padding: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+      z-index: 50;
+      animation: fadeInCloud 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .comment-cloud-modal.show {
+      display: block;
+    }
+
+    @keyframes fadeInCloud {
+      from { opacity: 0; transform: translateX(-50%) scale(0.8) translateY(20px); }
+      to { opacity: 1; transform: translateX(-50%) scale(1) translateY(0); }
+    }
+
+    .cloud-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 8px;
+    }
+
+    .cloud-header h4 {
+      color: #d4a017;
+      font-size: 0.95rem;
+    }
+
+    .cloud-close-btn {
+      background: none;
+      border: none;
+      color: #9ca3af;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    .cloud-close-btn:hover { color: #ffffff; }
+
+    .cloud-comments-list {
+      max-height: 140px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-right: 4px;
+    }
+
+    .comment-bubble {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 8px 12px;
+      border-radius: 14px;
+      font-size: 0.82rem;
+    }
+
+    .comment-author {
+      color: #d4a017;
+      font-weight: 700;
+      margin-bottom: 2px;
+      font-size: 0.78rem;
+    }
+
+    .comment-text {
+      color: #e5e7eb;
+    }
+
+    .cloud-input-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .cloud-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 8px 12px;
+      border-radius: 20px;
+      color: #ffffff;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .cloud-input:focus { border-color: #d4a017; }
+
+    .cloud-submit-btn {
+      background: #d4a017;
+      color: #0d0d15;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+    .cloud-submit-btn:hover { background: #b8860b; }
 
     /* Slider Controls */
     .controls {
@@ -698,7 +806,7 @@
   </footer>
 
   <script type="module">
-    import { db, collection, getDocs } from "./firebase.js";
+    import { db, collection, getDocs, setDoc, doc } from "./firebase.js";
 
     const basePoemsData = {
       love: {
@@ -707,7 +815,7 @@
         items: {
           hi: [
             "तेरे नाम से जुड़ी हर शाम सुहानी लगती है,\nतेरी मुस्कुराहट ही मेरी ज़िंदगानी लगती है।",
-            "दिल की धड़कन बनकर तुम समाए हो,\nसांसों में महक बनकर तुम छाए हो।",
+            "दिल की धड़कन बनकर तुम समाए हो,\nसांसों में महक बनकर तुम छाए हो。",
             "मोहब्बत नाम है जिसका, वो इक हंसीं अहसास है,\nजो दूर रहकर भी हर लम्हा हमारे पास है।"
           ],
           en: [
@@ -778,12 +886,12 @@
     let poemsMultilingualData = JSON.parse(JSON.stringify(basePoemsData));
     let currentCategory = 'love';
     let currentSlideIndex = 0;
+    const currentAuthorName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
 
-    // --- FETCH PUBLISHED POEMS FROM FIREBASE CLOUD ---
+    // --- FETCH PUBLISHED POEMS & COMMENTS FROM FIREBASE ---
     async function loadPublishedPoemsFromCloud() {
       try {
         const querySnapshot = await getDocs(collection(db, "works"));
-        
         poemsMultilingualData = JSON.parse(JSON.stringify(basePoemsData));
 
         querySnapshot.forEach((docSnap) => {
@@ -826,6 +934,7 @@
       const btnCommentText = dict.btnComment || "💬 Comment";
 
       items.forEach((itemText, idx) => {
+        const cardId = `poem_${currentCategory}_${idx}`;
         const card = document.createElement('div');
         card.className = `custom-slide-card ${catData.themeClass}`;
         card.setAttribute('data-index', idx);
@@ -839,7 +948,7 @@
         card.innerHTML = `
           <div class="card-top-bar">
             <div class="card-header-title">${title}</div>
-            <button class="like-btn" onclick="handleProtectedLike(event, this)" title="Save to Liked">
+            <button class="like-btn" onclick="handleProtectedLike(event, this, '${title}', \`${itemText}\`)" title="Save to Liked">
               <svg viewBox="0 0 24 24">
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
               </svg>
@@ -849,12 +958,28 @@
           <div class="shayari-content">${itemText}</div>
 
           <div class="action-bar">
-            <button class="action-btn" onclick="handleSaveAction(event, '${btnSaveText}')">${btnSaveText}</button>
+            <button class="action-btn" onclick="handleSaveAction(event, '${title}', \`${itemText}\`, '${btnSaveText}')">${btnSaveText}</button>
             <button class="action-btn" onclick="handleShareAction(event, '${btnShareText}')">${btnShareText}</button>
-            <button class="action-btn" onclick="handleCommentAction(event, '${btnCommentText}')">${btnCommentText}</button>
+            <button class="action-btn" onclick="toggleCommentCloud(event, '${cardId}')">${btnCommentText}</button>
+          </div>
+
+          <!-- Cloud Shape Comment Section -->
+          <div class="comment-cloud-modal" id="cloud_${cardId}" onclick="event.stopPropagation()">
+            <div class="cloud-header">
+              <h4>💬 काव्य चर्चा (Comments)</h4>
+              <button class="cloud-close-btn" onclick="closeCommentCloud(event, '${cardId}')">✕</button>
+            </div>
+            <div class="cloud-comments-list" id="list_${cardId}">
+              <p style="font-size:0.78rem; color:#9ca3af; text-align:center;">लोड हो रहा है...</p>
+            </div>
+            <div class="cloud-input-group">
+              <input type="text" class="cloud-input" id="input_${cardId}" placeholder="अपनी टिप्पणी लिखें...">
+              <button class="cloud-submit-btn" onclick="postComment(event, '${cardId}', \`${itemText}\`)">भेजें</button>
+            </div>
           </div>
         `;
         stage.appendChild(card);
+        loadCommentsFromCloud(cardId);
       });
 
       if (currentSlideIndex >= items.length) {
@@ -906,8 +1031,8 @@
       renderWidget();
     }
 
-    // --- PROTECTED INTERACTIONS ---
-    window.handleProtectedLike = function(e, btn) {
+    // --- CLOUD SAVE TO FIREBASE ---
+    window.handleProtectedLike = function(e, btn, title, bodyText) {
       e.stopPropagation();
       const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
       if (!isLoggedIn) {
@@ -923,9 +1048,10 @@
         return;
       }
       btn.classList.toggle('liked');
+      saveItemToCloud(title, bodyText);
     }
 
-    window.handleSaveAction = function(e, label) {
+    window.handleSaveAction = function(e, title, bodyText, label) {
       e.stopPropagation();
       const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
       if (!isLoggedIn) {
@@ -940,7 +1066,98 @@
         }
         return;
       }
+      saveItemToCloud(title, bodyText);
       alert(`${label} successfully!`);
+    }
+
+    async function saveItemToCloud(title, bodyText) {
+      try {
+        const saveId = 'saved_' + Date.now();
+        const savedDoc = {
+          id: saveId,
+          user: currentAuthorName,
+          category: 'kavita',
+          title: title,
+          body: bodyText,
+          pageUrl: 'poem.html',
+          date: new Date().toLocaleDateString()
+        };
+        await setDoc(doc(db, "saved_items", saveId), savedDoc);
+      } catch (err) {
+        console.error("Error saving to cloud:", err);
+      }
+    }
+
+    // --- CLOUD COMMENTS CLOUD SECTION ---
+    window.toggleCommentCloud = function(e, cardId) {
+      e.stopPropagation();
+      const cloudModal = document.getElementById(`cloud_${cardId}`);
+      cloudModal.classList.toggle('show');
+    }
+
+    window.closeCommentCloud = function(e, cardId) {
+      e.stopPropagation();
+      document.getElementById(`cloud_${cardId}`).classList.remove('show');
+    }
+
+    async function loadCommentsFromCloud(cardId) {
+      const listEl = document.getElementById(`list_${cardId}`);
+      if (!listEl) return;
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "comments"));
+        let html = '';
+        let count = 0;
+
+        querySnapshot.forEach((docSnap) => {
+          const c = docSnap.data();
+          if (c.cardId === cardId) {
+            count++;
+            html += `
+              <div class="comment-bubble">
+                <div class="comment-author">${c.author}</div>
+                <div class="comment-text">${c.text}</div>
+              </div>
+            `;
+          }
+        });
+
+        listEl.innerHTML = count > 0 ? html : `<p style="font-size:0.78rem; color:#9ca3af; text-align:center;">कोई टिप्पणी नहीं है। पहली टिप्पणी लिखें!</p>`;
+      } catch (err) {
+        console.error("Error loading comments:", err);
+      }
+    }
+
+    window.postComment = async function(e, cardId, itemText) {
+      e.stopPropagation();
+      const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
+      if (!isLoggedIn) {
+        alert("टिप्पणी करने के लिए कृपया पहले लॉगिन करें। (Please log in to comment.)");
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const inputEl = document.getElementById(`input_${cardId}`);
+      const text = inputEl.value.trim();
+      if (!text) return;
+
+      const commentId = 'com_' + Date.now();
+      const newComment = {
+        id: commentId,
+        cardId: cardId,
+        author: currentAuthorName,
+        text: text,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        await setDoc(doc(db, "comments", commentId), newComment);
+        inputEl.value = '';
+        loadCommentsFromCloud(cardId);
+      } catch (err) {
+        console.error("Error posting comment:", err);
+        alert("Failed to post comment.");
+      }
     }
 
     window.handleShareAction = function(e, label) {
@@ -951,11 +1168,6 @@
       } else {
         alert(`${label} triggered!`);
       }
-    }
-
-    window.handleCommentAction = function(e, label) {
-      e.stopPropagation();
-      alert('टिप्पणी अनुभाग जल्द ही आ रहा है! (Comments section opening soon!)');
     }
 
     // Dynamic Auth Header
