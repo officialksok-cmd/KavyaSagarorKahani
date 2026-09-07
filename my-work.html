@@ -429,16 +429,34 @@
       gap: 10px;
       padding-bottom: 12px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      flex-wrap: wrap;
     }
 
     .editor-title-input {
-      width: 70%;
+      width: 50%;
       background: transparent;
       border: none;
       color: #ffffff;
       font-size: 1.3rem;
       font-weight: 700;
       outline: none;
+    }
+
+    /* Sub-category dropdown selector */
+    .subcat-select {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      color: #d4a017;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+    .subcat-select option {
+      background: #181824;
+      color: #f3f4f6;
     }
 
     .status-badge {
@@ -697,6 +715,12 @@
             <div>
               <div class="workspace-top-bar">
                 <input type="text" id="workTitle" class="editor-title-input" placeholder="शीर्षक यहाँ लिखें...">
+                
+                <!-- Dynamic Sub-category Selector Dropdown -->
+                <select id="subCategorySelect" class="subcat-select" onchange="updateSubCategory(this.value)">
+                  <!-- Options will change dynamically depending on the active category -->
+                </select>
+
                 <span id="workBadge" class="status-badge badge-draft">Draft</span>
               </div>
               
@@ -731,13 +755,10 @@
           <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
             <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           </a>
-          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
-            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-          </a>
         </div>
       </div>
     </div>
-  </section>
+  </main>
 
   <footer>
     &copy; 2026 काव्य सागर और कहानी. All rights reserved.
@@ -746,7 +767,7 @@
   <script type="module">
     import { db, collection, getDocs, doc, setDoc } from "./firebase.js";
 
-    // --- 1. LOCAL TRANSLATION DICTIONARY (FOR UI ONLY) ---
+    // --- 1. LOCAL TRANSLATION DICTIONARY ---
     const localDict = {
       hi: {
         currentSectionBadge: "रचना प्रबंधन (My Works)",
@@ -806,11 +827,41 @@
       }
     };
 
-    // --- 2. PERSISTENT WORKS DATABASE (CLOUD FIRESTORE) ---
-    let worksData = {
-      draft: [],
-      finished: [],
-      published: []
+    let worksData = { draft: [], finished: [], published: [] };
+    let activeCategory = 'kavita';
+    let activeStage = 'published';
+    let currentSelectedId = null;
+
+    const taskListContainer = document.getElementById('taskListContainer');
+    const workTitle = document.getElementById('workTitle');
+    const workContent = document.getElementById('workContent');
+    const subCategorySelect = document.getElementById('subCategorySelect');
+    const workBadge = document.getElementById('workBadge');
+    const wordCountText = document.getElementById('wordCountText');
+    const actionGroup = document.getElementById('actionGroup');
+
+    // Sub-category mappings for dropdowns
+    const subCategoriesMap = {
+      kavita: [
+        { id: 'love', label: 'Love (प्रेम)' },
+        { id: 'friendship', label: 'Friendship (दोस्ती)' },
+        { id: 'nature', label: 'Nature (प्रकृति)' },
+        { id: 'religious', label: 'Religious (भक्ति)' },
+        { id: 'sad', label: 'Sad (दर्द)' }
+      ],
+      prerna: [
+        { id: 'spiritual', label: 'Spiritual & Life Philosophy' },
+        { id: 'selfbelief', label: 'Self Believe & Positivity' },
+        { id: 'lovebond', label: 'Love, Bond & Gratitude' },
+        { id: 'deepthought', label: 'Deep Thought & Wisdom' },
+        { id: 'success', label: 'Success & Hardwork' }
+      ],
+      kahani: [
+        { id: 'general_story', label: 'General Story (सामान्य कहानी)' }
+      ],
+      diary: [
+        { id: 'general_diary', label: 'General Diary (डायरी)' }
+      ]
     };
 
     async function loadWorksFromCloud() {
@@ -824,59 +875,42 @@
           cloudWorks[stage].push({ id: docSnap.id, ...data });
         });
 
-        // If cloud is completely empty, populate initial default data once
-        if (querySnapshot.empty) {
-          const defaultWorks = {
-            draft: [
-              { id: 1, category: "kavita", stage: "draft", date: "14-Aug-2026", title: "चाँद और मेरी तन्हाई", snippet: "रात के सन्नाटे में जब चाँद निकलता है...", content: "रात के सन्नाटे में जब चाँद निकलता है,\nदिल पुरानी यादों के दीप जलाता है।\nअनकहे अल्फ़ाज़ हवाओं में तैरते हैं,\nऔर ख़्वाब चुपके से मुस्कुराते हैं।" },
-              { id: 2, category: "kahani", stage: "draft", date: "12-Aug-2026", title: "अधूरी दास्तान - कहानी", snippet: "गाँव की उस पगडंडी पर एक पुराना घर था...", content: "गाँव की उस पगडंडी पर एक पुराना नीम का पेड़ था। उस पेड़ की छाँव में हर शाम बच्चे खेला करते थे। मगर उस दिन वहाँ कुछ अजीब खामोशी थी..." },
-              { id: 3, category: "diary", stage: "draft", date: "11-Aug-2026", title: "एक शांत शाम की डायरी", snippet: "आज शाम बालकनी में बैठकर चाय पी...", content: "आज शाम बालकनी में बैठकर चाय पीते हुए महसूस हुआ कि ज़िंदगी की सबसे खूबसूरत चीज़ें कितनी सरल होती हैं।" },
-              { id: 4, category: "prerna", stage: "draft", date: "09-Aug-2026", title: "असफलता ही सफलता की सीढ़ी है", snippet: "हर हार हमें कुछ नया सिखाती है...", content: "जब तक आप कोशिश करना नहीं छोड़ते, तब तक आप कभी पराजित नहीं होते। संघर्ष ही मनुष्य को निखारता है।" }
-            ],
-            finished: [
-              { id: 5, category: "kavita", stage: "finished", date: "08-Aug-2026", title: "प्रेम का अहसास", snippet: "जब धड़कनें गीत गाने लगें...", content: "जब धड़कनें गीत गाने लगें,\nऔर हर नज़र में तू ही नज़र आए,\nसमझ लेना यही वो मोहब्बत है,\nजो रूह को रूह से मिलाए।" },
-              { id: 6, category: "kahani", stage: "finished", date: "06-Aug-2026", title: "चालाक लोमड़ी का सच", snippet: "जंगल के राजा ने एक दिन सभा बुलाई...", content: "जंगल के राजा ने एक दिन सभी जानवरों की सभा बुलाई। लोमड़ी ने अपनी चालाकी से सबका ध्यान खींचा..." }
-            ],
-            published: [
-              { id: 7, category: "kavita", stage: "published", date: "01-Aug-2026", title: "प्रकृति का संगीत", snippet: "नदियों की कलकल, हवा की सरसराहट...", content: "नदियों की कलकल, हवा की सरसराहट,\nपहाड़ों की ऊँचाई और वादियों की मुस्कुराहट।\nप्रकृति हमें सिखाती है निस्वार्थ प्रेम,\nजिसमें छुपा है जीवन का सारा रस।" }
-            ]
-          };
-
-          for (const stage of Object.keys(defaultWorks)) {
-            for (const item of defaultWorks[stage]) {
-              await setDoc(doc(db, "works", String(item.id)), item);
-            }
-          }
-          worksData = defaultWorks;
-        } else {
-          worksData = cloudWorks;
-        }
-
+        worksData = cloudWorks;
         renderTaskList();
       } catch (error) {
         console.error("Error loading works from cloud:", error);
       }
     }
 
-    let activeCategory = 'kavita';
-    let activeStage = 'published';
-    let currentSelectedId = 7;
-
-    const taskListContainer = document.getElementById('taskListContainer');
-    const workTitle = document.getElementById('workTitle');
-    const workContent = document.getElementById('workContent');
-    const workBadge = document.getElementById('workBadge');
-    const wordCountText = document.getElementById('wordCountText');
-    const actionGroup = document.getElementById('actionGroup');
-
-    // --- 3. CATEGORY & STAGE SWITCHING ---
     window.switchContentCategory = function(catKey) {
       activeCategory = catKey;
       document.querySelectorAll('.cat-pill').forEach(btn => btn.classList.remove('active'));
       document.getElementById(`cat-${catKey}`).classList.add('active');
 
+      populateSubCategories(catKey);
       renderTaskList();
       renderActionButtons();
+    }
+
+    function populateSubCategories(catKey, selectedSubCat = '') {
+      subCategorySelect.innerHTML = '';
+      const options = subCategoriesMap[catKey] || [{ id: 'general', label: 'General' }];
+
+      options.forEach(opt => {
+        const optionEl = document.createElement('option');
+        optionEl.value = opt.id;
+        optionEl.innerText = opt.label;
+        if (opt.id === selectedSubCat) optionEl.selected = true;
+        subCategorySelect.appendChild(optionEl);
+      });
+    }
+
+    window.updateSubCategory = function(val) {
+      const allStageItems = worksData[activeStage] || [];
+      const item = allStageItems.find(i => i.id === currentSelectedId);
+      if (item) {
+        item.subCategory = val;
+      }
     }
 
     window.switchStage = function(stageKey) {
@@ -917,7 +951,6 @@
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const dict = localDict[currentLang] || localDict.hi;
 
-      // Update UI static labels
       document.getElementById('currentSectionBadge').innerText = dict.currentSectionBadge;
       document.getElementById('labelSavedMenu').innerText = dict.labelSavedMenu;
       document.getElementById('labelWorksMenu').innerText = dict.labelWorksMenu;
@@ -948,6 +981,7 @@
         workContent.value = '';
         workTitle.disabled = true;
         workContent.disabled = true;
+        subCategorySelect.innerHTML = '';
         updateWordCount();
         return;
       }
@@ -1001,6 +1035,7 @@
     function loadWorkspaceContent(item) {
       workTitle.value = item.title || '';
       workContent.value = item.content || '';
+      populateSubCategories(activeCategory, item.subCategory || '');
       updateWordCount();
     }
 
@@ -1025,6 +1060,8 @@
         item.content = workContent.value;
         item.snippet = item.content.slice(0, 35).replace(/\n/g, ' ') + '...';
         item.stage = activeStage;
+        item.category = activeCategory;
+        item.subCategory = subCategorySelect.value;
 
         try {
           await setDoc(doc(db, "works", String(item.id)), item);
@@ -1049,6 +1086,8 @@
       itemToMove.content = workContent.value;
       itemToMove.snippet = itemToMove.content.slice(0, 35).replace(/\n/g, ' ') + '...';
       itemToMove.stage = targetStage;
+      itemToMove.category = activeCategory;
+      itemToMove.subCategory = subCategorySelect.value;
 
       try {
         await setDoc(doc(db, "works", String(itemToMove.id)), itemToMove);
@@ -1076,10 +1115,12 @@
       const newId = Date.now();
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const defaultTitle = currentLang === 'hi' ? "नई रचना" : "New Creation";
+      const defaultSubCat = (subCategoriesMap[activeCategory] && subCategoriesMap[activeCategory][0]) ? subCategoriesMap[activeCategory][0].id : 'general';
 
       const newItem = {
         id: newId,
         category: activeCategory,
+        subCategory: defaultSubCat,
         stage: 'draft',
         date: "Today",
         title: defaultTitle,
@@ -1097,7 +1138,6 @@
       }
     }
 
-    // --- 4. DYNAMIC AUTH HEADER ---
     function renderAuthHeader() {
       const container = document.getElementById('userAuthContainer');
       if (!container) return;
@@ -1119,15 +1159,6 @@
           <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
         </div>
       `;
-
-      const currentLang = localStorage.getItem('site_lang') || 'hi';
-      if (typeof translations !== 'undefined' && translations[currentLang]) {
-        const dict = translations[currentLang];
-        container.querySelectorAll('[data-lang-key]').forEach(el => {
-          const key = el.getAttribute('data-lang-key');
-          if (dict[key]) el.innerText = dict[key];
-        });
-      }
     }
 
     window.toggleUserDropdown = function(event) {
@@ -1143,58 +1174,18 @@
       window.location.href = 'login.html';
     }
 
-    // --- 5. UI EVENT LISTENERS ---
-    document.getElementById('sidebarLogoutBtn').addEventListener('click', (e) => {
-      e.preventDefault();
-      handleUserLogout();
-    });
-
     window.addEventListener('click', (e) => {
       const userMenuBtn = document.getElementById('userMenuBtn');
       const userDropdown = document.getElementById('userDropdown');
-      const otherLinksBtn = document.getElementById('otherLinksBtn');
-      const socialPopup = document.getElementById('socialPopup');
-
       if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
         userDropdown.classList.remove('show');
       }
-
-      if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
-        socialPopup.classList.remove('active');
-        otherLinksBtn.classList.remove('active');
-        const currentLang = localStorage.getItem('site_lang') || 'hi';
-        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
-        otherLinksBtn.innerText = dict ? dict.otherLinks : 'Other Links';
-      }
     });
 
-    const otherLinksBtn = document.getElementById('otherLinksBtn');
-    const socialPopup = document.getElementById('socialPopup');
-
-    otherLinksBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isActive = socialPopup.classList.toggle('active');
-      otherLinksBtn.classList.toggle('active');
-      const currentLang = localStorage.getItem('site_lang') || 'hi';
-      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
-      if (dict) {
-        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
-      } else {
-        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
-      }
-    });
-
-    // Re-render when language changes globally without wiping user input
-    window.addEventListener('languageChanged', () => {
-      renderAuthHeader();
-      renderTaskList();
-      renderActionButtons();
-    });
-
-    // Initial Load
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
       loadWorksFromCloud().then(() => {
+        populateSubCategories(activeCategory);
         switchStage('published');
       });
     });
