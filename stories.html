@@ -205,6 +205,8 @@
       border-radius: 16px;
       padding: 24px;
       height: fit-content;
+      max-height: 520px;
+      overflow-y: auto;
     }
 
     .story-list-card h2 {
@@ -259,6 +261,7 @@
       text-align: center;
       min-height: 400px;
       box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      position: relative;
     }
 
     .placeholder-text {
@@ -354,6 +357,46 @@
       border-color: #d4a017;
       color: #ffffff;
     }
+
+    /* ---------------- CLOUD COMMENT SECTION POPUP ---------------- */
+    .comment-cloud-modal {
+      display: none;
+      position: absolute;
+      bottom: 25px;
+      right: 32px;
+      width: 90%;
+      max-width: 360px;
+      background: #1e1e2d;
+      border: 2px solid #d4a017;
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+      z-index: 50;
+      animation: fadeInCloud 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .comment-cloud-modal.show { display: block; }
+    @keyframes fadeInCloud {
+      from { opacity: 0; transform: scale(0.8) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .cloud-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 6px;
+    }
+    .cloud-header h4 { color: #d4a017; font-size: 0.88rem; }
+    .cloud-close-btn { background: none; border: none; color: #9ca3af; font-size: 1rem; cursor: pointer; }
+    .cloud-close-btn:hover { color: #ffffff; }
+    .cloud-comments-list {
+      max-height: 110px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; padding-right: 4px;
+    }
+    .comment-bubble { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); padding: 6px 10px; border-radius: 12px; font-size: 0.78rem; }
+    .comment-author { color: #d4a017; font-weight: 700; margin-bottom: 2px; font-size: 0.75rem; }
+    .comment-text { color: #e5e7eb; }
+    .cloud-input-group { display: flex; gap: 6px; }
+    .cloud-input { flex: 1; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); padding: 6px 10px; border-radius: 18px; color: #ffffff; font-size: 0.8rem; outline: none; }
+    .cloud-input:focus { border-color: #d4a017; }
+    .cloud-submit-btn { background: #d4a017; color: #0d0d15; border: none; padding: 6px 14px; border-radius: 18px; font-weight: 700; font-size: 0.78rem; cursor: pointer; }
+    .cloud-submit-btn:hover { background: #b8860b; }
 
     /* ---------------- STORY MODAL READER ---------------- */
     .story-modal {
@@ -610,11 +653,7 @@
   <main class="stories-container">
     <div class="story-list-card">
       <h2 data-lang-key="storyListTitle">कहानी सूची</h2>
-      <ul class="story-list" id="storyList">
-        <li class="story-item" onclick="showStory('fox', this)" id="item-fox">1. The Cunning Fox (चालाक लोमड़ी)</li>
-        <li class="story-item" onclick="showStory('crow', this)" id="item-crow">2. The Thirsty Crow (प्यासा कौआ)</li>
-        <li class="story-item" onclick="showStory('lion', this)" id="item-lion">3. The Lion and the Mouse (शेर और चूहा)</li>
-      </ul>
+      <ul class="story-list" id="storyList"></ul>
     </div>
 
     <div class="preview-card">
@@ -634,11 +673,27 @@
         </div>
 
         <div class="story-actions-bar">
-          <button class="story-act-btn" onclick="handleProtectedStoryAction('Saved')">🔖 <span data-lang-key="btnSave">सहेजें</span></button>
+          <button class="story-act-btn" onclick="handleProtectedStoryAction()">🔖 <span data-lang-key="btnSave">सहेजें</span></button>
           <button class="story-act-btn" onclick="handleShareStory()">🔗 <span data-lang-key="btnShare">साझा करें</span></button>
-          <button class="story-act-btn" onclick="handleCommentStory()">💬 <span data-lang-key="btnComment">टिप्पणी</span></button>
+          <button class="story-act-btn" onclick="toggleCommentCloud(event)">💬 <span data-lang-key="btnComment">टिप्पणी</span></button>
         </div>
       </div>
+
+      <!-- Cloud Shape Comment Section Popup -->
+      <div class="comment-cloud-modal" id="storyCommentCloud" onclick="event.stopPropagation()">
+        <div class="cloud-header">
+          <h4>💬 कहानी चर्चा (Comments)</h4>
+          <button class="cloud-close-btn" onclick="closeCommentCloud(event)">✕</button>
+        </div>
+        <div class="cloud-comments-list" id="storyCommentsList">
+          <p style="font-size:0.78rem; color:#9ca3af; text-align:center;">लोड हो रहा है...</p>
+        </div>
+        <div class="cloud-input-group">
+          <input type="text" class="cloud-input" id="storyCommentInput" placeholder="अपनी टिप्पणी लिखें...">
+          <button class="cloud-submit-btn" onclick="postStoryComment(event)">भेजें</button>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -685,25 +740,33 @@
     &copy; 2026 काव्य सागर और कहानी. All rights reserved.
   </footer>
 
-  <script>
+  <script type="module">
+    import { db, collection, getDocs, setDoc, doc } from "./firebase.js";
+
     // --- 1. LOCAL TRANSLATION DICTIONARY ---
     const localDict = {
       hi: {
         storyListTitle: "कहानी सूची",
         storyPlaceholder: "पढ़ने के लिए बाईं ओर से किसी कहानी पर क्लिक करें।",
         readStoryBtn: "पूरी कहानी पढ़ें →",
-        summaryHeading: "सारांश (Summary)"
+        summaryHeading: "सारांश (Summary)",
+        btnSave: "सहेजें",
+        btnShare: "साझा करें",
+        btnComment: "टिप्पणी"
       },
       en: {
         storyListTitle: "Story Collection",
         storyPlaceholder: "Click on any story from the left to read preview.",
         readStoryBtn: "Read Full Story →",
-        summaryHeading: "Summary"
+        summaryHeading: "Summary",
+        btnSave: "Save",
+        btnShare: "Share",
+        btnComment: "Comment"
       }
     };
 
-    // --- 2. BILINGUAL STORY DATASET WITH FULL CONTENT ---
-    const storiesData = {
+    // --- 2. BILINGUAL STORY DATASET ---
+    const baseStoriesData = {
       fox: {
         hi: {
           listLabel: "1. चालाक लोमड़ी (The Cunning Fox)",
@@ -748,9 +811,39 @@
       }
     };
 
+    let storiesData = JSON.parse(JSON.stringify(baseStoriesData));
     let selectedStoryKey = 'fox';
+    const currentAuthorName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
 
-    function renderStoryList() {
+    // --- FETCH PUBLISHED STORIES FROM FIREBASE ---
+    async function loadStoriesFromCloud() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "works"));
+        storiesData = JSON.parse(JSON.stringify(baseStoriesData));
+
+        querySnapshot.forEach((docSnap) => {
+          const item = docSnap.data();
+          if (item.stage === 'published' && item.category === 'kahani') {
+            const storyKey = 'cloud_' + docSnap.id;
+            const title = item.title || 'Untitled Story';
+            const content = item.content || '';
+            const summary = content.slice(0, 180) + '...';
+
+            storiesData[storyKey] = {
+              hi: { listLabel: title, title: title, summary: summary, fullStory: content },
+              en: { listLabel: title, title: title, summary: summary, fullStory: content }
+            };
+          }
+        });
+
+        renderStoryList();
+      } catch (error) {
+        console.error("Error loading stories from cloud:", error);
+        renderStoryList();
+      }
+    }
+
+    window.renderStoryList = function() {
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const dict = localDict[currentLang] || localDict.hi;
 
@@ -758,20 +851,31 @@
       document.querySelector('[data-lang-key="storyPlaceholder"]').innerText = dict.storyPlaceholder;
       document.getElementById('btnOpenModal').innerText = dict.readStoryBtn;
       document.querySelector('[data-lang-key="summaryHeading"]').innerText = dict.summaryHeading;
+      document.querySelector('[data-lang-key="btnSave"]').innerText = dict.btnSave;
+      document.querySelector('[data-lang-key="btnShare"]').innerText = dict.btnShare;
+      document.querySelector('[data-lang-key="btnComment"]').innerText = dict.btnComment;
 
-      document.getElementById('item-fox').innerText = storiesData.fox[currentLang].listLabel;
-      document.getElementById('item-crow').innerText = storiesData.crow[currentLang].listLabel;
-      document.getElementById('item-lion').innerText = storiesData.lion[currentLang].listLabel;
+      const listContainer = document.getElementById('storyList');
+      listContainer.innerHTML = '';
 
-      if (selectedStoryKey) {
-        const story = storiesData[selectedStoryKey];
+      Object.keys(storiesData).forEach((key) => {
+        const story = storiesData[key];
         const localized = story[currentLang] || story.hi;
-        document.getElementById('storyTitle').innerText = localized.title;
-        document.getElementById('storySummary').innerText = localized.summary;
+        const li = document.createElement('li');
+        li.className = `story-item ${key === selectedStoryKey ? 'active' : ''}`;
+        li.id = `item_${key}`;
+        li.innerText = localized.listLabel;
+        li.onclick = () => showStory(key, li);
+        listContainer.appendChild(li);
+      });
+
+      if (!storiesData[selectedStoryKey]) {
+        selectedStoryKey = Object.keys(storiesData)[0];
       }
+      showStory(selectedStoryKey, document.getElementById(`item_${selectedStoryKey}`));
     }
 
-    function showStory(key, el) {
+    window.showStory = function(key, el) {
       selectedStoryKey = key;
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const story = storiesData[key];
@@ -787,10 +891,12 @@
       const localized = story[currentLang] || story.hi;
       document.getElementById('storyTitle').innerText = localized.title;
       document.getElementById('storySummary').innerText = localized.summary;
+
+      loadStoryComments();
     }
 
     // Modal Interactive Logic
-    function openFullStoryModal() {
+    window.openFullStoryModal = function() {
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const story = storiesData[selectedStoryKey];
       if (!story) return;
@@ -801,18 +907,18 @@
       document.getElementById('storyModal').classList.add('show');
     }
 
-    function closeFullStoryModal() {
+    window.closeFullStoryModal = function() {
       document.getElementById('storyModal').classList.remove('show');
     }
 
-    function closeStoryModalOnOutside(e) {
+    window.closeStoryModalOnOutside = function(e) {
       if (e.target.id === 'storyModal') {
         closeFullStoryModal();
       }
     }
 
-    // Protected Actions
-    function handleProtectedStoryAction(actionName) {
+    // --- CLOUD SAVE TO FIREBASE ---
+    window.handleProtectedStoryAction = async function() {
       const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
       if (!isLoggedIn) {
         const currentLang = localStorage.getItem('site_lang') || 'hi';
@@ -826,20 +932,109 @@
         }
         return;
       }
-      alert(`कहानी सफलतापूर्वक सहेजी गई! (Story ${actionName} successfully!)`);
+
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const story = storiesData[selectedStoryKey];
+      const localized = story[currentLang] || story.hi;
+
+      try {
+        const saveId = 'saved_story_' + selectedStoryKey;
+        const savedDoc = {
+          id: saveId,
+          user: currentAuthorName,
+          category: 'kahani',
+          title: localized.title,
+          body: localized.fullStory,
+          pageUrl: 'stories.html',
+          date: new Date().toLocaleDateString()
+        };
+        await setDoc(doc(db, "saved_items", saveId), savedDoc);
+        alert("कहानी सफलतापूर्वक सहेजी गई! (Story Saved successfully!)");
+      } catch (err) {
+        console.error("Error saving story:", err);
+      }
     }
 
-    function handleShareStory() {
+    // --- CLOUD COMMENTS SECTION ---
+    window.toggleCommentCloud = function(e) {
+      e.stopPropagation();
+      document.getElementById('storyCommentCloud').classList.toggle('show');
+    }
+
+    window.closeCommentCloud = function(e) {
+      e.stopPropagation();
+      document.getElementById('storyCommentCloud').classList.remove('show');
+    }
+
+    async function loadStoryComments() {
+      const cardId = 'story_' + selectedStoryKey;
+      const listEl = document.getElementById('storyCommentsList');
+      if (!listEl) return;
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "comments"));
+        let html = '';
+        let count = 0;
+
+        querySnapshot.forEach((docSnap) => {
+          const c = docSnap.data();
+          if (c.cardId === cardId) {
+            count++;
+            html += `
+              <div class="comment-bubble">
+                <div class="comment-author">${c.author}</div>
+                <div class="comment-text">${c.text}</div>
+              </div>
+            `;
+          }
+        });
+
+        listEl.innerHTML = count > 0 ? html : `<p style="font-size:0.78rem; color:#9ca3af; text-align:center;">कोई टिप्पणी नहीं है। पहली टिप्पणी लिखें!</p>`;
+      } catch (err) {
+        console.error("Error loading story comments:", err);
+      }
+    }
+
+    window.postStoryComment = async function(e) {
+      e.stopPropagation();
+      const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
+      if (!isLoggedIn) {
+        alert("टिप्पणी करने के लिए कृपया पहले लॉगिन करें। (Please log in to comment.)");
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const inputEl = document.getElementById('storyCommentInput');
+      const text = inputEl.value.trim();
+      if (!text) return;
+
+      const cardId = 'story_' + selectedStoryKey;
+      const commentId = 'com_story_' + Date.now();
+      const newComment = {
+        id: commentId,
+        cardId: cardId,
+        author: currentAuthorName,
+        text: text,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        await setDoc(doc(db, "comments", commentId), newComment);
+        inputEl.value = '';
+        loadStoryComments();
+      } catch (err) {
+        console.error("Error posting story comment:", err);
+        alert("Failed to post comment.");
+      }
+    }
+
+    window.handleShareStory = function() {
       if (navigator.clipboard) {
         navigator.clipboard.writeText(window.location.href);
         alert('कहानी का लिंक कॉपी हो गया है! (Story link copied!)');
       } else {
         alert('साझा करें (Share link triggered)');
       }
-    }
-
-    function handleCommentStory() {
-      alert('टिप्पणी अनुभाग जल्द ही आ रहा है! (Comments section opening soon!)');
     }
 
     // Dynamic Auth Header
@@ -951,8 +1146,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
-      renderStoryList();
-      showStory('fox', document.getElementById('item-fox'));
+      loadStoriesFromCloud();
     });
   </script>
 
