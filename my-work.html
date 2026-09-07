@@ -366,6 +366,7 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      position: relative;
     }
 
     .task-card:hover {
@@ -402,6 +403,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      padding-right: 24px;
     }
 
     .task-item-snippet {
@@ -410,6 +412,26 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    /* Task Delete Button */
+    .task-delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      opacity: 0.6;
+      transition: opacity 0.2s, background 0.2s;
+    }
+    .task-delete-btn:hover {
+      opacity: 1;
+      background: rgba(239, 68, 68, 0.15);
     }
 
     .workspace-column {
@@ -433,7 +455,7 @@
     }
 
     .editor-title-input {
-      width: 50%;
+      width: 45%;
       background: transparent;
       border: none;
       color: #ffffff;
@@ -442,8 +464,8 @@
       outline: none;
     }
 
-    /* Sub-category dropdown selector */
-    .subcat-select {
+    /* Sub-category dropdown or Blank text box for Title Name */
+    .subcat-select, .subcat-input {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(212, 160, 23, 0.4);
       color: #d4a017;
@@ -452,11 +474,13 @@
       font-size: 0.85rem;
       font-weight: 600;
       outline: none;
-      cursor: pointer;
     }
     .subcat-select option {
       background: #181824;
       color: #f3f4f6;
+    }
+    .subcat-input::placeholder {
+      color: rgba(212, 160, 23, 0.6);
     }
 
     .status-badge {
@@ -716,10 +740,8 @@
               <div class="workspace-top-bar">
                 <input type="text" id="workTitle" class="editor-title-input" placeholder="शीर्षक यहाँ लिखें...">
                 
-                <!-- Dynamic Sub-category Selector Dropdown -->
-                <select id="subCategorySelect" class="subcat-select" onchange="updateSubCategory(this.value)">
-                  <!-- Options will change dynamically depending on the active category -->
-                </select>
+                <!-- Dynamic Sub-category Selector or Blank Input Box -->
+                <div id="subCategoryContainer"></div>
 
                 <span id="workBadge" class="status-badge badge-draft">Draft</span>
               </div>
@@ -765,7 +787,7 @@
   </footer>
 
   <script type="module">
-    import { db, collection, getDocs, doc, setDoc } from "./firebase.js";
+    import { db, collection, getDocs, doc, setDoc, deleteDoc } from "./firebase.js";
 
     // --- 1. LOCAL TRANSLATION DICTIONARY ---
     const localDict = {
@@ -835,7 +857,7 @@
     const taskListContainer = document.getElementById('taskListContainer');
     const workTitle = document.getElementById('workTitle');
     const workContent = document.getElementById('workContent');
-    const subCategorySelect = document.getElementById('subCategorySelect');
+    const subCategoryContainer = document.getElementById('subCategoryContainer');
     const workBadge = document.getElementById('workBadge');
     const wordCountText = document.getElementById('wordCountText');
     const actionGroup = document.getElementById('actionGroup');
@@ -843,7 +865,7 @@
     // Get currently logged-in author name
     const currentAuthorName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
 
-    // Sub-category mappings for dropdowns
+    // Sub-category mappings for poems and quotes, blank inputs for stories/diaries
     const subCategoriesMap = {
       kavita: [
         { id: 'love', label: 'Love (प्रेम)' },
@@ -858,12 +880,6 @@
         { id: 'lovebond', label: 'Love, Bond & Gratitude' },
         { id: 'deepthought', label: 'Deep Thought & Wisdom' },
         { id: 'success', label: 'Success & Hardwork' }
-      ],
-      kahani: [
-        { id: 'general_story', label: 'General Story (सामान्य कहानी)' }
-      ],
-      diary: [
-        { id: 'general_diary', label: 'General Diary (डायरी)' }
       ]
     };
 
@@ -874,9 +890,8 @@
 
         querySnapshot.forEach((docSnap) => {
           const data = docSnap.data();
-          // Only pull works created by this specific logged-in user
-          // (Admin can see all, or each user sees their own works)
           const author = data.author || 'Admin';
+          // Only pull works created by this specific logged-in user (new accounts start empty)
           if (currentAuthorName.toLowerCase() === 'admin' || author.toLowerCase() === currentAuthorName.toLowerCase()) {
             const stage = data.stage && cloudWorks[data.stage] ? data.stage : 'draft';
             cloudWorks[stage].push({ id: docSnap.id, ...data });
@@ -895,22 +910,40 @@
       document.querySelectorAll('.cat-pill').forEach(btn => btn.classList.remove('active'));
       document.getElementById(`cat-${catKey}`).classList.add('active');
 
-      populateSubCategories(catKey);
+      renderSubCategoryInput(catKey);
       renderTaskList();
       renderActionButtons();
     }
 
-    function populateSubCategories(catKey, selectedSubCat = '') {
-      subCategorySelect.innerHTML = '';
-      const options = subCategoriesMap[catKey] || [{ id: 'general', label: 'General' }];
+    function renderSubCategoryInput(catKey, selectedVal = '') {
+      subCategoryContainer.innerHTML = '';
 
-      options.forEach(opt => {
-        const optionEl = document.createElement('option');
-        optionEl.value = opt.id;
-        optionEl.innerText = opt.label;
-        if (opt.id === selectedSubCat) optionEl.selected = true;
-        subCategorySelect.appendChild(optionEl);
-      });
+      if (subCategoriesMap[catKey]) {
+        // Dropdown for Poems & Quotes
+        const selectEl = document.createElement('select');
+        selectEl.id = 'subCategorySelect';
+        selectEl.className = 'subcat-select';
+        selectEl.onchange = function() { updateSubCategory(this.value); };
+
+        subCategoriesMap[catKey].forEach(opt => {
+          const optionEl = document.createElement('option');
+          optionEl.value = opt.id;
+          optionEl.innerText = opt.label;
+          if (opt.id === selectedVal) optionEl.selected = true;
+          selectEl.appendChild(optionEl);
+        });
+        subCategoryContainer.appendChild(selectEl);
+      } else {
+        // Blank text box for Stories & Diaries category title naming
+        const inputEl = document.createElement('input');
+        inputEl.type = 'text';
+        inputEl.id = 'subCategoryInput';
+        inputEl.className = 'subcat-input';
+        inputEl.placeholder = catKey === 'kahani' ? 'कहानी उप-श्रेणी/शीर्षक...' : 'डायरी शीर्षक...';
+        inputEl.value = selectedVal;
+        inputEl.oninput = function() { updateSubCategory(this.value); };
+        subCategoryContainer.appendChild(inputEl);
+      }
     }
 
     window.updateSubCategory = function(val) {
@@ -989,7 +1022,7 @@
         workContent.value = '';
         workTitle.disabled = true;
         workContent.disabled = true;
-        subCategorySelect.innerHTML = '';
+        subCategoryContainer.innerHTML = '';
         updateWordCount();
         return;
       }
@@ -1009,6 +1042,7 @@
           </div>
           <div class="task-item-title">${item.title || 'Untitled'}</div>
           <div class="task-item-snippet">${item.snippet || '...'}</div>
+          <button class="task-delete-btn" onclick="deleteWorkItem(event, '${item.id}')" title="Delete Task">🗑️</button>
         `;
         taskListContainer.appendChild(taskCard);
       });
@@ -1043,7 +1077,7 @@
     function loadWorkspaceContent(item) {
       workTitle.value = item.title || '';
       workContent.value = item.content || '';
-      populateSubCategories(activeCategory, item.subCategory || '');
+      renderSubCategoryInput(activeCategory, item.subCategory || '');
       updateWordCount();
     }
 
@@ -1058,6 +1092,14 @@
 
     workContent.addEventListener('input', updateWordCount);
 
+    function getSubCatValue() {
+      const sel = document.getElementById('subCategorySelect');
+      const inp = document.getElementById('subCategoryInput');
+      if (sel) return sel.value;
+      if (inp) return inp.value.trim();
+      return '';
+    }
+
     window.saveCurrentWork = async function() {
       const allStageItems = worksData[activeStage] || [];
       const item = allStageItems.find(i => i.id === currentSelectedId);
@@ -1069,7 +1111,7 @@
         item.snippet = item.content.slice(0, 35).replace(/\n/g, ' ') + '...';
         item.stage = activeStage;
         item.category = activeCategory;
-        item.subCategory = subCategorySelect.value;
+        item.subCategory = getSubCatValue();
         item.author = currentAuthorName;
 
         try {
@@ -1096,7 +1138,7 @@
       itemToMove.snippet = itemToMove.content.slice(0, 35).replace(/\n/g, ' ') + '...';
       itemToMove.stage = targetStage;
       itemToMove.category = activeCategory;
-      itemToMove.subCategory = subCategorySelect.value;
+      itemToMove.subCategory = getSubCatValue();
       itemToMove.author = currentAuthorName;
 
       try {
@@ -1121,11 +1163,27 @@
       }
     }
 
+    // --- Delete Work Item ---
+    window.deleteWorkItem = async function(e, id) {
+      e.stopPropagation();
+      const confirmDel = confirm("क्या आप वाकई इस रचना को हटाना चाहते हैं? (Are you sure you want to delete this work?)");
+      if (!confirmDel) return;
+
+      try {
+        await deleteDoc(doc(db, "works", String(id)));
+        await loadWorksFromCloud();
+        alert("रचना सफलतापूर्वक हटा दी गई है! (Work deleted successfully!)");
+      } catch (error) {
+        console.error("Error deleting work from cloud:", error);
+        alert("Failed to delete work.");
+      }
+    }
+
     window.createNewWork = async function() {
       const newId = Date.now();
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const defaultTitle = currentLang === 'hi' ? "नई रचना" : "New Creation";
-      const defaultSubCat = (subCategoriesMap[activeCategory] && subCategoriesMap[activeCategory][0]) ? subCategoriesMap[activeCategory][0].id : 'general';
+      const defaultSubCat = (subCategoriesMap[activeCategory] && subCategoriesMap[activeCategory][0]) ? subCategoriesMap[activeCategory][0].id : '';
 
       const newItem = {
         id: newId,
@@ -1196,7 +1254,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
       loadWorksFromCloud().then(() => {
-        populateSubCategories(activeCategory);
+        renderSubCategoryInput(activeCategory);
         switchStage('published');
       });
     });
