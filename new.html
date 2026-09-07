@@ -221,6 +221,7 @@
       justify-content: space-between;
       background: #1b1b22;
       overflow-y: auto;
+      position: relative;
     }
 
     .viewer-top-row {
@@ -272,6 +273,46 @@
       margin-bottom: 25px;
       text-align: center;
     }
+
+    /* ---------------- CLOUD COMMENT SECTION POPUP ---------------- */
+    .comment-cloud-modal {
+      display: none;
+      position: absolute;
+      bottom: 25px;
+      right: 35px;
+      width: 90%;
+      max-width: 360px;
+      background: #1e1e2d;
+      border: 2px solid #d4a017;
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+      z-index: 50;
+      animation: fadeInCloud 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .comment-cloud-modal.show { display: block; }
+    @keyframes fadeInCloud {
+      from { opacity: 0; transform: scale(0.8) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .cloud-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 6px;
+    }
+    .cloud-header h4 { color: #d4a017; font-size: 0.88rem; }
+    .cloud-close-btn { background: none; border: none; color: #9ca3af; font-size: 1rem; cursor: pointer; }
+    .cloud-close-btn:hover { color: #ffffff; }
+    .cloud-comments-list {
+      max-height: 110px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; padding-right: 4px;
+    }
+    .comment-bubble { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); padding: 6px 10px; border-radius: 12px; font-size: 0.78rem; }
+    .comment-author { color: #d4a017; font-weight: 700; margin-bottom: 2px; font-size: 0.75rem; }
+    .comment-text { color: #e5e7eb; }
+    .cloud-input-group { display: flex; gap: 6px; }
+    .cloud-input { flex: 1; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); padding: 6px 10px; border-radius: 18px; color: #ffffff; font-size: 0.8rem; outline: none; }
+    .cloud-input:focus { border-color: #d4a017; }
+    .cloud-submit-btn { background: #d4a017; color: #0d0d15; border: none; padding: 6px 14px; border-radius: 18px; font-weight: 700; font-size: 0.78rem; cursor: pointer; }
+    .cloud-submit-btn:hover { background: #b8860b; }
 
     .viewer-actions-bar {
       display: flex;
@@ -400,7 +441,7 @@
               <div class="author-heading" id="viewAuthor">~ Author Name</div>
               <div class="post-main-title" id="viewTitle">Post Title</div>
             </div>
-            <button class="like-btn" onclick="handleProtectedLike(this)" title="Like Post">
+            <button class="like-btn" id="viewerLikeBtn" onclick="handleProtectedLike(this)" title="Like Post">
               <svg viewBox="0 0 24 24">
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
               </svg>
@@ -411,10 +452,26 @@
 
           <!-- Bottom Action Bar -->
           <div class="viewer-actions-bar">
-            <button class="action-badge-btn" onclick="handleProtectedAction('Save')">🔖 <span data-lang-key="btnSave">सहेजें (Save)</span></button>
+            <button class="action-badge-btn" onclick="handleProtectedSave()">🔖 <span data-lang-key="btnSave">सहेजें (Save)</span></button>
             <button class="action-badge-btn" onclick="handleShareAction()">🔗 <span data-lang-key="btnShare">साझा करें (Share)</span></button>
-            <button class="action-badge-btn" onclick="handleCommentAction()">💬 <span data-lang-key="btnComment">टिप्पणी (Comment)</span></button>
+            <button class="action-badge-btn" onclick="toggleCommentCloud(event)">💬 <span data-lang-key="btnComment">टिप्पणी (Comment)</span></button>
           </div>
+
+          <!-- Cloud Shape Comment Section Popup -->
+          <div class="comment-cloud-modal" id="latestCommentCloud" onclick="event.stopPropagation()">
+            <div class="cloud-header">
+              <h4>💬 पोस्ट चर्चा (Comments)</h4>
+              <button class="cloud-close-btn" onclick="closeCommentCloud(event)">✕</button>
+            </div>
+            <div class="cloud-comments-list" id="latestCommentsList">
+              <p style="font-size:0.78rem; color:#9ca3af; text-align:center;">लोड हो रहा है...</p>
+            </div>
+            <div class="cloud-input-group">
+              <input type="text" class="cloud-input" id="latestCommentInput" placeholder="अपनी टिप्पणी लिखें...">
+              <button class="cloud-submit-btn" onclick="postLatestComment(event)">भेजें</button>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -449,7 +506,9 @@
     &copy; 2026 काव्य सागर और कहानी. All rights reserved.
   </footer>
 
-  <script>
+  <script type="module">
+    import { db, collection, getDocs, setDoc, doc } from "./firebase.js";
+
     // --- 1. LOCAL TRANSLATION DICTIONARY ---
     const localDict = {
       hi: {
@@ -474,47 +533,65 @@
       }
     };
 
-    // --- 2. BILINGUAL LATEST POSTS DATABASE ---
-    const latestPostsDatabase = {
-      kavita: [
-        {
-          id: "kp1",
-          hi: { title: "कविता 1 - प्रकृति का सौंदर्य", author: "~ कुमार", body: "हरियाली की चादर ओढ़े धरती मुस्काती है,\nसुबह की पहली किरण नया सवेरा लाती है।" },
-          en: { title: "Poem 1 - Beauty of Nature", author: "~ Kumar", body: "Draped in lush green, the earth smiles with grace,\nThe first morning ray brings a new beginning to embrace." }
-        },
-        {
-          id: "kp2",
-          hi: { title: "कविता 2 - संध्या की बेला", author: "~ Dubey", body: "सूरज ढलता है तो छा जाती है खामोशी,\nदिल के कोने में जगती है कोई पुरानी ख़ामोशी।" },
-          en: { title: "Poem 2 - Evening Twilight", author: "~ Dubey", body: "As the sun sets, a gentle silence takes hold,\nAwakening memories within the heart's fold." }
-        }
-      ],
-      kahani: [
-        {
-          id: "tp1",
-          hi: { title: "कहानी 1 - चालाक लोमड़ी", author: "~ Dubey", body: "एक भूखी लोमड़ी भोजन की तलाश में जंगल में भटक रही थी...\nकौए और लोमड़ी की यह पुरानी कहानी सदा सीख देती है।" },
-          en: { title: "Story 1 - The Cunning Fox", author: "~ Dubey", body: "A hungry fox was wandering through the forest in search of food...\nThis classic tale of the crow and fox teaches a timeless moral." }
-        }
-      ],
-      diary: [
-        {
-          id: "dp1",
-          hi: { title: "डायरी 1 - शांत सुबह", author: "~ कुमार", body: "आज सुबह बालकनी में चाय पीते हुए महसूस हुआ\nकि जीवन की असली ख़ुशी सादगी में है।" },
-          en: { title: "Diary 1 - Peaceful Morning", author: "~ Kumar", body: "Sipping tea on the balcony this morning made me realize\nthat true joy in life resides in simplicity." }
-        }
-      ],
-      quotes: [
-        {
-          id: "qp1",
-          hi: { title: "प्रेरणा 1 - कड़ी मेहनत", author: "~ कुमार", body: "“मेहनत करने वालों की कभी हार नहीं होती।”" },
-          en: { title: "Inspiration 1 - Hard Work", author: "~ Kumar", body: "“Those who put in hard work never face defeat.”" }
-        }
-      ]
+    let latestPostsDatabase = {
+      kavita: [],
+      kahani: [],
+      diary: [],
+      quotes: []
     };
 
     let activeCategory = 'kavita';
     let selectedPostId = null;
+    const currentAuthorName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
 
-    function switchCategory(catKey) {
+    // --- FETCH RECENT WORKS FROM FIREBASE (Within 2 Days / 48 Hours) ---
+    async function loadLatestPostsFromCloud() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "works"));
+        const cloudPosts = { kavita: [], kahani: [], diary: [], quotes: [] };
+        
+        const now = Date.now();
+        const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+
+        querySnapshot.forEach((docSnap) => {
+          const item = docSnap.data();
+          
+          // Check if published
+          if (item.stage === 'published') {
+            // Check 2-day freshness window (item.id or fallback timestamp)
+            const itemTime = Number(item.id) || now;
+            if ((now - itemTime) <= twoDaysInMs) {
+              const mappedCat = mapCategoryToLatestTab(item.category);
+              if (mappedCat && cloudPosts[mappedCat]) {
+                cloudPosts[mappedCat].push({
+                  id: docSnap.id,
+                  title: item.title || 'Untitled',
+                  author: `~ ${item.author || 'Admin'}`,
+                  body: item.content || '',
+                  subCategory: item.subCategory || ''
+                });
+              }
+            }
+          }
+        });
+
+        latestPostsDatabase = cloudPosts;
+        renderPostList();
+      } catch (error) {
+        console.error("Error loading latest posts from cloud:", error);
+        renderPostList();
+      }
+    }
+
+    function mapCategoryToLatestTab(cat) {
+      if (cat === 'kavita') return 'kavita';
+      if (cat === 'kahani') return 'kahani';
+      if (cat === 'diary') return 'diary';
+      if (cat === 'prerna') return 'quotes';
+      return 'kavita';
+    }
+
+    window.switchCategory = function(catKey) {
       activeCategory = catKey;
       selectedPostId = null;
 
@@ -524,7 +601,7 @@
       renderPostList();
     }
 
-    function renderPostList() {
+    window.renderPostList = function() {
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const dict = localDict[currentLang] || localDict.hi;
 
@@ -539,7 +616,10 @@
       listContainer.innerHTML = '';
 
       if (posts.length === 0) {
-        listContainer.innerHTML = `<p style="color:#6b7280; font-size:0.85rem; text-align:center; padding:20px 5px;">No posts available.</p>`;
+        listContainer.innerHTML = `<p style="color:#6b7280; font-size:0.85rem; text-align:center; padding:20px 5px;">No recent posts (last 2 days).</p>`;
+        document.getElementById('viewAuthor').innerText = "~";
+        document.getElementById('viewTitle').innerText = "No post selected";
+        document.getElementById('viewBody').innerText = "There are no published posts within the last 48 hours in this category.";
         return;
       }
 
@@ -548,13 +628,12 @@
       }
 
       posts.forEach(post => {
-        const content = post[currentLang] || post.hi;
         const oval = document.createElement('div');
         oval.className = `post-oval-item ${post.id === selectedPostId ? 'active' : ''}`;
         oval.onclick = () => selectPost(post.id);
 
         oval.innerHTML = `
-          <span class="item-title-text">${content.title}</span>
+          <span class="item-title-text">${post.title}</span>
           <span style="color:#d4a017; font-size:0.8rem;">›</span>
         `;
         listContainer.appendChild(oval);
@@ -580,73 +659,15 @@
     }
 
     function loadPostToViewer(post) {
-      const currentLang = localStorage.getItem('site_lang') || 'hi';
-      const content = post[currentLang] || post.hi;
-
-      document.getElementById('viewAuthor').innerText = content.author;
-      document.getElementById('viewTitle').innerText = content.title;
-      document.getElementById('viewBody').innerText = content.body;
+      document.getElementById('viewAuthor').innerText = post.author;
+      document.getElementById('viewTitle').innerText = post.title;
+      document.getElementById('viewBody').innerText = post.body;
+      document.getElementById('viewerLikeBtn').classList.remove('liked');
+      loadLatestComments();
     }
 
-    // --- AUTH HEADER & LOGOUT ---
-    function renderAuthHeader() {
-      const container = document.getElementById('userAuthContainer');
-      if (!container) return;
-
-      const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
-      const currentLang = localStorage.getItem('site_lang') || 'hi';
-
-      if (isLoggedIn) {
-        const rawName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
-        const userName = rawName.trim();
-        const userInitial = userName.charAt(0).toUpperCase() || 'A';
-
-        container.innerHTML = `
-          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
-            <span class="avatar-icon">${userInitial}</span>
-            <span>${userName}</span>
-            <small>▼</small>
-          </button>
-          <div class="dropdown-content" id="userDropdown">
-            <a href="profile.html" data-lang-key="myProfile">My Profile</a>
-            <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
-            <a href="my-works.html" data-lang-key="myWorks">My Works</a>
-            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
-            <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
-          </div>
-        `;
-      } else {
-        const guestLabel = currentLang === 'hi' ? 'अतिथि (Guest)' : 'Guest';
-        const signInLabel = currentLang === 'hi' ? 'साइन इन करें' : 'Sign In';
-
-        container.innerHTML = `
-          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
-            <span class="avatar-icon guest-avatar">G</span>
-            <span>${guestLabel}</span>
-            <small>▼</small>
-          </button>
-          <div class="dropdown-content" id="userDropdown">
-            <a href="login.html" style="color:#d4a017; font-weight:600;">🔑 ${signInLabel}</a>
-            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
-          </div>
-        `;
-      }
-    }
-
-    function toggleUserDropdown(event) {
-      event.stopPropagation();
-      const dropdown = document.getElementById('userDropdown');
-      if (dropdown) dropdown.classList.toggle('show');
-    }
-
-    function handleUserLogout() {
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('userName');
-      sessionStorage.clear();
-      window.location.reload();
-    }
-
-    function handleProtectedLike(btn) {
+    // --- CLOUD SAVE TO FIREBASE ---
+    window.handleProtectedLike = async function(btn) {
       const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
       if (!isLoggedIn) {
         alert('Please log in to like this post.');
@@ -654,29 +675,120 @@
         return;
       }
       btn.classList.toggle('liked');
+      handleProtectedSave();
     }
 
-    function handleProtectedAction(actionName) {
+    window.handleProtectedSave = async function() {
       const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
       if (!isLoggedIn) {
         alert('Please log in to save items.');
         window.location.href = 'login.html';
         return;
       }
-      alert(`Post ${actionName} successfully!`);
+
+      const posts = latestPostsDatabase[activeCategory] || [];
+      const post = posts.find(p => p.id === selectedPostId);
+      if (!post) return;
+
+      try {
+        const saveId = 'saved_latest_' + post.id;
+        const savedDoc = {
+          id: saveId,
+          user: currentAuthorName,
+          category: activeCategory,
+          title: post.title,
+          body: post.body,
+          pageUrl: 'latest.html',
+          date: new Date().toLocaleDateString()
+        };
+        await setDoc(doc(db, "saved_items", saveId), savedDoc);
+        alert("Post saved successfully to your Dashboard!");
+      } catch (err) {
+        console.error("Error saving latest post:", err);
+      }
     }
 
-    function handleShareAction() {
+    // --- CLOUD COMMENTS SECTION ---
+    window.toggleCommentCloud = function(e) {
+      e.stopPropagation();
+      document.getElementById('latestCommentCloud').classList.toggle('show');
+    }
+
+    window.closeCommentCloud = function(e) {
+      e.stopPropagation();
+      document.getElementById('latestCommentCloud').classList.remove('show');
+    }
+
+    async function loadLatestComments() {
+      if (!selectedPostId) return;
+      const cardId = 'latest_' + selectedPostId;
+      const listEl = document.getElementById('latestCommentsList');
+      if (!listEl) return;
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "comments"));
+        let html = '';
+        let count = 0;
+
+        querySnapshot.forEach((docSnap) => {
+          const c = docSnap.data();
+          if (c.cardId === cardId) {
+            count++;
+            html += `
+              <div class="comment-bubble">
+                <div class="comment-author">${c.author}</div>
+                <div class="comment-text">${c.text}</div>
+              </div>
+            `;
+          }
+        });
+
+        listEl.innerHTML = count > 0 ? html : `<p style="font-size:0.78rem; color:#9ca3af; text-align:center;">कोई टिप्पणी नहीं है। पहली टिप्पणी लिखें!</p>`;
+      } catch (err) {
+        console.error("Error loading latest comments:", err);
+      }
+    }
+
+    window.postLatestComment = async function(e) {
+      e.stopPropagation();
+      const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
+      if (!isLoggedIn) {
+        alert("टिप्पणी करने के लिए कृपया पहले लॉगिन करें। (Please log in to comment.)");
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const inputEl = document.getElementById('latestCommentInput');
+      const text = inputEl.value.trim();
+      if (!text || !selectedPostId) return;
+
+      const cardId = 'latest_' + selectedPostId;
+      const commentId = 'com_latest_' + Date.now();
+      const newComment = {
+        id: commentId,
+        cardId: cardId,
+        author: currentAuthorName,
+        text: text,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        await setDoc(doc(db, "comments", commentId), newComment);
+        inputEl.value = '';
+        loadLatestComments();
+      } catch (err) {
+        console.error("Error posting latest comment:", err);
+        alert("Failed to post comment.");
+      }
+    }
+
+    window.handleShareAction = function() {
       if (navigator.clipboard) {
         navigator.clipboard.writeText(window.location.href);
         alert('Post link copied to clipboard!');
       } else {
         alert('Share triggered!');
       }
-    }
-
-    function handleCommentAction() {
-      alert('Comments section opening soon!');
     }
 
     window.addEventListener('click', (e) => {
@@ -694,7 +806,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
-      renderPostList();
+      loadLatestPostsFromCloud();
     });
   </script>
 
