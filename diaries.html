@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>कविताएँ - काव्य सागर और कहानी</title>
+  <title>डायरी संग्रह - काव्य सागर और कहानी</title>
 
   <!-- Global Language Switcher Script -->
   <script src="lang.js"></script>
@@ -186,265 +186,243 @@
       color: #d4a017;
     }
 
-    /* ---------------- MAIN CONTAINER ---------------- */
-    .poems-container {
-      max-width: 1240px;
+    /* ---------------- 3-COLUMN DIARY LAYOUT ---------------- */
+    .diaries-container {
+      max-width: 1280px;
       margin: 30px auto;
       padding: 0 20px;
       width: 100%;
       display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 30px;
+      grid-template-columns: 280px 240px 1fr;
+      gap: 20px;
       flex: 1;
       align-items: start;
     }
 
-    /* Left Sidebar: Fixed Category Panel */
-    .category-card {
-      background: #15151f;
+    .col-card {
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 20px;
-      padding: 24px 18px;
-      width: 100%;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      border-radius: 16px;
+      padding: 20px;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
     }
 
-    .category-card h2 {
+    .col-header {
       font-size: 1.1rem;
       color: #d4a017;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       padding-bottom: 10px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    .category-list {
+    /* Column 1: Diary List */
+    .diary-list {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .category-item {
-      padding: 12px 16px;
+    .diary-item {
+      padding: 14px 16px;
       background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
       color: #d1d5db;
       cursor: pointer;
       transition: all 0.25s ease;
       font-weight: 600;
-      text-align: center;
-      font-size: 0.9rem;
-      white-space: nowrap;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    .category-item:hover {
-      background: rgba(255, 255, 255, 0.06);
+    .diary-item:hover {
+      background: rgba(212, 160, 23, 0.1);
+      border-color: rgba(212, 160, 23, 0.3);
       color: #ffffff;
       transform: translateX(3px);
     }
 
-    /* Active Category Glow Themes */
-    .category-item[data-theme="love"].active { background: linear-gradient(135deg, #ff4b2b, #ff416c); color: #fff; border-color: #ff416c; box-shadow: 0 4px 15px rgba(255, 65, 108, 0.35); }
-    .category-item[data-theme="friendship"].active { background: linear-gradient(135deg, #00b4db, #0083b0); color: #fff; border-color: #00b4db; box-shadow: 0 4px 15px rgba(0, 180, 219, 0.35); }
-    .category-item[data-theme="nature"].active { background: linear-gradient(135deg, #a8ff78, #78ffd6); color: #0d0d15; border-color: #a8ff78; box-shadow: 0 4px 15px rgba(168, 255, 120, 0.35); }
-    .category-item[data-theme="religious"].active { background: linear-gradient(135deg, #ff9966, #ff5e62); color: #fff; border-color: #ff9966; box-shadow: 0 4px 15px rgba(255, 153, 102, 0.35); }
-    .category-item[data-theme="sad"].active { background: linear-gradient(135deg, #4b6cb7, #182848); color: #fff; border-color: #4b6cb7; box-shadow: 0 4px 15px rgba(75, 108, 183, 0.35); }
-
-    /* ---------------- NATIVE 3D CARD CAROUSEL (EXPANDED) ---------------- */
-    .custom-carousel-box {
-      background: #15151f;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 24px;
-      padding: 35px 20px 25px 20px;
-      width: 100%;
-      min-height: 540px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-      position: relative;
-      overflow: hidden;
+    .diary-item.active {
+      background: rgba(212, 160, 23, 0.18);
+      border-color: #d4a017;
+      color: #d4a017;
+      box-shadow: 0 4px 15px rgba(212, 160, 23, 0.15);
     }
 
-    .card-deck-stage {
-      position: relative;
-      width: 100%;
-      height: 410px;
+    /* Column 2: Episodes List */
+    .episodes-column {
+      background: rgba(18, 18, 26, 0.5);
+    }
+
+    .episodes-list {
+      list-style: none;
       display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      max-height: 440px;
+      padding-right: 4px;
+    }
+
+    .episode-item {
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      color: #9ca3af;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.88rem;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .episode-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(212, 160, 23, 0.25);
+      color: #ffffff;
+    }
+
+    .episode-item.active {
+      background: linear-gradient(135deg, rgba(212, 160, 23, 0.2) 0%, rgba(120, 53, 15, 0.2) 100%);
+      border-color: #d4a017;
+      color: #ffffff;
+    }
+
+    .ep-number {
+      font-size: 0.75rem;
+      color: #d4a017;
+      font-weight: 700;
+    }
+
+    .ep-title {
+      font-size: 0.88rem;
+      color: #e5e7eb;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Column 3: Content Workspace View */
+    .content-column {
+      background: rgba(18, 18, 26, 0.7);
+      padding: 28px;
+      position: relative;
+    }
+
+    .placeholder-view {
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      perspective: 1200px;
-    }
-
-    .custom-slide-card {
-      position: absolute;
-      width: 580px;
-      max-width: 95%;
+      height: 100%;
       min-height: 380px;
-      background: #1a1a26;
-      border: 1.5px solid rgba(255, 255, 255, 0.08);
-      border-radius: 24px;
-      padding: 28px 24px 22px 24px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease, box-shadow 0.45s ease, border-color 0.45s ease;
-      cursor: pointer;
-      user-select: none;
-      overflow-y: auto;
+      color: #6b7280;
+      text-align: center;
+      font-size: 0.95rem;
     }
 
-    /* CARD POSITION STATES */
-    .custom-slide-card.active {
-      transform: translateX(0) scale(1) translateZ(50px);
-      opacity: 1;
-      z-index: 10;
-      cursor: default;
+    .content-view {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
     }
 
-    .custom-slide-card.prev {
-      transform: translateX(-260px) scale(0.82) rotateY(8deg);
-      opacity: 0.28;
-      z-index: 5;
-      filter: blur(0.5px);
-    }
-
-    .custom-slide-card.next {
-      transform: translateX(260px) scale(0.82) rotateY(-8deg);
-      opacity: 0.28;
-      z-index: 5;
-      filter: blur(0.5px);
-    }
-
-    .custom-slide-card.hidden-left {
-      transform: translateX(-450px) scale(0.6);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 1;
-    }
-    .custom-slide-card.hidden-right {
-      transform: translateX(450px) scale(0.6);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    /* THEME ACTIVE GLOWS */
-    .custom-slide-card.active.theme-love {
-      background: linear-gradient(145deg, rgba(255, 65, 108, 0.22), rgba(24, 24, 34, 0.98));
-      border-color: #ff416c;
-      box-shadow: 0 0 35px rgba(255, 65, 108, 0.45);
-    }
-    .custom-slide-card.active.theme-friendship {
-      background: linear-gradient(145deg, rgba(0, 180, 219, 0.22), rgba(24, 24, 34, 0.98));
-      border-color: #00b4db;
-      box-shadow: 0 0 35px rgba(0, 180, 219, 0.45);
-    }
-    .custom-slide-card.active.theme-nature {
-      background: linear-gradient(145deg, rgba(168, 255, 120, 0.22), rgba(24, 24, 34, 0.98));
-      border-color: #a8ff78;
-      box-shadow: 0 0 35px rgba(168, 255, 120, 0.45);
-    }
-    .custom-slide-card.active.theme-religious {
-      background: linear-gradient(145deg, rgba(255, 153, 102, 0.22), rgba(24, 24, 34, 0.98));
-      border-color: #ff9966;
-      box-shadow: 0 0 35px rgba(255, 153, 102, 0.45);
-    }
-    .custom-slide-card.active.theme-sad {
-      background: linear-gradient(145deg, rgba(75, 108, 183, 0.22), rgba(24, 24, 34, 0.98));
-      border-color: #4b6cb7;
-      box-shadow: 0 0 35px rgba(75, 108, 183, 0.45);
-    }
-
-    .card-top-bar {
+    .content-top-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
-    .card-header-title {
-      font-size: 0.98rem;
-      font-weight: 700;
+    .content-heading-box h2 {
+      font-size: 1.5rem;
       color: #ffffff;
-      letter-spacing: 0.5px;
+      margin-bottom: 6px;
     }
 
-    .like-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
+    .content-meta {
+      font-size: 0.8rem;
       color: #9ca3af;
-      padding: 4px;
-      transition: transform 0.2s;
+      display: flex;
+      gap: 14px;
     }
 
-    .like-btn:hover { transform: scale(1.2); }
-    .like-btn.liked svg { fill: #ff416c; stroke: #ff416c; color: #ff416c; }
+    .action-btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
 
-    .like-btn svg {
-      width: 22px;
-      height: 22px;
+    .like-action-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #9ca3af;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .like-action-btn:hover, .like-action-btn.liked {
+      border-color: #ff416c;
+      color: #ff416c;
+      background: rgba(255, 65, 108, 0.12);
+    }
+
+    .like-action-btn svg {
+      width: 16px;
+      height: 16px;
       stroke: currentColor;
       fill: none;
       stroke-width: 2;
     }
 
-    .shayari-content {
-      font-size: 1.08rem;
+    .like-action-btn.liked svg {
+      fill: #ff416c;
+    }
+
+    .diary-body-text {
+      font-size: 1.05rem;
       line-height: 1.9;
-      text-align: center;
-      min-height: 140px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      white-space: pre-line;
-      color: #ffffff;
-      font-style: italic;
-      padding: 10px 0;
-    }
-
-    .action-bar {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 15px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      flex-wrap: wrap;
-    }
-
-    .action-btn {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
       color: #d1d5db;
-      padding: 6px 16px;
-      border-radius: 20px;
-      font-size: 0.84rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .action-btn:hover {
-      background: #d4a017;
-      color: #0e0e14;
-      border-color: #d4a017;
+      white-space: pre-line;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      min-height: 280px;
     }
 
     /* ---------------- CLOUD COMMENT SECTION POPUP ---------------- */
     .comment-cloud-modal {
       display: none;
       position: absolute;
-      bottom: 60px;
-      left: 50%;
-      transform: translateX(-50%);
+      bottom: 80px;
+      right: 28px;
       width: 90%;
-      max-width: 480px;
+      max-width: 400px;
       background: #1e1e2d;
       border: 2px solid #d4a017;
-      border-radius: 30px;
-      padding: 20px;
+      border-radius: 24px;
+      padding: 18px;
       box-shadow: 0 15px 40px rgba(0,0,0,0.8);
       z-index: 50;
       animation: fadeInCloud 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -455,8 +433,8 @@
     }
 
     @keyframes fadeInCloud {
-      from { opacity: 0; transform: translateX(-50%) scale(0.8) translateY(20px); }
-      to { opacity: 1; transform: translateX(-50%) scale(1) translateY(0); }
+      from { opacity: 0; transform: scale(0.8) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
     .cloud-header {
@@ -483,7 +461,7 @@
     .cloud-close-btn:hover { color: #ffffff; }
 
     .cloud-comments-list {
-      max-height: 140px;
+      max-height: 130px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -540,49 +518,44 @@
     }
     .cloud-submit-btn:hover { background: #b8860b; }
 
-    /* Slider Controls */
-    .controls {
+    .content-bottom-bar {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      gap: 25px;
       margin-top: 20px;
-      z-index: 20;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .nav-arrow {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
+    .nav-ep-btn {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      color: #d4a017;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
     }
 
-    .nav-arrow:hover {
+    .nav-ep-btn:hover {
       background: #d4a017;
       color: #0d0d15;
-      border-color: #d4a017;
-      transform: scale(1.08);
     }
 
-    .counter {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #9ca3af;
-      min-width: 60px;
-      text-align: center;
+    .nav-ep-btn:disabled {
+      opacity: 0.4;
+      pointer-events: none;
+      border-color: rgba(255, 255, 255, 0.1);
+      color: #6b7280;
     }
 
     /* ---------------- UNIVERSAL 4-CARD FOOTER ---------------- */
     .footer-section {
-      max-width: 1240px;
+      max-width: 1280px;
       margin: 40px auto 0 auto;
       padding: 30px 20px 0 20px;
       width: 100%;
@@ -684,7 +657,7 @@
     }
 
     .social-popup.active .social-circle:nth-child(1) { transition-delay: 0.05s; }
-    .social-popup.active .social-circle:nth-child(2) { transition-delay: 0.1s; }
+    .social-popup.active .social-circle:nth-child(2) { transition-delay: 0.10s; }
     .social-popup.active .social-circle:nth-child(3) { transition-delay: 0.15s; }
 
     .social-circle.yt:hover { background: #ff0000; border-color: #ff0000; }
@@ -704,16 +677,16 @@
       font-size: 0.85rem;
     }
 
-    @media (max-width: 900px) {
-      .poems-container {
-        grid-template-columns: 1fr;
-      }
-      .category-list {
-        flex-direction: row;
-        overflow-x: auto;
-        padding-bottom: 8px;
-      }
-      header { padding: 10px 15px; } nav { display: none; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 992px) {
+      .diaries-container { grid-template-columns: 1fr; gap: 20px; }
+      .col-card { min-height: auto; }
+      header { padding: 10px 15px; }
+      nav { display: none; }
       .footer-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
@@ -734,13 +707,14 @@
 
     <nav>
       <a href="home.html" data-lang-key="navHome">होम</a>
-      <a href="poem.html" class="active" data-lang-key="navPoem">कविताएँ</a>
+      <a href="poem.html" data-lang-key="navPoem">कविताएँ</a>
       <a href="stories.html" data-lang-key="navStory">कहानी</a>
-      <a href="diaries.html" data-lang-key="navDiary">डायरी</a>
+      <a href="diaries.html" class="active" data-lang-key="navDiary">डायरी</a>
       <a href="quotes.html" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
     </nav>
 
     <div style="display: flex; align-items: center;">
+      <!-- Language Dropdown -->
       <div class="lang-dropdown-wrapper">
         <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
           <option value="hi">हिन्दी</option>
@@ -748,38 +722,92 @@
         </select>
       </div>
 
+      <!-- Dynamic User / Guest Profile Container -->
       <div class="user-profile-menu" id="userAuthContainer"></div>
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="poems-container">
-    <!-- Left Category Panel -->
-    <div class="category-card">
-      <h2 data-lang-key="categoriesHeading">श्रेणियाँ (Categories)</h2>
-      <ul class="category-list">
-        <li class="category-item active" data-theme="love" onclick="selectCategory('love', this)" data-lang-key="catLove">Love (प्रेम)</li>
-        <li class="category-item" data-theme="friendship" onclick="selectCategory('friendship', this)" data-lang-key="catFriendship">Friendship (दोस्ती)</li>
-        <li class="category-item" data-theme="nature" onclick="selectCategory('nature', this)" data-lang-key="catNature">Nature (प्रकृति)</li>
-        <li class="category-item" data-theme="religious" onclick="selectCategory('religious', this)" data-lang-key="catReligious">Religious (भक्ति)</li>
-        <li class="category-item" data-theme="sad" onclick="selectCategory('sad', this)" data-lang-key="catSad">Sad (दर्द)</li>
-      </ul>
-    </div>
+  <!-- 3-Column Layout -->
+  <main class="diaries-container">
 
-    <!-- Right Contained Card Stage -->
-    <div class="custom-carousel-box">
-      <div class="card-deck-stage" id="cardDeckStage"></div>
-
-      <!-- Controls -->
-      <div class="controls">
-        <button class="nav-arrow" onclick="navigateDeck(-1)" id="prevBtn">&lt;</button>
-        <span id="counterText" class="counter">1 / 1</span>
-        <button class="nav-arrow" onclick="navigateDeck(1)" id="nextBtn">&gt;</button>
+    <!-- COLUMN 1: PUBLISHED DIARIES -->
+    <section class="col-card">
+      <div class="col-header">
+        <span data-lang-key="diariesTitle">प्रकाशित डायरियाँ</span>
       </div>
-    </div>
+      <ul class="diary-list" id="diaryList"></ul>
+    </section>
+
+    <!-- COLUMN 2: EPISODES LIST -->
+    <section class="col-card episodes-column">
+      <div class="col-header">
+        <span data-lang-key="episodesTitle">Episodes</span>
+        <span style="font-size:0.75rem; color:#d4a017;" id="episodeCountBadge">0 भाग</span>
+      </div>
+      <ul class="episodes-list" id="episodesList"></ul>
+    </section>
+
+    <!-- COLUMN 3: WORKSPACE CONTENT -->
+    <section class="col-card content-column">
+      <div id="contentPlaceholder" class="placeholder-view">
+        <svg style="width:48px; height:48px; color:#4b5563; margin-bottom:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+        </svg>
+        <p data-lang-key="diaryPlaceholder">पढ़ने के लिए बाईं ओर से किसी एपिसोड पर क्लिक करें।</p>
+      </div>
+
+      <div id="contentView" class="content-view">
+        <div class="content-top-header">
+          <div class="content-heading-box">
+            <h2 id="viewHeading"></h2>
+            <div class="content-meta">
+              <span id="viewDate"></span>
+              <span id="viewReadTime"></span>
+            </div>
+          </div>
+
+          <div class="action-btn-group">
+            <button class="like-action-btn" id="diaryLikeBtn" onclick="handleProtectedDiaryLike()">
+              <svg viewBox="0 0 24 24">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              <span data-lang-key="saveLike">सहेजें / Like</span>
+            </button>
+            <button class="like-action-btn" onclick="toggleCommentCloud(event)">
+              💬 <span data-lang-key="commentBtn">टिप्पणी</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="diary-body-text" id="viewBody"></div>
+
+        <!-- Cloud Shape Comment Section Popup -->
+        <div class="comment-cloud-modal" id="diaryCommentCloud" onclick="event.stopPropagation()">
+          <div class="cloud-header">
+            <h4>💬 डायरी चर्चा (Comments)</h4>
+            <button class="cloud-close-btn" onclick="closeCommentCloud(event)">✕</button>
+          </div>
+          <div class="cloud-comments-list" id="diaryCommentsList">
+            <p style="font-size:0.78rem; color:#9ca3af; text-align:center;">लोड हो रहा है...</p>
+          </div>
+          <div class="cloud-input-group">
+            <input type="text" class="cloud-input" id="diaryCommentInput" placeholder="अपनी टिप्पणी लिखें...">
+            <button class="cloud-submit-btn" onclick="postDiaryComment(event)">भेजें</button>
+          </div>
+        </div>
+
+        <div class="content-bottom-bar">
+          <button class="nav-ep-btn" id="prevEpBtn" onclick="navigateEpisode(-1)" data-lang-key="prevEp">← पिछला भाग</button>
+          <span style="font-size:0.85rem; color:#9ca3af;" id="epPositionTracker"></span>
+          <button class="nav-ep-btn" id="nextEpBtn" onclick="navigateEpisode(1)" data-lang-key="nextEp">अगला भाग →</button>
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <!-- Universal 4-Card Footer Section -->
+  <!-- Universal 4-Card Footer -->
   <section class="footer-section">
     <div class="footer-grid">
       <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
@@ -808,300 +836,280 @@
   <script type="module">
     import { db, collection, getDocs, setDoc, doc } from "./firebase.js";
 
-    const basePoemsData = {
-      love: {
-        themeClass: "theme-love",
-        titles: { hi: "प्रेम शायरी", en: "Love Poetry" },
-        items: {
-          hi: [
-            "तेरे नाम से जुड़ी हर शाम सुहानी लगती है,\nतेरी मुस्कुराहट ही मेरी ज़िंदगानी लगती है।",
-            "दिल की धड़कन बनकर तुम समाए हो,\nसांसों में महक बनकर तुम छाए हो。",
-            "मोहब्बत नाम है जिसका, वो इक हंसीं अहसास है,\nजो दूर रहकर भी हर लम्हा हमारे पास है।"
-          ],
-          en: [
-            "Every evening linked with your name feels pleasant,\nYour warm smile alone feels like my whole life.",
-            "You dwell within me as the beat of my heart,\nYou surround me like a fragrance in every breath.",
-            "Love is that pure and beautiful emotion,\nWhich stays close to the heart even across distances."
-          ]
-        }
+    // --- 1. LOCAL TRANSLATION FALLBACKS ---
+    const localDict = {
+      hi: {
+        diariesTitle: "प्रकाशित डायरियाँ",
+        episodesTitle: "Episodes",
+        diaryPlaceholder: "पढ़ने के लिए बाईं ओर से किसी एपिसोड पर क्लिक करें।",
+        saveLike: "सहेजें / Like",
+        commentBtn: "टिप्पणी",
+        prevEp: "← पिछला भाग",
+        nextEp: "अगला भाग →"
       },
-      friendship: {
-        themeClass: "theme-friendship",
-        titles: { hi: "दोस्ती शायरी", en: "Friendship Poetry" },
-        items: {
-          hi: [
-            "दोस्ती नाम है सुख-दुख की कहानी का,\nदोस्ती राज़ है सदा मुस्कुराने का।",
-            "सच्चा दोस्त वही जो बिना कहे बात समझ ले,\nहर मुश्किल राह में हाथ थाम ले।"
-          ],
-          en: [
-            "Friendship is the story of shared joys and sorrows,\nFriendship is the secret to smiling through everything.",
-            "A true friend understands without needing words,\nAnd holds your hand through every tough road."
-          ]
-        }
-      },
-      nature: {
-        themeClass: "theme-nature",
-        titles: { hi: "प्रकृति कविता", en: "Nature Poetry" },
-        items: {
-          hi: [
-            "हरियाली की चादर ओढ़े धरती मुस्काती है,\nसुबह की पहली किरण नया सवेरा लाती है।",
-            "नदियों का बहना, हवाओं का चलना,\nप्रकृति सिखाती है हर हाल में ढलना।"
-          ],
-          en: [
-            "Draped in lush green, the earth smiles with grace,\nThe first morning ray brings a new beginning to embrace.",
-            "Flowing rivers and gentle winds that softly pass,\nNature teaches us resilience in every circumstance."
-          ]
-        }
-      },
-      religious: {
-        themeClass: "theme-religious",
-        titles: { hi: "भक्ति शायरी", en: "Devotional Poetry" },
-        items: {
-          hi: [
-            "ईश्वर का वास तो हर कण में समाया है,\nजिसने सच्चा भाव रखा, उसने ही पाया है।",
-            "मन में भक्ति और होठों पर तेरा नाम,\nतेरे दर पे आकर मिले परम विश्राम।"
-          ],
-          en: [
-            "The Divine presence dwells in every single atom,\nWhoever holds pure devotion finds eternal peace.",
-            "With faith in the soul and Your name on the lips,\nOne finds absolute tranquility at Your sanctuary."
-          ]
-        }
-      },
-      sad: {
-        themeClass: "theme-sad",
-        titles: { hi: "दर्द शायरी", en: "Heartbreak Poetry" },
-        items: {
-          hi: [
-            "खामोशियों में भी एक गहरी आवाज़ होती है,\nहर मुस्कुराते चेहरे के पीछे कुछ बात होती है।",
-            "वक़्त के साथ हर ज़ख्म भर जाता है,\nपर यादों का कारवां सदा साथ रहता है।"
-          ],
-          en: [
-            "Even in silent moments, there lies a profound voice,\nBehind every smiling face, a hidden story remains.",
-            "With passing time, every deep wound heals,\nYet the caravan of memories stays forever near."
-          ]
-        }
+      en: {
+        diariesTitle: "Published Diaries",
+        episodesTitle: "Episodes",
+        diaryPlaceholder: "Click on any episode from the left to read.",
+        saveLike: "Save / Like",
+        commentBtn: "Comment",
+        prevEp: "← Previous Episode",
+        nextEp: "Next Episode →"
       }
     };
 
-    let poemsMultilingualData = JSON.parse(JSON.stringify(basePoemsData));
-    let currentCategory = 'love';
-    let currentSlideIndex = 0;
+    // --- 2. BILINGUAL DIARY DATABASE ---
+    const baseDiaries = [
+      {
+        id: "kanhaiya",
+        names: { hi: "कन्हैया की डायरी", en: "Kanhaiya's Diary" },
+        episodes: [
+          {
+            epNum: 1,
+            titles: { hi: "Episode - 1 (शुरुआती सफर)", en: "Episode - 1 (The Beginning)" },
+            dates: { hi: "10-अगस्त-2026", en: "10-Aug-2026" },
+            readTimes: { hi: "3 मिनट पठन", en: "3 min read" },
+            contents: {
+              hi: "आज एक नए सफर की शुरुआत हुई है। शहर की इस तेज रफ्तार और भागदौड़ भरी जिंदगी में जब भी वक्त ठहरता है, मन पुरानी यादों की पगडंडियों पर निकल पड़ता है।\n\nकागज़ और कलम का यह रिश्ता ही तो है जो हमें खुद से जोड़कर रखता है। कमरे की खिड़की से बाहर ठंडी हवा आ रही थी और हाथ में चाय का कुल्हड़ था। तभी अचानक वो पुराना दिन याद आ गया...",
+              en: "Today marks the start of a brand new journey. In this fast-paced life of running between tasks, whenever time pauses, the mind wanders down the trails of old memories.\n\nThis bond of paper and pen is what truly keeps us connected to our authentic selves. A cool breeze drifted through the window as I held a warm cup of tea, and suddenly, that long-forgotten day flashed before my eyes..."
+            }
+          },
+          {
+            epNum: 2,
+            titles: { hi: "Episode - 2 (अनकही बातें)", en: "Episode - 2 (Unspoken Thoughts)" },
+            dates: { hi: "12-अगस्त-2026", en: "12-Aug-2026" },
+            readTimes: { hi: "4 मिनट पठन", en: "4 min read" },
+            contents: {
+              hi: "कुछ बातें ऐसी होती हैं जिन्हें हम लफ्जों में कभी बयां नहीं कर पाते, पर डायरी के पन्नों पर वो खुद-ब-खुद उतर आती हैं।\n\nआज शाम जब काम खत्म हुआ तो लगा जैसे बहुत कुछ कहना बाकी रह गया था। हमने अक्सर लोगों को हँसते देखा है मगर उन आँखों के पीछे छिपे एहसासों को कोई नहीं पढ़ पाता। यही ज़िंदगी का सबसे हसीन फलसफा है।",
+              en: "Some emotions can never be spoken aloud, yet they effortlessly flow onto the pages of a journal.\n\nAs the work wrapped up this evening, a lingering feeling remained that much was left unsaid. We frequently see smiling faces everywhere, but few ever read the deep sentiments hidden behind those eyes."
+            }
+          }
+        ]
+      }
+    ];
+
+    let publishedDiaries = JSON.parse(JSON.stringify(baseDiaries));
+    let currentDiaryIndex = 0;
+    let currentEpisodeIndex = 0;
     const currentAuthorName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
 
-    // --- FETCH PUBLISHED POEMS & COMMENTS FROM FIREBASE ---
-    async function loadPublishedPoemsFromCloud() {
+    // --- FETCH PUBLISHED DIARIES FROM FIREBASE CLOUD ---
+    async function loadDiariesFromCloud() {
       try {
         const querySnapshot = await getDocs(collection(db, "works"));
-        poemsMultilingualData = JSON.parse(JSON.stringify(basePoemsData));
+        publishedDiaries = JSON.parse(JSON.stringify(baseDiaries));
 
         querySnapshot.forEach((docSnap) => {
           const item = docSnap.data();
-          if (item.stage === 'published' && item.category === 'kavita') {
-            const targetCat = poemsMultilingualData[item.subCategory] ? item.subCategory : 'love';
+          if (item.stage === 'published' && item.category === 'diary') {
+            const diaryTitle = item.subCategory || item.title || 'My Diary';
             
-            if (item.content && item.content.trim() !== '') {
-              poemsMultilingualData[targetCat].items.hi.unshift(item.content);
-              poemsMultilingualData[targetCat].items.en.unshift(item.content);
+            // Find if diary container already exists, else create it
+            let foundDiary = publishedDiaries.find(d => d.names.hi === diaryTitle || d.names.en === diaryTitle);
+            if (!foundDiary) {
+              foundDiary = {
+                id: 'diary_' + Date.now(),
+                names: { hi: diaryTitle, en: diaryTitle },
+                episodes: []
+              };
+              publishedDiaries.push(foundDiary);
             }
+
+            foundDiary.episodes.push({
+              epNum: foundDiary.episodes.length + 1,
+              titles: { hi: item.title || 'Untitled', en: item.title || 'Untitled' },
+              dates: { hi: item.date || 'Today', en: item.date || 'Today' },
+              readTimes: { hi: '3 मिनट पठन', en: '3 min read' },
+              contents: { hi: item.content || '', en: item.content || '' }
+            });
           }
         });
 
-        renderWidget();
+        renderDiaries();
       } catch (error) {
-        console.error("Error fetching published poems from cloud:", error);
-        renderWidget();
+        console.error("Error loading diaries from cloud:", error);
+        renderDiaries();
       }
     }
 
-    // --- NATIVE 3D CARD ENGINE ---
-    window.renderWidget = function() {
+    window.renderDiaries = function() {
       const currentLang = localStorage.getItem('site_lang') || 'hi';
-      const catData = poemsMultilingualData[currentCategory];
-      const stage = document.getElementById('cardDeckStage');
-      if (!stage || !catData) return;
+      const dict = localDict[currentLang] || localDict.hi;
 
-      stage.innerHTML = '';
+      document.querySelector('[data-lang-key="diariesTitle"]').innerText = dict.diariesTitle;
+      document.querySelector('[data-lang-key="episodesTitle"]').innerText = dict.episodesTitle;
+      document.querySelector('[data-lang-key="diaryPlaceholder"]').innerText = dict.diaryPlaceholder;
+      document.querySelector('[data-lang-key="saveLike"]').innerText = dict.saveLike;
+      document.querySelector('[data-lang-key="commentBtn"]').innerText = dict.commentBtn;
+      document.querySelector('[data-lang-key="prevEp"]').innerText = dict.prevEp;
+      document.querySelector('[data-lang-key="nextEp"]').innerText = dict.nextEp;
 
-      const title = (catData.titles && catData.titles[currentLang]) ? catData.titles[currentLang] : catData.titles.hi;
-      const items = (catData.items && catData.items[currentLang]) ? catData.items[currentLang] : catData.items.hi;
+      diaryList.innerHTML = '';
 
-      const dict = (typeof translations !== 'undefined' && translations[currentLang]) 
-        ? translations[currentLang] 
-        : { btnSave: "🔖 सहेजें", btnShare: "🔗 साझा करें", btnComment: "💬 टिप्पणी" };
-
-      const btnSaveText = dict.btnSave || "🔖 Save";
-      const btnShareText = dict.btnShare || "🔗 Share";
-      const btnCommentText = dict.btnComment || "💬 Comment";
-
-      items.forEach((itemText, idx) => {
-        const cardId = `poem_${currentCategory}_${idx}`;
-        const card = document.createElement('div');
-        card.className = `custom-slide-card ${catData.themeClass}`;
-        card.setAttribute('data-index', idx);
-        card.onclick = () => {
-          if (idx !== currentSlideIndex) {
-            currentSlideIndex = idx;
-            updateCardPositions();
-          }
-        };
-
-        card.innerHTML = `
-          <div class="card-top-bar">
-            <div class="card-header-title">${title}</div>
-            <button class="like-btn" onclick="handleProtectedLike(event, this, '${title}', \`${itemText}\`)" title="Save to Liked">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-              </svg>
-            </button>
-          </div>
-
-          <div class="shayari-content">${itemText}</div>
-
-          <div class="action-bar">
-            <button class="action-btn" onclick="handleSaveAction(event, '${title}', \`${itemText}\`, '${btnSaveText}')">${btnSaveText}</button>
-            <button class="action-btn" onclick="handleShareAction(event, '${btnShareText}')">${btnShareText}</button>
-            <button class="action-btn" onclick="toggleCommentCloud(event, '${cardId}')">${btnCommentText}</button>
-          </div>
-
-          <!-- Cloud Shape Comment Section -->
-          <div class="comment-cloud-modal" id="cloud_${cardId}" onclick="event.stopPropagation()">
-            <div class="cloud-header">
-              <h4>💬 काव्य चर्चा (Comments)</h4>
-              <button class="cloud-close-btn" onclick="closeCommentCloud(event, '${cardId}')">✕</button>
-            </div>
-            <div class="cloud-comments-list" id="list_${cardId}">
-              <p style="font-size:0.78rem; color:#9ca3af; text-align:center;">लोड हो रहा है...</p>
-            </div>
-            <div class="cloud-input-group">
-              <input type="text" class="cloud-input" id="input_${cardId}" placeholder="अपनी टिप्पणी लिखें...">
-              <button class="cloud-submit-btn" onclick="postComment(event, '${cardId}', \`${itemText}\`)">भेजें</button>
-            </div>
-          </div>
+      publishedDiaries.forEach((diary, idx) => {
+        const li = document.createElement('li');
+        li.className = `diary-item ${idx === currentDiaryIndex ? 'active' : ''}`;
+        const diaryName = diary.names[currentLang] || diary.names.hi;
+        li.innerHTML = `
+          <span>${diaryName}</span>
+          <span style="font-size:0.75rem; opacity:0.7;">›</span>
         `;
-        stage.appendChild(card);
-        loadCommentsFromCloud(cardId);
+        li.onclick = () => selectDiary(idx);
+        diaryList.appendChild(li);
       });
 
-      if (currentSlideIndex >= items.length) {
-        currentSlideIndex = 0;
+      if (currentDiaryIndex >= publishedDiaries.length) currentDiaryIndex = 0;
+      renderEpisodes(currentDiaryIndex);
+    }
+
+    window.selectDiary = function(dIndex) {
+      currentDiaryIndex = dIndex;
+      currentEpisodeIndex = 0;
+
+      document.querySelectorAll('.diary-item').forEach((item, idx) => {
+        item.classList.toggle('active', idx === dIndex);
+      });
+
+      renderEpisodes(dIndex);
+    }
+
+    function renderEpisodes(dIndex) {
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const diary = publishedDiaries[dIndex];
+      episodesList.innerHTML = '';
+
+      const countSuffix = currentLang === 'en' ? 'Episodes' : 'भाग';
+      episodeCountBadge.innerText = `${diary.episodes.length} ${countSuffix}`;
+
+      if (!diary.episodes || diary.episodes.length === 0) {
+        const noEpText = currentLang === 'en' ? 'No episodes available.' : 'कोई एपिसोड उपलब्ध नहीं है।';
+        episodesList.innerHTML = `<p style="color:#6b7280; font-size:0.85rem; padding:10px;">${noEpText}</p>`;
+        showPlaceholder();
+        return;
       }
-      updateCardPositions();
-    }
 
-    function updateCardPositions() {
-      const cards = document.querySelectorAll('.custom-slide-card');
-      const total = cards.length;
-      if (total === 0) return;
-
-      cards.forEach((card, idx) => {
-        card.classList.remove('active', 'prev', 'next', 'hidden-left', 'hidden-right');
-
-        if (idx === currentSlideIndex) {
-          card.classList.add('active');
-        } else if (idx === (currentSlideIndex - 1 + total) % total && total > 1) {
-          card.classList.add('prev');
-        } else if (idx === (currentSlideIndex + 1) % total && total > 1) {
-          card.classList.add('next');
-        } else {
-          if (idx < currentSlideIndex) {
-            card.classList.add('hidden-left');
-          } else {
-            card.classList.add('hidden-right');
-          }
-        }
+      diary.episodes.forEach((ep, epIdx) => {
+        const li = document.createElement('li');
+        li.className = `episode-item ${epIdx === currentEpisodeIndex ? 'active' : ''}`;
+        const title = ep.titles[currentLang] || ep.titles.hi;
+        li.innerHTML = `
+          <span class="ep-number">Episode - ${ep.epNum}</span>
+          <span class="ep-title">${title}</span>
+        `;
+        li.onclick = () => selectEpisode(epIdx);
+        episodesList.appendChild(li);
       });
 
-      document.getElementById('counterText').innerText = `${currentSlideIndex + 1} / ${total}`;
+      if (currentEpisodeIndex >= diary.episodes.length) currentEpisodeIndex = 0;
+      selectEpisode(currentEpisodeIndex);
     }
 
-    window.navigateDeck = function(dir) {
-      const items = (poemsMultilingualData[currentCategory].items.hi) || [];
-      const total = items.length;
-      if (total <= 1) return;
+    window.selectEpisode = function(epIdx) {
+      currentEpisodeIndex = epIdx;
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const diary = publishedDiaries[currentDiaryIndex];
+      const ep = diary.episodes[epIdx];
 
-      currentSlideIndex = (currentSlideIndex + dir + total) % total;
-      updateCardPositions();
+      document.querySelectorAll('.episode-item').forEach((item, idx) => {
+        item.classList.toggle('active', idx === epIdx);
+      });
+
+      contentPlaceholder.style.display = 'none';
+      contentView.style.display = 'block';
+
+      const diaryName = diary.names[currentLang] || diary.names.hi;
+      viewHeading.innerText = `${diaryName} - Ep ${ep.epNum}: ${ep.titles[currentLang] || ep.titles.hi}`;
+      viewDate.innerText = `📅 ${ep.dates[currentLang] || ep.dates.hi}`;
+      viewReadTime.innerText = `⏱️ ${ep.readTimes[currentLang] || ep.readTimes.hi}`;
+      viewBody.innerText = ep.contents[currentLang] || ep.contents.hi;
+
+      diaryLikeBtn.classList.remove('liked');
+
+      prevEpBtn.disabled = (epIdx === 0);
+      nextEpBtn.disabled = (epIdx === diary.episodes.length - 1);
+
+      if (currentLang === 'en') {
+        epPositionTracker.innerText = `Episode ${epIdx + 1} of ${diary.episodes.length}`;
+      } else {
+        epPositionTracker.innerText = `भाग ${epIdx + 1} / ${diary.episodes.length}`;
+      }
+
+      loadDiaryComments();
     }
 
-    window.selectCategory = function(catKey, el) {
-      currentCategory = catKey;
-      currentSlideIndex = 0;
-      document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
-      if (el) el.classList.add('active');
-      renderWidget();
+    function showPlaceholder() {
+      contentPlaceholder.style.display = 'flex';
+      contentView.style.display = 'none';
+    }
+
+    window.navigateEpisode = function(direction) {
+      const diary = publishedDiaries[currentDiaryIndex];
+      const newIdx = currentEpisodeIndex + direction;
+      if (newIdx >= 0 && newIdx < diary.episodes.length) {
+        selectEpisode(newIdx);
+      }
     }
 
     // --- CLOUD SAVE TO FIREBASE ---
-    window.handleProtectedLike = function(e, btn, title, bodyText) {
-      e.stopPropagation();
+    window.handleProtectedDiaryLike = async function() {
       const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
       if (!isLoggedIn) {
         const currentLang = localStorage.getItem('site_lang') || 'hi';
-        const msg = currentLang === 'hi' 
-          ? 'कविता को पसंद/सहेजने के लिए कृपया पहले लॉगिन करें। क्या आप लॉगिन पृष्ठ पर जाना चाहते हैं?' 
-          : 'Please log in to like and save this poem. Would you like to go to the login page?';
-        
+        const msg = currentLang === 'hi'
+          ? 'डायरी एपिसोड सहेजने/पसंद करने के लिए कृपया पहले लॉगिन करें। क्या आप लॉगिन पृष्ठ पर जाना चाहते हैं?'
+          : 'Please log in to save and like diary entries. Would you like to log in now?';
+
         if (confirm(msg)) {
           sessionStorage.setItem('redirectAfterLogin', window.location.href);
           window.location.href = 'login.html';
         }
         return;
       }
-      btn.classList.toggle('liked');
-      saveItemToCloud(title, bodyText);
-    }
 
-    window.handleSaveAction = function(e, title, bodyText, label) {
-      e.stopPropagation();
-      const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
-      if (!isLoggedIn) {
-        const currentLang = localStorage.getItem('site_lang') || 'hi';
-        const msg = currentLang === 'hi' 
-          ? 'कविता सहेजने के लिए कृपया पहले लॉगिन करें। क्या आप लॉगिन पृष्ठ पर जाना चाहते हैं?' 
-          : 'Please log in to save items to your dashboard. Would you like to log in now?';
-        
-        if (confirm(msg)) {
-          sessionStorage.setItem('redirectAfterLogin', window.location.href);
-          window.location.href = 'login.html';
-        }
-        return;
-      }
-      saveItemToCloud(title, bodyText);
-      alert(`${label} successfully!`);
-    }
+      diaryLikeBtn.classList.toggle('liked');
 
-    async function saveItemToCloud(title, bodyText) {
+      const diary = publishedDiaries[currentDiaryIndex];
+      const ep = diary.episodes[currentEpisodeIndex];
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+
       try {
-        const saveId = 'saved_' + Date.now();
+        const saveId = 'saved_diary_' + diary.id + '_' + ep.epNum;
         const savedDoc = {
           id: saveId,
           user: currentAuthorName,
-          category: 'kavita',
-          title: title,
-          body: bodyText,
-          pageUrl: 'poem.html',
+          category: 'diary',
+          title: `${diary.names[currentLang] || diary.names.hi} - Ep ${ep.epNum}`,
+          body: ep.contents[currentLang] || ep.contents.hi,
+          pageUrl: 'diaries.html',
           date: new Date().toLocaleDateString()
         };
         await setDoc(doc(db, "saved_items", saveId), savedDoc);
+        alert("डायरी सहेजी गई! (Saved to your Dashboard!)");
       } catch (err) {
-        console.error("Error saving to cloud:", err);
+        console.error("Error saving diary:", err);
       }
     }
 
     // --- CLOUD COMMENTS CLOUD SECTION ---
-    window.toggleCommentCloud = function(e, cardId) {
+    window.toggleCommentCloud = function(e) {
       e.stopPropagation();
-      const cloudModal = document.getElementById(`cloud_${cardId}`);
-      cloudModal.classList.toggle('show');
+      document.getElementById('diaryCommentCloud').classList.toggle('show');
     }
 
-    window.closeCommentCloud = function(e, cardId) {
+    window.closeCommentCloud = function(e) {
       e.stopPropagation();
-      document.getElementById(`cloud_${cardId}`).classList.remove('show');
+      document.getElementById('diaryCommentCloud').classList.remove('show');
     }
 
-    async function loadCommentsFromCloud(cardId) {
-      const listEl = document.getElementById(`list_${cardId}`);
+    function getActiveCommentCardId() {
+      const diary = publishedDiaries[currentDiaryIndex];
+      const ep = diary.episodes[currentEpisodeIndex];
+      return `diary_${diary.id}_ep_${ep.epNum}`;
+    }
+
+    async function loadDiaryComments() {
+      const cardId = getActiveCommentCardId();
+      const listEl = document.getElementById('diaryCommentsList');
       if (!listEl) return;
 
       try {
@@ -1124,11 +1132,11 @@
 
         listEl.innerHTML = count > 0 ? html : `<p style="font-size:0.78rem; color:#9ca3af; text-align:center;">कोई टिप्पणी नहीं है। पहली टिप्पणी लिखें!</p>`;
       } catch (err) {
-        console.error("Error loading comments:", err);
+        console.error("Error loading diary comments:", err);
       }
     }
 
-    window.postComment = async function(e, cardId, itemText) {
+    window.postDiaryComment = async function(e) {
       e.stopPropagation();
       const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
       if (!isLoggedIn) {
@@ -1137,11 +1145,12 @@
         return;
       }
 
-      const inputEl = document.getElementById(`input_${cardId}`);
+      const inputEl = document.getElementById('diaryCommentInput');
       const text = inputEl.value.trim();
       if (!text) return;
 
-      const commentId = 'com_' + Date.now();
+      const cardId = getActiveCommentCardId();
+      const commentId = 'com_diary_' + Date.now();
       const newComment = {
         id: commentId,
         cardId: cardId,
@@ -1153,24 +1162,14 @@
       try {
         await setDoc(doc(db, "comments", commentId), newComment);
         inputEl.value = '';
-        loadCommentsFromCloud(cardId);
+        loadDiaryComments();
       } catch (err) {
-        console.error("Error posting comment:", err);
+        console.error("Error posting diary comment:", err);
         alert("Failed to post comment.");
       }
     }
 
-    window.handleShareAction = function(e, label) {
-      e.stopPropagation();
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(window.location.href);
-        alert('कविता का लिंक कॉपी हो गया है! (Link copied to clipboard!)');
-      } else {
-        alert(`${label} triggered!`);
-      }
-    }
-
-    // Dynamic Auth Header
+    // --- DYNAMIC AUTH HEADER ---
     function renderAuthHeader() {
       const container = document.getElementById('userAuthContainer');
       if (!container) return;
@@ -1179,8 +1178,7 @@
       const currentLang = localStorage.getItem('site_lang') || 'hi';
 
       if (isLoggedIn) {
-        const rawName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
-        const userName = rawName.trim();
+        const userName = currentAuthorName.trim();
         const userInitial = userName.charAt(0).toUpperCase() || 'A';
 
         container.innerHTML = `
@@ -1272,19 +1270,14 @@
       }
     });
 
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') navigateDeck(-1);
-      if (e.key === 'ArrowRight') navigateDeck(1);
-    });
-
     window.addEventListener('languageChanged', () => {
       renderAuthHeader();
-      renderWidget();
+      renderDiaries();
     });
 
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
-      loadPublishedPoemsFromCloud();
+      loadDiariesFromCloud();
     });
   </script>
 
