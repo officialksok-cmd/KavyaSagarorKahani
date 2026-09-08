@@ -110,8 +110,8 @@
     }
     .dropdown-content {
       display: none; position: absolute; right: 0; top: 110%; background: #181824;
-      border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; min-width: 150px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 200;
+      border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; min-width: 160px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 200; overflow: hidden;
     }
     .dropdown-content.show { display: block; }
     .dropdown-content a, .dropdown-content button {
@@ -132,7 +132,7 @@
       gap: 25px;
     }
 
-    /* Search Results Matrix Overlay (Matches Image 2) */
+    /* Search Results Matrix Overlay */
     .search-results-section {
       display: none;
       background: #181820;
@@ -156,7 +156,7 @@
     .search-matrix-table th { background: #23232c; color: #d4a017; }
     .highlight-match { background: #fef08a; color: #000; padding: 1px 4px; border-radius: 3px; font-weight: 600; }
 
-    /* Dual Tab Switcher (Followers / Following) */
+    /* Dual Tab Switcher */
     .network-tabs {
       display: flex;
       gap: 10px;
@@ -181,7 +181,7 @@
       box-shadow: 0 4px 12px rgba(212, 160, 23, 0.3);
     }
 
-    /* Split Screen: Table Left, Author Profile Layout Right */
+    /* Split Screen */
     .network-split-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -189,7 +189,6 @@
       align-items: start;
     }
 
-    /* Left Table View (Image 1) */
     .network-table-card {
       background: #181820;
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -229,7 +228,7 @@
     }
     .share-icon-btn { background: none; border: none; color: #d4a017; cursor: pointer; font-size: 0.95rem; }
 
-    /* Right Side: Author Profile Layout (Shared Yesterday) */
+    /* Right Side: Author Profile Preview */
     .author-profile-preview-card {
       background: #1e1e24;
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -256,7 +255,6 @@
     .profile-meta p { font-size: 0.82rem; color: #9ca3af; }
     .bio-text { font-size: 0.88rem; color: #d1d5db; font-style: italic; }
 
-    /* Stats Bar */
     .stats-bar {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -269,7 +267,6 @@
     .stat-box span { display: block; font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; }
     .stat-box strong { font-size: 1.05rem; color: #ffd700; }
 
-    /* Profile Content Category Tabs */
     .profile-cat-tabs { display: flex; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; }
     .p-tab-pill {
       padding: 5px 14px; border-radius: 15px; background: rgba(255, 255, 255, 0.04);
@@ -305,12 +302,38 @@
       padding-top: 6px;
     }
 
-    /* Universal Footer */
-    .footer-section { max-width: 1280px; margin: 40px auto 0 auto; padding: 30px 20px 0 20px; width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+    /* ---------------- UNIVERSAL 4-CARD FOOTER WITH SOCIAL POPUP ---------------- */
+    .footer-section {
+      max-width: 1280px; margin: 40px auto 0 auto; padding: 30px 20px 0 20px; width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
     .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
     .footer-card {
       background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 20px; text-align: center; text-decoration: none; color: #d1d5db; font-weight: 600; min-height: 80px; display: flex; align-items: center; justify-content: center;
     }
+    .footer-card:hover { border-color: rgba(212, 160, 23, 0.4); background: rgba(212, 160, 23, 0.05); color: #ffffff; }
+
+    .other-links-wrapper { position: relative; display: flex; justify-content: center; align-items: center; }
+    .other-links-btn {
+      width: 100%; height: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #d1d5db; font-weight: 600; font-size: 1rem; cursor: pointer; min-height: 80px; transition: all 0.2s;
+    }
+    .other-links-btn:hover, .other-links-btn.active { border-color: #d4a017; color: #d4a017; background: rgba(212, 160, 23, 0.08); }
+
+    .social-popup {
+      position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); display: flex; gap: 16px; pointer-events: none; z-index: 50;
+    }
+    .social-popup.active { pointer-events: auto; }
+    .social-circle {
+      width: 50px; height: 50px; border-radius: 50%; background: #181824; border: 2px solid rgba(255, 255, 255, 0.15); display: flex; align-items: center; justify-content: center; color: #ffffff; text-decoration: none; box-shadow: 0 10px 20px rgba(0,0,0,0.6); opacity: 0; transform: translateY(20px) scale(0.5); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .social-popup.active .social-circle { opacity: 1; transform: translateY(0) scale(1); }
+    .social-popup.active .social-circle:nth-child(1) { transition-delay: 0.05s; }
+    .social-popup.active .social-circle:nth-child(2) { transition-delay: 0.1s; }
+    .social-popup.active .social-circle:nth-child(3) { transition-delay: 0.15s; }
+    .social-circle.yt:hover { background: #ff0000; border-color: #ff0000; }
+    .social-circle.fb:hover { background: #1877f2; border-color: #1877f2; }
+    .social-circle.ig:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: #e6683c; }
+    .social-circle svg { width: 24px; height: 24px; fill: currentColor; }
+
     footer { text-align: center; padding: 30px 20px; color: #6b7280; font-size: 0.85rem; }
 
     @media (max-width: 900px) {
@@ -329,25 +352,25 @@
         <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
         <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
       </svg>
-      <span>काव्य सागर और कहानी</span>
+      <span data-lang-key="brandTitle">काव्य सागर और कहानी</span>
     </a>
 
     <nav>
-      <a href="home.html">होम</a>
-      <a href="poem.html">कविताएँ</a>
-      <a href="stories.html">कहानी</a>
-      <a href="diaries.html">डायरी</a>
-      <a href="quotes.html">प्रेरणादायक बातें</a>
+      <a href="home.html" data-lang-key="navHome">होम</a>
+      <a href="poem.html" data-lang-key="navPoem">कविताएँ</a>
+      <a href="stories.html" data-lang-key="navStory">कहानी</a>
+      <a href="diaries.html" data-lang-key="navDiary">डायरी</a>
+      <a href="quotes.html" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
     </nav>
 
     <!-- Fixed Header Search Input -->
     <div class="header-search-box">
-      <button class="search-icon-btn">🔍 Search</button>
+      <button class="search-icon-btn">🔍</button>
       <input type="text" id="globalSearchInput" class="header-search-input" placeholder="Search authors, poems, stories..." oninput="handleGlobalSearch(this.value)">
     </div>
 
     <div class="header-right-actions">
-      <select class="lang-select" onchange="applyLanguage(this.value)">
+      <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
         <option value="hi">हिन्दी</option>
         <option value="en">English</option>
       </select>
@@ -358,52 +381,48 @@
   <!-- Main Container -->
   <main class="network-container">
 
-    <!-- Search Results Matrix Overlay (Appears when typing in header search) -->
+    <!-- Search Results Matrix Overlay -->
     <section class="search-results-section" id="searchResultsSection">
       <h3 style="color:#d4a017; font-size:1.1rem; margin-bottom:10px;">🔍 Search Results Matrix</h3>
       <table class="search-matrix-table">
         <thead>
           <tr>
-            <th>User</th>
-            <th>Poem</th>
-            <th>Story</th>
-            <th>Diaries</th>
-            <th>Quotes</th>
+            <th data-lang-key="matrixUser">User</th>
+            <th data-lang-key="matrixPoem">Poem</th>
+            <th data-lang-key="matrixStory">Story</th>
+            <th data-lang-key="matrixDiaries">Diaries</th>
+            <th data-lang-key="matrixQuotes">Quotes</th>
           </tr>
         </thead>
-        <tbody id="matrixTableBody">
-          <!-- Dynamically populated search matrix -->
-        </tbody>
+        <tbody id="matrixTableBody"></tbody>
       </table>
     </section>
 
     <!-- Followers / Following Tabs -->
     <div class="network-tabs">
-      <button class="net-tab-btn active" id="tabFollowers" onclick="switchNetworkTab('followers')">Followers</button>
-      <button class="net-tab-btn" id="tabFollowing" onclick="switchNetworkTab('following')">Following</button>
+      <button class="net-tab-btn active" id="tabFollowers" onclick="switchNetworkTab('followers')" data-lang-key="tabFollowers">Followers</button>
+      <button class="net-tab-btn" id="tabFollowing" onclick="switchNetworkTab('following')" data-lang-key="tabFollowing">Following</button>
     </div>
 
     <!-- Split Screen Layout: Table + Author Profile Preview -->
     <div class="network-split-grid">
       
-      <!-- Left Table View (Image 1 Layout) -->
+      <!-- Left Table View -->
       <section class="network-table-card">
         <table class="users-data-table">
           <thead>
             <tr>
-              <th>User Name</th>
-              <th>Follow</th>
-              <th>Total Post</th>
-              <th>Share</th>
+              <th data-lang-key="colUserName">User Name</th>
+              <th data-lang-key="colFollow">Follow</th>
+              <th data-lang-key="colTotalPosts">Total Post</th>
+              <th data-lang-key="colShare">Share</th>
             </tr>
           </thead>
-          <tbody id="networkTableBody">
-            <!-- Populated via Firebase -->
-          </tbody>
+          <tbody id="networkTableBody"></tbody>
         </table>
       </section>
 
-      <!-- Right Side: Author Profile Preview Layout (Shared Yesterday) -->
+      <!-- Right Side: Author Profile Preview -->
       <section class="author-profile-preview-card" id="authorPreviewCard">
         <div class="profile-top-row">
           <div class="profile-author-info">
@@ -421,31 +440,31 @@
         <!-- Stats Bar -->
         <div class="stats-bar">
           <div class="stat-box">
-            <span>Total Likes</span>
+            <span data-lang-key="statLikes">Total Likes</span>
             <strong id="prevStatLikes">0</strong>
           </div>
           <div class="stat-box">
-            <span>Views</span>
+            <span data-lang-key="statViews">Views</span>
             <strong id="prevStatViews">0</strong>
           </div>
           <div class="stat-box">
-            <span>Followers</span>
+            <span data-lang-key="statFollowers">Followers</span>
             <strong id="prevStatFollowers">0</strong>
           </div>
         </div>
 
         <!-- Category Tabs -->
         <div class="profile-cat-tabs">
-          <button class="p-tab-pill active" onclick="filterProfileCreations('all')">All</button>
-          <button class="p-tab-pill" onclick="filterProfileCreations('kavita')">Poems</button>
-          <button class="p-tab-pill" onclick="filterProfileCreations('kahani')">Stories</button>
-          <button class="p-tab-pill" onclick="filterProfileCreations('diary')">Diaries</button>
-          <button class="p-tab-pill" onclick="filterProfileCreations('prerna')">Quotes</button>
+          <button class="p-tab-pill active" onclick="filterProfileCreations('all')" data-lang-key="tabAll">All</button>
+          <button class="p-tab-pill" onclick="filterProfileCreations('kavita')" data-lang-key="tabPoems">Poems</button>
+          <button class="p-tab-pill" onclick="filterProfileCreations('kahani')" data-lang-key="tabStories">Stories</button>
+          <button class="p-tab-pill" onclick="filterProfileCreations('diary')" data-lang-key="tabDiaries">Diaries</button>
+          <button class="p-tab-pill" onclick="filterProfileCreations('prerna')" data-lang-key="tabQuotes">Quotes</button>
         </div>
 
         <!-- Creations Feed -->
         <div class="profile-creations-feed" id="prevCreationsFeed">
-          <p style="color:#6b7280; font-size:0.85rem; text-align:center; padding:20px;">No creations loaded.</p>
+          <p style="color:#6b7280; font-size:0.85rem; text-align:center; padding:20px;" data-lang-key="noCreations">No creations loaded.</p>
         </div>
       </section>
 
@@ -453,16 +472,34 @@
 
   </main>
 
-  <!-- Universal Footer -->
+  <!-- Universal Footer with Social Popup -->
   <section class="footer-section">
     <div class="footer-grid">
-      <a href="about-us.html" class="footer-card">About us</a>
-      <a href="privacy-policy.html" class="footer-card">Privacy Policy</a>
-      <a href="terms.html" class="footer-card">Terms and Conditions</a>
-      <a href="home.html" class="footer-card">Other Links</a>
+      <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
+      <a href="privacy-policy.html" class="footer-card" data-lang-key="privacyPolicy">Privacy Policy</a>
+      <a href="terms.html" class="footer-card" data-lang-key="termsConditions">Terms and Conditions</a>
+
+      <div class="other-links-wrapper">
+        <button class="other-links-btn" id="otherLinksBtn" data-lang-key="otherLinks">Other Links</button>
+
+        <div class="social-popup" id="socialPopup">
+          <a href="https://www.youtube.com/@KavyaSagarorKahani" target="_blank" class="social-circle yt" title="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+        </div>
+      </div>
     </div>
-  </main>
-  <footer>&copy; 2026 काव्य सागर और कहानी. All rights reserved.</footer>
+  </section>
+
+  <footer>
+    &copy; 2026 काव्य सागर और कहानी. All rights reserved.
+  </footer>
 
   <script type="module">
     import { db, collection, getDocs } from "./firebase.js";
@@ -472,7 +509,6 @@
     let activeNetworkTab = 'followers';
     let selectedAuthorName = null;
     let currentProfileFilter = 'all';
-    const currentUser = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Kamal';
 
     async function loadNetworkDataFromCloud() {
       try {
@@ -523,7 +559,6 @@
       const tbody = document.getElementById('networkTableBody');
       tbody.innerHTML = '';
 
-      // Filter based on tab (Followers vs Following simulation)
       const filteredUsers = allUsersData.filter(u => activeNetworkTab === 'followers' ? true : u.isFollowing);
 
       if (filteredUsers.length === 0) {
@@ -551,7 +586,7 @@
       const user = allUsersData.find(u => u.name === authorName);
       if (!user) return;
 
-      renderNetworkTable(); // Update active row styling
+      renderNetworkTable();
 
       document.getElementById('prevAvatar').innerText = user.name.charAt(0).toUpperCase();
       document.getElementById('prevAuthorName').innerText = user.name;
@@ -619,7 +654,7 @@
       alert(`Profile link for ${authorName} copied to clipboard!`);
     }
 
-    // --- GLOBAL SEARCH MATRIX (Image 2 Layout) ---
+    // --- GLOBAL SEARCH MATRIX ---
     window.handleGlobalSearch = function(query) {
       const section = document.getElementById('searchResultsSection');
       const tbody = document.getElementById('matrixTableBody');
@@ -633,7 +668,6 @@
       section.classList.add('show');
       const q = query.toLowerCase();
 
-      // Group works by author for matrix view matching Image 2
       const matrixMap = {};
       allWorksData.forEach(w => {
         const author = w.author || 'Admin';
@@ -648,7 +682,6 @@
 
       let matchCount = 0;
       Object.values(matrixMap).forEach(row => {
-        // Check if query matches user or any work title
         const userMatch = row.user.toLowerCase().includes(q);
         const kavitaMatch = row.kavita.some(t => t.toLowerCase().includes(q));
         const kahaniMatch = row.kahani.some(t => t.toLowerCase().includes(q));
@@ -674,25 +707,98 @@
       }
     }
 
-    // Auth Header Renderer
+    // --- DYNAMIC AUTH HEADER WITH MY ACCOUNT & LIVE LANGUAGE ---
     function renderAuthHeader() {
       const container = document.getElementById('userAuthContainer');
       if (!container) return;
+
       const userName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Kamal';
+      const userInitial = userName.trim().charAt(0).toUpperCase() || 'K';
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+
+      const myProfileLabel = currentLang === 'hi' ? 'मेरी प्रोफाइल (My Account)' : 'My Account';
+      const savedItemsLabel = currentLang === 'hi' ? 'सहेजी गई रचनाएँ' : 'Saved Items';
+      const myWorksLabel = currentLang === 'hi' ? 'मेरी रचनाएँ' : 'My Works';
+      const contactUsLabel = currentLang === 'hi' ? 'संपर्क करें' : 'Contact Us';
+      const logoutLabel = currentLang === 'hi' ? 'लॉग आउट' : 'Logout';
+
       container.innerHTML = `
-        <button class="user-btn" onclick="document.getElementById('userDropdown').classList.toggle('show')">
-          <span class="avatar-icon">${userName.charAt(0).toUpperCase()}</span>
+        <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+          <span class="avatar-icon">${userInitial}</span>
           <span>${userName}</span>
           <small>▼</small>
         </button>
         <div class="dropdown-content" id="userDropdown">
-          <a href="profile.html">My Profile</a>
-          <a href="saved-items.html">Saved Items</a>
-          <a href="my-work.html">My Works</a>
-          <button onclick="localStorage.clear(); sessionStorage.clear(); location.reload();">Logout</button>
+          <a href="profile.html">${myProfileLabel}</a>
+          <a href="saved-items.html">${savedItemsLabel}</a>
+          <a href="my-work.html">${myWorksLabel}</a>
+          <a href="mailto:official.ksok@gmail.com">${contactUsLabel}</a>
+          <button onclick="handleUserLogout()">${logoutLabel}</button>
         </div>
       `;
+
+      if (typeof translations !== 'undefined' && translations[currentLang]) {
+        const dict = translations[currentLang];
+        container.querySelectorAll('[data-lang-key]').forEach(el => {
+          const key = el.getAttribute('data-lang-key');
+          if (dict[key]) el.innerText = dict[key];
+        });
+      }
     }
+
+    window.toggleUserDropdown = function(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) dropdown.classList.toggle('show');
+    }
+
+    window.handleUserLogout = function() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userName');
+      sessionStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    // Footer Social Popup & Outside Click Handlers
+    window.addEventListener('click', (e) => {
+      const userDropdown = document.getElementById('userDropdown');
+      const userMenuBtn = document.getElementById('userMenuBtn');
+      const otherLinksBtn = document.getElementById('otherLinksBtn');
+      const socialPopup = document.getElementById('socialPopup');
+
+      if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
+        userDropdown.classList.remove('show');
+      }
+
+      if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
+        socialPopup.classList.remove('active');
+        otherLinksBtn.classList.remove('active');
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+        otherLinksBtn.innerText = dict ? dict.otherLinks : 'Other Links';
+      }
+    });
+
+    const otherLinksBtn = document.getElementById('otherLinksBtn');
+    const socialPopup = document.getElementById('socialPopup');
+
+    otherLinksBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = socialPopup.classList.toggle('active');
+      otherLinksBtn.classList.toggle('active');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+      if (dict) {
+        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+      } else {
+        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+      }
+    });
+
+    // Live Language Change Listener
+    window.addEventListener('languageChanged', () => {
+      renderAuthHeader();
+    });
 
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
