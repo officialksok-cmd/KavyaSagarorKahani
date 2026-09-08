@@ -26,9 +26,9 @@
       width: 100%;
     }
 
-    /* ---------------- HEADER ---------------- */
+    /* ---------------- HEADER WITH SEARCH ---------------- */
     header {
-      background: rgba(30, 30, 47, 0.85);
+      background: rgba(30, 30, 47, 0.95);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       padding: 12px 20px;
@@ -39,6 +39,8 @@
       top: 0;
       z-index: 100;
       width: 100%;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
     .brand {
@@ -60,6 +62,7 @@
     nav {
       display: flex;
       gap: 20px;
+      align-items: center;
     }
 
     nav a {
@@ -71,6 +74,37 @@
 
     nav a:hover, nav a.active {
       color: #d4a017;
+    }
+
+    /* Header Search Bar */
+    .header-search-box {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      border-radius: 20px;
+      overflow: hidden;
+      max-width: 280px;
+      width: 100%;
+    }
+    .search-icon-btn {
+      background: rgba(212, 160, 23, 0.15);
+      border: none;
+      color: #d4a017;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+    .header-search-input {
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      color: #f3f4f6;
+      font-size: 0.85rem;
+      outline: none;
+      width: 100%;
     }
 
     /* Dual Language Dropdown */
@@ -158,7 +192,7 @@
       background: #181824;
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 10px;
-      min-width: 150px;
+      min-width: 160px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
       overflow: hidden;
       z-index: 200;
@@ -185,6 +219,37 @@
       background: rgba(212, 160, 23, 0.15);
       color: #d4a017;
     }
+
+    /* Search Results Matrix Overlay */
+    .search-results-section {
+      display: none;
+      background: #181820;
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 20px auto 0 auto;
+      max-width: 1200px;
+      width: 95%;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      z-index: 90;
+      position: relative;
+    }
+    .search-results-section.show { display: block; }
+    .search-matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+    .search-matrix-table th, .search-matrix-table td {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 14px;
+      text-align: left;
+    }
+    .search-matrix-table th { background: #23232c; color: #d4a017; }
+    .search-matrix-table tr { cursor: pointer; transition: background 0.2s; }
+    .search-matrix-table tr:hover { background: rgba(212, 160, 23, 0.15); }
+    .highlight-match { background: #fef08a; color: #000; padding: 1px 4px; border-radius: 3px; font-weight: 600; }
 
     /* ---------------- LAYOUT CONTAINER ---------------- */
     .stories-container {
@@ -280,8 +345,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
+      margin-bottom: 8px;
+      padding-bottom: 12px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       flex-wrap: wrap;
       gap: 15px;
@@ -290,6 +355,21 @@
     .preview-title {
       font-size: 1.65rem;
       color: #ffffff;
+    }
+
+    /* Author Badge on Story Preview */
+    .story-author-badge {
+      font-size: 0.88rem;
+      color: #ffd700;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: inline-block;
+      transition: color 0.2s;
+    }
+    .story-author-badge:hover {
+      color: #ffffff;
+      text-decoration: underline;
     }
 
     .btn-read-story {
@@ -617,7 +697,7 @@
 </head>
 <body>
 
-  <!-- Navigation Header -->
+  <!-- Navigation Header with Search -->
   <header>
     <a href="home.html" class="brand">
       <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -637,6 +717,12 @@
       <a href="quotes.html" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
     </nav>
 
+    <!-- Header Search Input -->
+    <div class="header-search-box">
+      <button class="search-icon-btn">🔍</button>
+      <input type="text" id="globalSearchInput" class="header-search-input" placeholder="Search authors, stories..." oninput="handleGlobalSearch(this.value)">
+    </div>
+
     <div style="display: flex; align-items: center;">
       <div class="lang-dropdown-wrapper">
         <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
@@ -648,6 +734,23 @@
       <div class="user-profile-menu" id="userAuthContainer"></div>
     </div>
   </header>
+
+  <!-- Search Results Matrix Overlay -->
+  <section class="search-results-section" id="searchResultsSection">
+    <h3 style="color:#d4a017; font-size:1.1rem; margin-bottom:10px;">🔍 Search Results Matrix</h3>
+    <table class="search-matrix-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Poem</th>
+          <th>Story</th>
+          <th>Diaries</th>
+          <th>Quotes</th>
+        </tr>
+      </thead>
+      <tbody id="matrixTableBody"></tbody>
+    </table>
+  </section>
 
   <!-- Main Content Area -->
   <main class="stories-container">
@@ -666,6 +769,9 @@
           <h2 id="storyTitle" class="preview-title"></h2>
           <button class="btn-read-story" onclick="openFullStoryModal()" id="btnOpenModal">पूरी कहानी पढ़ें →</button>
         </div>
+
+        <!-- Clickable Author Badge -->
+        <a href="visitor.html" class="story-author-badge" id="storyAuthorBadge" title="View Author Profile & Follow">~ Admin</a>
 
         <div class="summary-box">
           <div class="summary-title" data-lang-key="summaryHeading">सारांश (Summary)</div>
@@ -711,7 +817,7 @@
     </div>
   </div>
 
-  <!-- Universal 4-Card Footer -->
+  <!-- Universal 4-Card Footer with IG -->
   <section class="footer-section">
     <div class="footer-grid">
       <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
@@ -771,12 +877,14 @@
         hi: {
           listLabel: "1. चालाक लोमड़ी (The Cunning Fox)",
           title: "The Cunning Fox Story (चालाक लोमड़ी)",
+          author: "~ कुमार",
           summary: "एक भूखी लोमड़ी भोजन की तलाश में जंगल में भटक रही थी। उसे एक पेड़ पर बैठा कौआ दिखाई दिया जिसके मुंह में पनीर का टुकड़ा था। लोमड़ी ने चालाकी से कौए की प्रशंसा की और उससे गाना गाने को कहा। जैसे ही कौए ने गाने के लिए मुंह खोला, पनीर का टुकड़ा नीचे गिर गया और चालाक लोमड़ी उसे लेकर भाग गई।",
           fullStory: "एक समय की बात है, एक घने जंगल में एक बहुत चालाक लोमड़ी रहती थी। कई दिनों से उसे कोई भोजन नहीं मिला था और उसकी भूख बढ़ती जा रही थी।\n\nभोजन की तलाश में वह जंगल में इधर-उधर भटक रही थी। अचानक उसकी नज़र एक ऊँचे पेड़ की डाल पर बैठे कौए पर पड़ी। कौए की चोंच में एक स्वादिष्ट पनीर का बड़ा टुकड़ा था।\n\nलोमड़ी के मुंह में पानी आ गया। उसने सोचा, 'मुझे किसी भी तरह यह पनीर का टुकड़ा हासिल करना होगा।' लोमड़ी पेड़ के नीचे गई और मधुर स्वर में बोली, 'अरे कौए भाई! आप कितने सुंदर लग रहे हैं! आपके पंख कितने चमकदार हैं और आपकी आँखें कितनी प्यारी हैं। मैंने सुना है कि आपकी आवाज़ पूरे जंगल में सबसे सुरीली है। क्या आप मेरे लिए एक मधुर गीत नहीं गाएंगे?'\n\nकौआ अपनी झूठी प्रशंसा सुनकर गर्व से फूला न समाया। अपनी सुरीली आवाज़ का प्रदर्शन करने के लिए उसने जैसे ही 'काँव-काँव' करने के लिए अपनी चोंच खोली, पनीर का टुकड़ा नीचे गिर गया।\n\nलोमड़ी ने लपक कर पनीर का टुकड़ा उठा लिया और हँसते हुए जंगल की ओर भाग गई।\n\nसीख: झूठी चापलूसी करने वालों से हमेशा सावधान रहना चाहिए।"
         },
         en: {
           listLabel: "1. The Cunning Fox",
           title: "The Cunning Fox Story",
+          author: "~ Kumar",
           summary: "A hungry fox was wandering through the forest in search of food. She saw a crow perched on a branch holding a piece of cheese in its beak. Flattering the crow, the fox praised its voice and asked for a song. As soon as the crow opened its beak to sing, the cheese fell down, and the clever fox ran away with it.",
           fullStory: "Once upon a time in a dense woodland, a clever fox had been searching for food for several days without success.\n\nAs she wandered near an oak tree, she spotted a crow perched on a high branch holding a rich piece of cheese in its beak.\n\nThe fox decided to use flattery to get the cheese. She walked up beneath the tree and said warmly, 'Good morning, noble bird! How magnificent your feathers look, and how bright your eyes shine! I have heard that your voice is the sweetest in the entire forest. Would you grace me with a song?'\n\nOvercome with vanity, the crow opened its beak wide to caw aloud. The instant it opened its beak, the cheese slipped and fell straight down.\n\nThe cunning fox caught it swiftly, smiled, and trotted away into the forest.\n\nMoral: Never trust flatterers who flatter for selfish gain."
         }
@@ -785,12 +893,14 @@
         hi: {
           listLabel: "2. प्यासा कौआ (The Thirsty Crow)",
           title: "The Thirsty Crow (प्यासा कौआ)",
+          author: "~ Dubey",
           summary: "एक प्यासा कौआ पानी की तलाश में उड़ रहा था। उसे एक घड़ा मिला जिसमें पानी बहुत नीचे था। कौए ने अपनी बुद्धिमत्ता का परिचय देते हुए एक-एक करके छोटे कंकड़ घड़े में डाले, जिससे पानी ऊपर आ गया और उसने अपनी प्यास बुझाई।",
           fullStory: "गर्मियों के दिन थे और सूरज की तेज धूप में एक कौआ पानी की तलाश में बहुत देर से उड़ रहा था। उसे बहुत तेज प्यास लगी थी और वह थक चुका था।\n\nउड़ते-उड़ते उसे एक बगीचे में एक मिट्टी का घड़ा दिखाई दिया। वह तुरंत खुशी-खुशी घड़े के पास पहुँचा। जब उसने घड़े के अंदर झाँका, तो देखा कि उसमें पानी बहुत कम था और उसकी चोंच पानी तक नहीं पहुँच पा रही थी।\n\nकौआ निराश नहीं हुआ। उसने चारों तरफ देखा और उसे ज़मीन पर छोटे-छोटे कंकड़ पड़े दिखाई दिए। उसने एक योजना बनाई।\n\nकौए ने एक-एक करके कंकड़ अपनी चोंच में उठाए और घड़े में डालना शुरू किया। जैसे-जैसे कंकड़ नीचे बैठते गए, पानी धीरे-धीरे ऊपर आता गया। कुछ ही देर में पानी घड़े के मुंह तक आ गया।\n\nकौए ने जी भरकर पानी पिया और खुशी से उड़ गया।\n\nसीख: जहाँ चाह, वहाँ राह। कठिन परिस्थिति में बुद्धि और धैर्य से हर समस्या का समाधान निकलता है।"
         },
         en: {
           listLabel: "2. The Thirsty Crow",
           title: "The Thirsty Crow Story",
+          author: "~ Dubey",
           summary: "A thirsty crow flew across the fields looking for water. He found a pitcher with water low at the bottom. Using his clever thinking, he picked up small pebbles one by one and dropped them into the jug until the water rose to the brim, allowing him to quench his thirst.",
           fullStory: "On a scorching summer afternoon, a thirsty crow flew over the dried-up fields searching desperately for water.\n\nHe spotted a pitcher in a garden courtyard and swooped down with excitement. Looking inside, he found only a small amount of water remaining at the bottom, far below the reach of his beak.\n\nInstead of giving up in despair, the crow looked around and noticed small pebbles scattered across the ground.\n\nHe picked up the pebbles one by one with his beak and dropped them into the pitcher. As the pebbles accumulated at the bottom, the water level steadily rose.\n\nSoon, the water reached the top. The wise crow drank his fill and flew away happily into the sky.\n\nMoral: Where there is a will and thoughtful effort, there is always a way."
         }
@@ -799,12 +909,14 @@
         hi: {
           listLabel: "3. शेर और चूहा (The Lion and the Mouse)",
           title: "The Lion and the Mouse (शेर और चूहा)",
+          author: "~ कुमार",
           summary: "एक नन्हे चूहे ने गलती से एक सोते हुए शेर को जगा दिया। शेर ने उसे छोड़ दिया। कुछ समय बाद शेर एक शिकारी के जाल में फंस गया। चूहे ने अपने नुकीले दांतों से जाल काटकर शेर की जान बचाई और साबित किया कि छोटा जीव भी बड़े काम आ सकता है।",
           fullStory: "एक दोपहर जब जंगल का राजा शेर एक पेड़ की छाँव में गहरी नींद में सो रहा था, एक नन्हा चूहा वहाँ खेल रहा था। खेलते-खेलते चूहा गलती से शेर की पीठ पर चढ़ गया।\n\nशेर की नींद टूट गई और उसने गुस्से में आकर चूहे को अपने विशाल पंजे में दबोच लिया। शेर ने दहाड़ते हुए कहा, 'तुझे मेरी नींद खराब करने की सज़ा मिलेगी!'\n\nचूहा डर से कांपते हुए बोला, 'हे वनराज! मुझे क्षमा कर दीजिए। यदि आप मुझे छोड़ देंगे, तो मैं आपके इस उपकार को कभी नहीं भूलूँगा और संकट के समय आपके काम आऊँगा।'\n\nशेर चूहे की बात सुनकर हँसा और उस पर दया करके उसे छोड़ दिया।\n\nकुछ दिनों बाद, एक शिकारी ने शेर को पकड़ने के लिए मजबूत जाल बिछाया और शेर उसमें फँस गया। शेर की लाचार दहाड़ सुनकर वह छोटा चूहा तुरंत वहाँ पहुँचा। चूहे ने अपने नुकीले दांतों से शिकारी के जाल की रस्सियों को काट दिया और शेर को आज़ाद करा दिया।\n\nसीख: कोई भी जीव छोटा या कमज़ोर नहीं होता। दयालुता का फल हमेशा अच्छा होता है।"
         },
         en: {
           listLabel: "3. The Lion and the Mouse",
           title: "The Lion and the Mouse",
+          author: "~ Kumar",
           summary: "A tiny mouse accidentally woke up a sleeping lion. The lion showed mercy and let him go. Sometime later, the lion was caught in a hunter's net. The little mouse gnawed through the ropes with his sharp teeth and set the lion free, proving that even small friends can be of great help.",
           fullStory: "One warm afternoon, while the king of the jungle lay sleeping under a shady tree, a little mouse was scampering around and accidentally ran over the lion's nose.\n\nThe lion woke up with a roar and trapped the little mouse under his heavy paw. 'How dare you disturb my slumber!' the lion growled.\n\nThe mouse trembled and pleaded, 'Please spare me, O King! If you let me go, I will be forever grateful, and perhaps one day I may help you in return.'\n\nAmused by the thought that a tiny mouse could ever assist a mighty lion, the lion laughed and generously released him.\n\nA few weeks later, the lion was ensnared in a hunter's rope trap. Hearing the lion's roar of distress, the tiny mouse ran to the spot. Using his sharp teeth, he gnawed through the thick ropes and freed the lion.\n\nMoral: An act of kindness is never wasted, and small friends can prove to be of immense help."
         }
@@ -812,6 +924,7 @@
     };
 
     let storiesData = JSON.parse(JSON.stringify(baseStoriesData));
+    let allWorksData = [];
     let selectedStoryKey = 'fox';
     const currentAuthorName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
 
@@ -819,19 +932,23 @@
     async function loadStoriesFromCloud() {
       try {
         const querySnapshot = await getDocs(collection(db, "works"));
+        allWorksData = [];
         storiesData = JSON.parse(JSON.stringify(baseStoriesData));
 
         querySnapshot.forEach((docSnap) => {
           const item = docSnap.data();
+          allWorksData.push({ id: docSnap.id, ...item });
+
           if (item.stage === 'published' && item.category === 'kahani') {
             const storyKey = 'cloud_' + docSnap.id;
             const title = item.title || 'Untitled Story';
+            const authorSign = `~ ${item.author || 'Admin'}`;
             const content = item.content || '';
             const summary = content.slice(0, 180) + '...';
 
             storiesData[storyKey] = {
-              hi: { listLabel: title, title: title, summary: summary, fullStory: content },
-              en: { listLabel: title, title: title, summary: summary, fullStory: content }
+              hi: { listLabel: title, title: title, author: authorSign, summary: summary, fullStory: content },
+              en: { listLabel: title, title: title, author: authorSign, summary: summary, fullStory: content }
             };
           }
         });
@@ -840,6 +957,65 @@
       } catch (error) {
         console.error("Error loading stories from cloud:", error);
         renderStoryList();
+      }
+    }
+
+    // --- SEARCH BAR MATRIX & REDIRECTION ---
+    window.handleGlobalSearch = function(query) {
+      const section = document.getElementById('searchResultsSection');
+      const tbody = document.getElementById('matrixTableBody');
+      tbody.innerHTML = '';
+
+      if (!query || query.trim() === '') {
+        section.classList.remove('show');
+        return;
+      }
+
+      section.classList.add('show');
+      const q = query.toLowerCase();
+
+      const matrixMap = {};
+      allWorksData.forEach(w => {
+        const author = w.author || 'Admin';
+        if (!matrixMap[author]) matrixMap[author] = { user: author, kavita: [], kahani: [], diary: [], quotes: [] };
+        
+        const cat = w.category;
+        if (cat === 'kavita') matrixMap[author].kavita.push(w);
+        else if (cat === 'kahani') matrixMap[author].kahani.push(w);
+        else if (cat === 'diary') matrixMap[author].diary.push(w);
+        else if (cat === 'prerna') matrixMap[author].quotes.push(w);
+      });
+
+      let matchCount = 0;
+      Object.values(matrixMap).forEach(row => {
+        const userMatch = row.user.toLowerCase().includes(q);
+        const kavitaMatch = row.kavita.some(w => w.title.toLowerCase().includes(q));
+        const kahaniMatch = row.kahani.some(w => w.title.toLowerCase().includes(q));
+        const diaryMatch = row.diary.some(w => w.title.toLowerCase().includes(q));
+        const quotesMatch = row.quotes.some(w => w.title.toLowerCase().includes(q));
+
+        if (userMatch || kavitaMatch || kahaniMatch || diaryMatch || quotesMatch) {
+          matchCount++;
+          const tr = document.createElement('tr');
+          
+          const formatCell = (worksList, targetPage) => {
+            if (worksList.length === 0) return '-';
+            return worksList.map(w => `<span style="cursor:pointer; color:#d4a017; text-decoration:underline;" onclick="window.location.href='${targetPage}'">${w.title}</span>`).join(', ');
+          };
+
+          tr.innerHTML = `
+            <td><strong>${row.user}</strong></td>
+            <td>${formatCell(row.kavita, 'poem.html')}</td>
+            <td>${formatCell(row.kahani, 'stories.html')}</td>
+            <td>${formatCell(row.diary, 'diaries.html')}</td>
+            <td>${formatCell(row.quotes, 'quotes.html')}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+
+      if (matchCount === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#6b7280; padding:15px;">No matches found for "${query}".</td></tr>`;
       }
     }
 
@@ -890,6 +1066,7 @@
 
       const localized = story[currentLang] || story.hi;
       document.getElementById('storyTitle').innerText = localized.title;
+      document.getElementById('storyAuthorBadge').innerText = localized.author || "~ Admin";
       document.getElementById('storySummary').innerText = localized.summary;
 
       loadStoryComments();
@@ -1045,10 +1222,17 @@
       const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
       const currentLang = localStorage.getItem('site_lang') || 'hi';
 
+      const myProfileLabel = currentLang === 'hi' ? 'मेरी प्रोफाइल (My Account)' : 'My Account';
+      const savedItemsLabel = currentLang === 'hi' ? 'सहेजी गई रचनाएँ' : 'Saved Items';
+      const myWorksLabel = currentLang === 'hi' ? 'मेरी रचनाएँ' : 'My Works';
+      const contactUsLabel = currentLang === 'hi' ? 'संपर्क करें' : 'Contact Us';
+      const logoutLabel = currentLang === 'hi' ? 'लॉग आउट' : 'Logout';
+
       if (isLoggedIn) {
         const rawName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
         const userName = rawName.trim();
         const userInitial = userName.charAt(0).toUpperCase() || 'A';
+        const isAdmin = (userName.toLowerCase() === 'admin');
 
         container.innerHTML = `
           <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
@@ -1057,11 +1241,12 @@
             <small>▼</small>
           </button>
           <div class="dropdown-content" id="userDropdown">
-            <a href="profile.html" data-lang-key="myProfile">My Profile</a>
-            <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
-            <a href="my-work.html" data-lang-key="myWorks">My Works</a>
-            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
-            <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
+            <a href="profile.html">${myProfileLabel}</a>
+            <a href="saved-items.html">${savedItemsLabel}</a>
+            <a href="my-work.html">${myWorksLabel}</a>
+            ${isAdmin ? `<a href="admin-control.html" style="color: #ffd700; font-weight: bold;">⚡ Master Panel</a>` : ''}
+            <a href="mailto:official.ksok@gmail.com">${contactUsLabel}</a>
+            <button onclick="handleUserLogout()">${logoutLabel}</button>
           </div>
         `;
       } else {
@@ -1076,7 +1261,7 @@
           </button>
           <div class="dropdown-content" id="userDropdown">
             <a href="login.html" style="color:#d4a017; font-weight:600;">🔑 ${signInLabel}</a>
-            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+            <a href="mailto:official.ksok@gmail.com">${contactUsLabel}</a>
           </div>
         `;
       }
@@ -1090,13 +1275,13 @@
       }
     }
 
-    function toggleUserDropdown(event) {
+    window.toggleUserDropdown = function(event) {
       event.stopPropagation();
       const dropdown = document.getElementById('userDropdown');
       if (dropdown) dropdown.classList.toggle('show');
     }
 
-    function handleUserLogout() {
+    window.handleUserLogout = function() {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userName');
       sessionStorage.clear();
