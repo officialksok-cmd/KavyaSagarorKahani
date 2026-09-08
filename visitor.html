@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>कम्युनिटी और नेटवर्क - काव्य सागर और कहानी</title>
+
+  <!-- Global Language Switcher Script -->
+  <script src="lang.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0d0d15;
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* ---------------- HEADER WITH FIXED SEARCH ---------------- */
+    header {
+      background: rgba(30, 30, 47, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d4a017;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+    .brand svg { width: 28px; height: 28px; flex-shrink: 0; }
+
+    nav { display: flex; gap: 20px; align-items: center; }
+    nav a {
+      color: #9ca3af; text-decoration: none; font-size: 0.95rem; transition: color 0.2s;
+    }
+    nav a:hover, nav a.active { color: #d4a017; }
+
+    /* Fixed Header Search Bar */
+    .header-search-box {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      border-radius: 20px;
+      overflow: hidden;
+      max-width: 320px;
+      width: 100%;
+    }
+    .search-icon-btn {
+      background: rgba(212, 160, 23, 0.15);
+      border: none;
+      color: #d4a017;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .header-search-input {
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      color: #f3f4f6;
+      font-size: 0.85rem;
+      outline: none;
+      width: 100%;
+    }
+
+    .header-right-actions { display: flex; align-items: center; gap: 12px; }
+    .lang-select {
+      background: rgba(255, 255, 255, 0.05); border: 1px solid #d4a017; color: #d4a017;
+      padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600; cursor: pointer; outline: none;
+    }
+
+    .user-profile-menu { position: relative; }
+    .user-btn {
+      display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4); padding: 6px 12px; border-radius: 20px;
+      color: #f3f4f6; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+    }
+    .avatar-icon {
+      width: 22px; height: 22px; background: #ffd700; color: #0d0d15; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem;
+    }
+    .dropdown-content {
+      display: none; position: absolute; right: 0; top: 110%; background: #181824;
+      border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; min-width: 150px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 200;
+    }
+    .dropdown-content.show { display: block; }
+    .dropdown-content a, .dropdown-content button {
+      display: block; width: 100%; padding: 10px 14px; color: #d1d5db; text-decoration: none;
+      background: none; border: none; text-align: left; font-size: 0.85rem; cursor: pointer;
+    }
+    .dropdown-content a:hover, .dropdown-content button:hover { background: rgba(212, 160, 23, 0.15); color: #d4a017; }
+
+    /* ---------------- MAIN CONTAINER SPLIT LAYOUT ---------------- */
+    .network-container {
+      max-width: 1280px;
+      margin: 30px auto;
+      padding: 0 20px;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    /* Search Results Matrix Overlay (Matches Image 2) */
+    .search-results-section {
+      display: none;
+      background: #181820;
+      border: 1px solid rgba(212, 160, 23, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 10px;
+    }
+    .search-results-section.show { display: block; }
+    .search-matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+    .search-matrix-table th, .search-matrix-table td {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 14px;
+      text-align: left;
+    }
+    .search-matrix-table th { background: #23232c; color: #d4a017; }
+    .highlight-match { background: #fef08a; color: #000; padding: 1px 4px; border-radius: 3px; font-weight: 600; }
+
+    /* Dual Tab Switcher (Followers / Following) */
+    .network-tabs {
+      display: flex;
+      gap: 10px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+    }
+    .net-tab-btn {
+      padding: 8px 24px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      color: #9ca3af;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .net-tab-btn.active {
+      background: #d4a017;
+      color: #0e0e14;
+      border-color: #d4a017;
+      box-shadow: 0 4px 12px rgba(212, 160, 23, 0.3);
+    }
+
+    /* Split Screen: Table Left, Author Profile Layout Right */
+    .network-split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      align-items: start;
+    }
+
+    /* Left Table View (Image 1) */
+    .network-table-card {
+      background: #181820;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      overflow-x: auto;
+    }
+    .users-data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .users-data-table th, .users-data-table td {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 14px;
+      text-align: left;
+    }
+    .users-data-table th { background: #23232c; color: #d4a017; }
+    .users-data-table tr { cursor: pointer; transition: background 0.2s; }
+    .users-data-table tr:hover { background: rgba(255, 255, 255, 0.03); }
+    .users-data-table tr.active-row { background: rgba(212, 160, 23, 0.1); border-left: 3px solid #d4a017; }
+
+    .btn-follow-toggle {
+      background: rgba(212, 160, 23, 0.15);
+      border: 1px solid #d4a017;
+      color: #d4a017;
+      padding: 5px 12px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-follow-toggle.following {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #9ca3af;
+    }
+    .share-icon-btn { background: none; border: none; color: #d4a017; cursor: pointer; font-size: 0.95rem; }
+
+    /* Right Side: Author Profile Layout (Shared Yesterday) */
+    .author-profile-preview-card {
+      background: #1e1e24;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    }
+    .profile-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .profile-author-info { display: flex; align-items: center; gap: 14px; }
+    .big-avatar {
+      width: 55px; height: 55px; background: #ffd700; color: #0d0d15; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.4rem;
+    }
+    .profile-meta h3 { font-size: 1.2rem; color: #ffffff; }
+    .profile-meta p { font-size: 0.82rem; color: #9ca3af; }
+    .bio-text { font-size: 0.88rem; color: #d1d5db; font-style: italic; }
+
+    /* Stats Bar */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-box span { display: block; font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; }
+    .stat-box strong { font-size: 1.05rem; color: #ffd700; }
+
+    /* Profile Content Category Tabs */
+    .profile-cat-tabs { display: flex; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; }
+    .p-tab-pill {
+      padding: 5px 14px; border-radius: 15px; background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1); color: #9ca3af; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+    }
+    .p-tab-pill.active { background: #d4a017; color: #0d0d15; border-color: #d4a017; }
+
+    .profile-creations-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .creation-mini-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mini-card-title { font-size: 0.95rem; font-weight: 700; color: #ffffff; }
+    .mini-card-snippet { font-size: 0.83rem; color: #9ca3af; }
+    .mini-card-metrics {
+      display: flex;
+      gap: 15px;
+      font-size: 0.78rem;
+      color: #d4a017;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 6px;
+    }
+
+    /* Universal Footer */
+    .footer-section { max-width: 1280px; margin: 40px auto 0 auto; padding: 30px 20px 0 20px; width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .footer-card {
+      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 20px; text-align: center; text-decoration: none; color: #d1d5db; font-weight: 600; min-height: 80px; display: flex; align-items: center; justify-content: center;
+    }
+    footer { text-align: center; padding: 30px 20px; color: #6b7280; font-size: 0.85rem; }
+
+    @media (max-width: 900px) {
+      .network-split-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header with Fixed Search Bar -->
+  <header>
+    <a href="home.html" class="brand">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+        <path d="M22 38l16-16" />
+        <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+        <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+      </svg>
+      <span>काव्य सागर और कहानी</span>
+    </a>
+
+    <nav>
+      <a href="home.html">होम</a>
+      <a href="poem.html">कविताएँ</a>
+      <a href="stories.html">कहानी</a>
+      <a href="diaries.html">डायरी</a>
+      <a href="quotes.html">प्रेरणादायक बातें</a>
+    </nav>
+
+    <!-- Fixed Header Search Input -->
+    <div class="header-search-box">
+      <button class="search-icon-btn">🔍 Search</button>
+      <input type="text" id="globalSearchInput" class="header-search-input" placeholder="Search authors, poems, stories..." oninput="handleGlobalSearch(this.value)">
+    </div>
+
+    <div class="header-right-actions">
+      <select class="lang-select" onchange="applyLanguage(this.value)">
+        <option value="hi">हिन्दी</option>
+        <option value="en">English</option>
+      </select>
+      <div class="user-profile-menu" id="userAuthContainer"></div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="network-container">
+
+    <!-- Search Results Matrix Overlay (Appears when typing in header search) -->
+    <section class="search-results-section" id="searchResultsSection">
+      <h3 style="color:#d4a017; font-size:1.1rem; margin-bottom:10px;">🔍 Search Results Matrix</h3>
+      <table class="search-matrix-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Poem</th>
+            <th>Story</th>
+            <th>Diaries</th>
+            <th>Quotes</th>
+          </tr>
+        </thead>
+        <tbody id="matrixTableBody">
+          <!-- Dynamically populated search matrix -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Followers / Following Tabs -->
+    <div class="network-tabs">
+      <button class="net-tab-btn active" id="tabFollowers" onclick="switchNetworkTab('followers')">Followers</button>
+      <button class="net-tab-btn" id="tabFollowing" onclick="switchNetworkTab('following')">Following</button>
+    </div>
+
+    <!-- Split Screen Layout: Table + Author Profile Preview -->
+    <div class="network-split-grid">
+      
+      <!-- Left Table View (Image 1 Layout) -->
+      <section class="network-table-card">
+        <table class="users-data-table">
+          <thead>
+            <tr>
+              <th>User Name</th>
+              <th>Follow</th>
+              <th>Total Post</th>
+              <th>Share</th>
+            </tr>
+          </thead>
+          <tbody id="networkTableBody">
+            <!-- Populated via Firebase -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Right Side: Author Profile Preview Layout (Shared Yesterday) -->
+      <section class="author-profile-preview-card" id="authorPreviewCard">
+        <div class="profile-top-row">
+          <div class="profile-author-info">
+            <div class="big-avatar" id="prevAvatar">A</div>
+            <div class="profile-meta">
+              <h3 id="prevAuthorName">Select a User</h3>
+              <p id="prevAuthorHandle">@writer</p>
+            </div>
+          </div>
+          <button class="btn-follow-toggle" id="prevFollowBtn">+ Follow</button>
+        </div>
+
+        <p class="bio-text" id="prevBio">Click any user from the table on the left to preview their complete author profile, stats, and creations here.</p>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+          <div class="stat-box">
+            <span>Total Likes</span>
+            <strong id="prevStatLikes">0</strong>
+          </div>
+          <div class="stat-box">
+            <span>Views</span>
+            <strong id="prevStatViews">0</strong>
+          </div>
+          <div class="stat-box">
+            <span>Followers</span>
+            <strong id="prevStatFollowers">0</strong>
+          </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="profile-cat-tabs">
+          <button class="p-tab-pill active" onclick="filterProfileCreations('all')">All</button>
+          <button class="p-tab-pill" onclick="filterProfileCreations('kavita')">Poems</button>
+          <button class="p-tab-pill" onclick="filterProfileCreations('kahani')">Stories</button>
+          <button class="p-tab-pill" onclick="filterProfileCreations('diary')">Diaries</button>
+          <button class="p-tab-pill" onclick="filterProfileCreations('prerna')">Quotes</button>
+        </div>
+
+        <!-- Creations Feed -->
+        <div class="profile-creations-feed" id="prevCreationsFeed">
+          <p style="color:#6b7280; font-size:0.85rem; text-align:center; padding:20px;">No creations loaded.</p>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- Universal Footer -->
+  <section class="footer-section">
+    <div class="footer-grid">
+      <a href="about-us.html" class="footer-card">About us</a>
+      <a href="privacy-policy.html" class="footer-card">Privacy Policy</a>
+      <a href="terms.html" class="footer-card">Terms and Conditions</a>
+      <a href="home.html" class="footer-card">Other Links</a>
+    </div>
+  </main>
+  <footer>&copy; 2026 काव्य सागर और कहानी. All rights reserved.</footer>
+
+  <script type="module">
+    import { db, collection, getDocs } from "./firebase.js";
+
+    let allUsersData = [];
+    let allWorksData = [];
+    let activeNetworkTab = 'followers';
+    let selectedAuthorName = null;
+    let currentProfileFilter = 'all';
+    const currentUser = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Kamal';
+
+    async function loadNetworkDataFromCloud() {
+      try {
+        const worksSnap = await getDocs(collection(db, "works"));
+        allWorksData = [];
+        const authorMap = {};
+
+        worksSnap.forEach(docSnap => {
+          const item = docSnap.data();
+          allWorksData.push({ id: docSnap.id, ...item });
+          const author = item.author || 'Admin';
+          
+          if (!authorMap[author]) {
+            authorMap[author] = {
+              name: author,
+              handle: '@' + author.toLowerCase().replace(/\s+/g, '_'),
+              bio: `Dedicated contributor sharing literary works on काव्य सागर और कहानी.`,
+              totalPosts: 0,
+              likes: Math.floor(Math.random() * 500) + 50,
+              views: Math.floor(Math.random() * 2500) + 200,
+              followersCount: Math.floor(Math.random() * 150) + 10,
+              isFollowing: Math.random() > 0.5,
+              works: []
+            };
+          }
+          authorMap[author].totalPosts++;
+          authorMap[author].works.push(item);
+        });
+
+        allUsersData = Object.values(authorMap);
+        renderNetworkTable();
+        if (allUsersData.length > 0) {
+          selectAuthorForPreview(allUsersData[0].name);
+        }
+      } catch (err) {
+        console.error("Error loading network data:", err);
+      }
+    }
+
+    window.switchNetworkTab = function(tab) {
+      activeNetworkTab = tab;
+      document.getElementById('tabFollowers').classList.toggle('active', tab === 'followers');
+      document.getElementById('tabFollowing').classList.toggle('active', tab === 'following');
+      renderNetworkTable();
+    }
+
+    window.renderNetworkTable = function() {
+      const tbody = document.getElementById('networkTableBody');
+      tbody.innerHTML = '';
+
+      // Filter based on tab (Followers vs Following simulation)
+      const filteredUsers = allUsersData.filter(u => activeNetworkTab === 'followers' ? true : u.isFollowing);
+
+      if (filteredUsers.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#6b7280; padding:20px;">No users found in ${activeNetworkTab}.</td></tr>`;
+        return;
+      }
+
+      filteredUsers.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.className = user.name === selectedAuthorName ? 'active-row' : '';
+        tr.onclick = () => selectAuthorForPreview(user.name);
+
+        tr.innerHTML = `
+          <td><strong>${user.name}</strong></td>
+          <td><button class="btn-follow-toggle ${user.isFollowing ? 'following' : ''}" onclick="toggleFollow(event, '${user.name}')">${user.isFollowing ? 'Following' : 'Follow'}</button></td>
+          <td>${user.totalPosts}</td>
+          <td><button class="share-icon-btn" onclick="shareUserProfile(event, '${user.name}')">🔗 Share</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.selectAuthorForPreview = function(authorName) {
+      selectedAuthorName = authorName;
+      const user = allUsersData.find(u => u.name === authorName);
+      if (!user) return;
+
+      renderNetworkTable(); // Update active row styling
+
+      document.getElementById('prevAvatar').innerText = user.name.charAt(0).toUpperCase();
+      document.getElementById('prevAuthorName').innerText = user.name;
+      document.getElementById('prevAuthorHandle').innerText = user.handle;
+      document.getElementById('prevBio').innerText = user.bio;
+      document.getElementById('prevStatLikes').innerText = user.likes;
+      document.getElementById('prevStatViews').innerText = user.views;
+      document.getElementById('prevStatFollowers').innerText = user.followersCount;
+
+      const followBtn = document.getElementById('prevFollowBtn');
+      followBtn.innerText = user.isFollowing ? 'Following' : '+ Follow';
+      followBtn.className = `btn-follow-toggle ${user.isFollowing ? 'following' : ''}`;
+
+      renderProfileFeed(user.works);
+    }
+
+    window.renderProfileFeed = function(works) {
+      const feed = document.getElementById('prevCreationsFeed');
+      feed.innerHTML = '';
+
+      const filteredWorks = currentProfileFilter === 'all' ? works : works.filter(w => w.category === currentProfileFilter);
+
+      if (filteredWorks.length === 0) {
+        feed.innerHTML = `<p style="color:#6b7280; font-size:0.85rem; text-align:center; padding:20px;">No creations in this category.</p>`;
+        return;
+      }
+
+      filteredWorks.forEach(w => {
+        const card = document.createElement('div');
+        card.className = 'creation-mini-card';
+        card.innerHTML = `
+          <div class="mini-card-title">📌 ${w.title || 'Untitled'}</div>
+          <div class="mini-card-snippet">${(w.content || '').slice(0, 80)}...</div>
+          <div class="mini-card-metrics">
+            <span>❤️ ${Math.floor(Math.random()*40)+5} Likes</span>
+            <span>💬 ${Math.floor(Math.random()*10)} Comments</span>
+            <span>🔗 Share</span>
+          </div>
+        `;
+        feed.appendChild(card);
+      });
+    }
+
+    window.filterProfileCreations = function(cat) {
+      currentProfileFilter = cat;
+      document.querySelectorAll('.profile-cat-tabs .p-tab-pill').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+      const user = allUsersData.find(u => u.name === selectedAuthorName);
+      if (user) renderProfileFeed(user.works);
+    }
+
+    window.toggleFollow = function(e, authorName) {
+      e.stopPropagation();
+      const user = allUsersData.find(u => u.name === authorName);
+      if (user) {
+        user.isFollowing = !user.isFollowing;
+        user.followersCount += user.isFollowing ? 1 : -1;
+        renderNetworkTable();
+        if (selectedAuthorName === authorName) selectAuthorForPreview(authorName);
+      }
+    }
+
+    window.shareUserProfile = function(e, authorName) {
+      e.stopPropagation();
+      alert(`Profile link for ${authorName} copied to clipboard!`);
+    }
+
+    // --- GLOBAL SEARCH MATRIX (Image 2 Layout) ---
+    window.handleGlobalSearch = function(query) {
+      const section = document.getElementById('searchResultsSection');
+      const tbody = document.getElementById('matrixTableBody');
+      tbody.innerHTML = '';
+
+      if (!query || query.trim() === '') {
+        section.classList.remove('show');
+        return;
+      }
+
+      section.classList.add('show');
+      const q = query.toLowerCase();
+
+      // Group works by author for matrix view matching Image 2
+      const matrixMap = {};
+      allWorksData.forEach(w => {
+        const author = w.author || 'Admin';
+        if (!matrixMap[author]) matrixMap[author] = { user: author, kavita: [], kahani: [], diary: [], quotes: [] };
+        
+        const cat = w.category;
+        if (cat === 'kavita') matrixMap[author].kavita.push(w.title);
+        else if (cat === 'kahani') matrixMap[author].kahani.push(w.title);
+        else if (cat === 'diary') matrixMap[author].diary.push(w.title);
+        else if (cat === 'prerna') matrixMap[author].quotes.push(w.title);
+      });
+
+      let matchCount = 0;
+      Object.values(matrixMap).forEach(row => {
+        // Check if query matches user or any work title
+        const userMatch = row.user.toLowerCase().includes(q);
+        const kavitaMatch = row.kavita.some(t => t.toLowerCase().includes(q));
+        const kahaniMatch = row.kahani.some(t => t.toLowerCase().includes(q));
+        const diaryMatch = row.diary.some(t => t.toLowerCase().includes(q));
+        const quotesMatch = row.quotes.some(t => t.toLowerCase().includes(q));
+
+        if (userMatch || kavitaMatch || kahaniMatch || diaryMatch || quotesMatch) {
+          matchCount++;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${userMatch ? row.user.replace(new RegExp(q, 'gi'), m=>`<span class="highlight-match">${m}</span>`) : row.user}</strong></td>
+            <td>${row.kavita.join(', ').replace(new RegExp(q, 'gi'), m=>`<span class="highlight-match">${m}</span>`)}</td>
+            <td>${row.kahani.join(', ').replace(new RegExp(q, 'gi'), m=>`<span class="highlight-match">${m}</span>`)}</td>
+            <td>${row.diary.join(', ').replace(new RegExp(q, 'gi'), m=>`<span class="highlight-match">${m}</span>`)}</td>
+            <td>${row.quotes.join(', ').replace(new RegExp(q, 'gi'), m=>`<span class="highlight-match">${m}</span>`)}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+
+      if (matchCount === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#6b7280; padding:15px;">No matches found for "${query}".</td></tr>`;
+      }
+    }
+
+    // Auth Header Renderer
+    function renderAuthHeader() {
+      const container = document.getElementById('userAuthContainer');
+      if (!container) return;
+      const userName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Kamal';
+      container.innerHTML = `
+        <button class="user-btn" onclick="document.getElementById('userDropdown').classList.toggle('show')">
+          <span class="avatar-icon">${userName.charAt(0).toUpperCase()}</span>
+          <span>${userName}</span>
+          <small>▼</small>
+        </button>
+        <div class="dropdown-content" id="userDropdown">
+          <a href="profile.html">My Profile</a>
+          <a href="saved-items.html">Saved Items</a>
+          <a href="my-work.html">My Works</a>
+          <button onclick="localStorage.clear(); sessionStorage.clear(); location.reload();">Logout</button>
+        </div>
+      `;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAuthHeader();
+      loadNetworkDataFromCloud();
+    });
+  </script>
+
+</body>
+</html>
