@@ -386,6 +386,34 @@
       margin-bottom: 15px;
     }
 
+    /* Followers / Following Navigation Button Row */
+    .network-nav-buttons {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+
+    .net-btn {
+      flex: 1;
+      padding: 7px 10px;
+      background: rgba(212, 160, 23, 0.15);
+      border: 1px solid #d4a017;
+      color: #d4a017;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .net-btn:hover {
+      background: #d4a017;
+      color: #0e0e14;
+    }
+
     /* Stats Panel Styles */
     .stats-panel {
       width: 100%;
@@ -714,8 +742,7 @@
         </select>
       </div>
 
-      <div class="user-profile-menu" id="userAuthContainer">
-        </div>
+      <div class="user-profile-menu" id="userAuthContainer"></div>
     </div>
   </header>
 
@@ -791,6 +818,12 @@
         <div class="avatar-label-title" id="avatarTitle">चित्र बदलें</div>
         <div class="avatar-label-subtitle" id="avatarSubtitle">(Change Picture)</div>
 
+        <!-- Followers / Following Buttons fetching visitor.html -->
+        <div class="network-nav-buttons">
+          <a href="visitor.html?tab=followers" class="net-btn" id="btnFollowersTab">Followers</a>
+          <a href="visitor.html?tab=following" class="net-btn" id="btnFollowingTab">Following</a>
+        </div>
+
         <div class="stats-panel">
           <div class="stats-title" id="statsHeaderTitle">रचना आँकड़े (Stats)</div>
           
@@ -851,12 +884,12 @@
 
           <div class="form-group">
             <label class="form-label" id="labelBio">बायो (Bio)</label>
-            <textarea class="form-textarea" id="bioInput">लेखक | पाठक | काव्य और कहानी प्रेमी।</textarea>
+            <textarea class="form-textarea" id="bioInput" placeholder="Write something about yourself..."></textarea>
           </div>
 
           <div class="form-group">
             <label class="form-label" id="labelContactEmail">ईमेल संपर्क (Contact Email)</label>
-            <input type="email" class="form-input" id="contactEmailInput" required>
+            <input type="email" class="form-input" id="contactEmailInput">
           </div>
 
           <div class="form-group">
@@ -921,7 +954,6 @@
   </footer>
 
   <script>
-    // --- 1. LOCAL TRANSLATION DICTIONARY FOR PROFILE ---
     const profileTranslations = {
       hi: {
         sidebarBrandHeading: "काव्य सागर और कहानी",
@@ -946,7 +978,7 @@
         labelContactPhone: "मोबाइल नंबर (Contact Number)",
         labelDob: "जन्म तिथि (Date of Birth)",
         btnUpdateProfile: "अपडेट करें (Update Profile)",
-        updateSuccess: "प्रोफ़ाइल सफलतापूर्वक अपडेट हो गई! (Profile updated successfully!)"
+        updateSuccess: "प्रोफ़ाइल सफलतापूर्वक अपडेट हो गई!"
       },
       en: {
         sidebarBrandHeading: "Kavya Sagar & Stories",
@@ -985,7 +1017,6 @@
       }
     }
 
-    // --- 2. DYNAMIC AUTH HEADER ---
     function renderAuthHeader() {
       const container = document.getElementById('userAuthContainer');
       if (!container) return;
@@ -1007,15 +1038,6 @@
           <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
         </div>
       `;
-
-      const currentLang = localStorage.getItem('site_lang') || 'hi';
-      if (typeof translations !== 'undefined' && translations[currentLang]) {
-        const dict = translations[currentLang];
-        container.querySelectorAll('[data-lang-key]').forEach(el => {
-          const key = el.getAttribute('data-lang-key');
-          if (dict[key]) el.innerText = dict[key];
-        });
-      }
     }
 
     function toggleUserDropdown(event) {
@@ -1031,47 +1053,17 @@
       window.location.href = 'login.html';
     }
 
-    // --- 3. COMPUTE USER STATS FROM MY WORKS ---
-    function loadUserStats() {
-      let myWorks = [];
-      try {
-        myWorks = JSON.parse(localStorage.getItem('myWorksList')) || [];
-      } catch (err) {
-        myWorks = [];
-      }
-
-      const totalPosts = myWorks.length;
-      let totalViews = 0;
-      let totalLikes = 0;
-      let totalShares = 0;
-      let totalComments = 0;
-
-      myWorks.forEach(work => {
-        totalViews += Number(work.views || work.viewCount || 12) * 1;
-        totalLikes += Number(work.likes || work.likeCount || 5) * 1;
-        totalShares += Number(work.shares || work.shareCount || 2) * 1;
-        totalComments += Number(work.comments || work.commentCount || 1) * 1;
-      });
-
-      // If no works exist yet, provide realistic fallback demo numbers or zeroes
-      document.getElementById('statTotalPosts').innerText = totalPosts;
-      document.getElementById('statTotalViews').innerText = totalPosts > 0 ? totalViews : 0;
-      document.getElementById('statTotalLikes').innerText = totalPosts > 0 ? totalLikes : 0;
-      document.getElementById('statTotalShares').innerText = totalPosts > 0 ? totalShares : 0;
-      document.getElementById('statTotalComments').innerText = totalPosts > 0 ? totalComments : 0;
-    }
-
-    // --- 4. PROFILE DATA INITIALIZATION & FORM HANDLING ---
+    // --- PICK UP ONLY ACCOUNT CREATION DETAILS & LEAVE REST BLANK IF UNASSIGNED ---
     function loadUserProfileData() {
-      const storedName = localStorage.getItem('userName') || 'Admin';
-      const storedEmail = localStorage.getItem('userEmail') || 'admin@kaavyasagar.com';
+      const storedName = localStorage.getItem('userName') || '';
+      const storedEmail = localStorage.getItem('userEmail') || '';
       const storedPhone = localStorage.getItem('userPhone') || '';
-      const storedBio = localStorage.getItem('userBio') || 'लेखक | पाठक | काव्य और कहानी प्रेमी।';
-      const storedDob = localStorage.getItem('userDob') || '01/01/1990';
+      const storedBio = localStorage.getItem('userBio') || '';
+      const storedDob = localStorage.getItem('userDob') || '';
       const storedAvatar = localStorage.getItem('userProfileAvatar');
 
       document.getElementById('fullNameInput').value = storedName;
-      document.getElementById('usernameInput').value = `@${storedName.toLowerCase().replace(/\s+/g, '_')}`;
+      document.getElementById('usernameInput').value = storedName ? `@${storedName.toLowerCase().replace(/\s+/g, '_')}` : '';
       document.getElementById('contactEmailInput').value = storedEmail;
       document.getElementById('contactPhoneInput').value = storedPhone;
       document.getElementById('bioInput').value = storedBio;
@@ -1089,7 +1081,12 @@
         defaultAvatarSvg.style.display = 'block';
       }
 
-      loadUserStats();
+      // Stats default to 0 for new/blank user accounts until they publish work
+      document.getElementById('statTotalPosts').innerText = 0;
+      document.getElementById('statTotalViews').innerText = 0;
+      document.getElementById('statTotalLikes').innerText = 0;
+      document.getElementById('statTotalShares').innerText = 0;
+      document.getElementById('statTotalComments').innerText = 0;
     }
 
     function handleProfileUpdate(e) {
@@ -1116,7 +1113,6 @@
       alert(dict.updateSuccess);
     }
 
-    // --- 5. IMAGE UPLOAD & PREVIEW ---
     const uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
     const imageFileInput = document.getElementById('imageFileInput');
     const profileImageDisplay = document.getElementById('profileImageDisplay');
@@ -1140,7 +1136,6 @@
       }
     });
 
-    // --- 6. UI EVENT LISTENERS ---
     document.getElementById('sidebarLogoutAction').addEventListener('click', (e) => {
       e.preventDefault();
       handleUserLogout();
@@ -1181,13 +1176,11 @@
       }
     });
 
-    // Re-render when language changes globally
     window.addEventListener('languageChanged', () => {
       renderAuthHeader();
       updateProfileLanguage();
     });
 
-    // Initial Load
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
       loadUserProfileData();
