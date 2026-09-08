@@ -1284,13 +1284,13 @@
       }
     }
 
-    function toggleUserDropdown(event) {
+    window.toggleUserDropdown = function(event) {
       event.stopPropagation();
       const dropdown = document.getElementById('userDropdown');
       if (dropdown) dropdown.classList.toggle('show');
     }
 
-    function handleUserLogout() {
+    window.handleUserLogout = function() {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userName');
       sessionStorage.clear();
