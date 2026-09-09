@@ -1,6 +1,343 @@
-<script type="module">
-    import { db, collection, getDocs } from "./firebase.js";
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>होम - काव्य सागर और कहानी</title>
 
+  <!-- Global Language Switcher Script -->
+  <script src="lang.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0d0d15;
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* ---------------- HEADER ---------------- */
+    header {
+      background: rgba(30, 30, 47, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d4a017;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+
+    .brand svg { width: 28px; height: 28px; flex-shrink: 0; }
+
+    nav { display: flex; gap: 20px; }
+    nav a {
+      color: #9ca3af; text-decoration: none; font-size: 0.95rem; transition: color 0.2s;
+    }
+    nav a:hover, nav a.active { color: #d4a017; }
+
+    .lang-dropdown-wrapper { position: relative; margin-right: 12px; }
+    .lang-select {
+      background: rgba(255, 255, 255, 0.05); border: 1px solid #d4a017; color: #d4a017;
+      padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; outline: none; transition: all 0.2s ease; appearance: none;
+      -webkit-appearance: none; padding-right: 28px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%23d4a017' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat; background-position: right 8px center;
+    }
+    .lang-select:hover { background-color: rgba(212, 160, 23, 0.15); }
+    .lang-select option { background: #181824; color: #f3f4f6; }
+
+    .user-profile-menu { position: relative; }
+    .user-btn {
+      display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4); padding: 6px 12px; border-radius: 20px;
+      color: #f3f4f6; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+    }
+    .user-btn:hover { background: rgba(212, 160, 23, 0.15); border-color: #d4a017; }
+    .avatar-icon {
+      width: 22px; height: 22px; background: #ffd700; color: #0d0d15; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem;
+    }
+    .avatar-icon.guest-avatar {
+      background: #4b5563;
+      color: #f3f4f6;
+    }
+
+    .dropdown-content {
+      display: none; position: absolute; right: 0; top: 110%; background: #181824;
+      border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; min-width: 160px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5); overflow: hidden; z-index: 200;
+    }
+    .dropdown-content.show { display: block; }
+    .dropdown-content a, .dropdown-content button {
+      display: block; width: 100%; padding: 10px 14px; color: #d1d5db; text-decoration: none;
+      background: none; border: none; text-align: left; font-size: 0.85rem; cursor: pointer;
+    }
+    .dropdown-content a:hover, .dropdown-content button:hover { background: rgba(212, 160, 23, 0.15); color: #d4a017; }
+
+    /* ---------------- HOME CONTAINER ---------------- */
+    .home-container {
+      max-width: 1240px;
+      margin: 30px auto;
+      padding: 0 20px;
+      width: 100%;
+      flex: 1;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(212, 160, 23, 0.15) 0%, rgba(30, 30, 47, 0.8) 100%);
+      border: 1px solid rgba(212, 160, 23, 0.25);
+      border-radius: 20px;
+      padding: 40px 35px;
+      margin-bottom: 40px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    }
+
+    .hero-banner h1 {
+      font-size: 2.1rem;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .hero-banner p {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #d1d5db;
+      max-width: 800px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      color: #ffffff;
+      margin-bottom: 24px;
+      font-weight: 700;
+    }
+
+    /* Flexbox Centered Layout for the 2 Cards */
+    .features-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: calc(50% - 20px);
+      min-width: 320px;
+      max-width: 480px;
+      min-height: 230px;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(212, 160, 23, 0.4);
+      background: rgba(212, 160, 23, 0.05);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+    }
+
+    .feature-card h3 {
+      font-size: 1.35rem;
+      color: #ffd700;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      color: #9ca3af;
+      font-size: 0.98rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .feature-link {
+      color: #ffd700;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap 0.2s;
+    }
+
+    .feature-link:hover {
+      gap: 10px;
+    }
+
+    /* ---------------- UNIVERSAL 4-CARD FOOTER ---------------- */
+    .footer-section {
+      max-width: 1240px; margin: 40px auto 0 auto; padding: 30px 20px 0 20px; width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .footer-card {
+      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 20px; text-align: center; text-decoration: none; color: #d1d5db; font-weight: 600; font-size: 1rem; transition: transform 0.2s, border-color 0.2s, background 0.2s; display: flex; align-items: center; justify-content: center; min-height: 80px;
+    }
+    .footer-card:hover { transform: translateY(-4px); border-color: rgba(212, 160, 23, 0.4); background: rgba(212, 160, 23, 0.05); color: #ffffff; }
+
+    .other-links-wrapper { position: relative; display: flex; justify-content: center; align-items: center; }
+    .other-links-btn {
+      width: 100%; height: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #d1d5db; font-weight: 600; font-size: 1rem; cursor: pointer; min-height: 80px; transition: all 0.2s;
+    }
+    .other-links-btn:hover, .other-links-btn.active { border-color: #d4a017; color: #d4a017; background: rgba(212, 160, 23, 0.08); }
+
+    .social-popup {
+      position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); display: flex; gap: 16px; pointer-events: none; z-index: 50;
+    }
+    .social-popup.active { pointer-events: auto; }
+    .social-circle {
+      width: 50px; height: 50px; border-radius: 50%; background: #181824; border: 2px solid rgba(255, 255, 255, 0.15); display: flex; align-items: center; justify-content: center; color: #ffffff; text-decoration: none; box-shadow: 0 10px 20px rgba(0,0,0,0.6); opacity: 0; transform: translateY(20px) scale(0.5); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .social-popup.active .social-circle { opacity: 1; transform: translateY(0) scale(1); }
+    .social-popup.active .social-circle:nth-child(1) { transition-delay: 0.05s; }
+    .social-popup.active .social-circle:nth-child(2) { transition-delay: 0.1s; }
+    .social-popup.active .social-circle:nth-child(3) { transition-delay: 0.15s; }
+    .social-circle.yt:hover { background: #ff0000; border-color: #ff0000; }
+    .social-circle.fb:hover { background: #1877f2; border-color: #1877f2; }
+    .social-circle.ig:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: #e6683c; }
+    .social-circle svg { width: 24px; height: 24px; fill: currentColor; }
+
+    footer { text-align: center; padding: 30px 20px; color: #6b7280; font-size: 0.85rem; }
+
+    @media (max-width: 900px) {
+      header { padding: 10px 15px; } nav { display: none; }
+      .feature-card { width: 100%; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header>
+    <a href="home.html" class="brand">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+        <path d="M22 38l16-16" />
+        <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+        <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+      </svg>
+      <span data-lang-key="brandTitle">काव्य सागर और कहानी</span>
+    </a>
+
+    <nav>
+      <a href="home.html" class="active" data-lang-key="navHome">होम</a>
+      <a href="poem.html" data-lang-key="navPoem">कविताएँ</a>
+      <a href="stories.html" data-lang-key="navStory">कहानी</a>
+      <a href="diaries.html" data-lang-key="navDiary">डायरी</a>
+      <a href="quotes.html" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
+    </nav>
+
+    <div style="display: flex; align-items: center;">
+      <div class="lang-dropdown-wrapper">
+        <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
+          <option value="hi">हिन्दी</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div class="user-profile-menu" id="userAuthContainer"></div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="home-container">
+    
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 id="heroGreeting">Welcome, Admin!</h1>
+      <p id="heroDescription">
+        काव्य और कहानियों के इस अनूठे संगम में आपका स्वागत है। यहाँ अपनी पसंदीदा रचनाएँ पढ़ें और नया लेखन लिखें।
+      </p>
+    </div>
+
+    <!-- Section Heading -->
+    <h2 class="section-title" id="sectionTitle">त्वरित विकल्प (Quick Links)</h2>
+
+    <!-- Two Cards Grid (New Posts & Create New) -->
+    <div class="features-grid">
+      <!-- 1. New Posts -->
+      <div class="feature-card">
+        <div>
+          <h3 id="card1Title">नवीन पोस्ट (New Posts)</h3>
+          <p id="card1Desc">मंच पर साझा की गई नवीनतम कविताएँ, कहानियाँ, डायरी और प्रेरणादायक विचार देखें।</p>
+        </div>
+        <a href="new.html" class="feature-link" id="card1Link">नवीनतम पोस्ट देखें →</a>
+      </div>
+
+      <!-- 2. Create New -->
+      <div class="feature-card">
+        <div>
+          <h3 id="card2Title">नया लिखें (Create New)</h3>
+          <p id="card2Desc">अपनी खुद की कविता, कहानी, डायरी या प्रेरक विचार यहाँ लिखें और समुदाय के साथ साझा करें।</p>
+        </div>
+        <a href="my-work.html" class="feature-link" id="card2Link">रचना जोड़ें →</a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Universal 4-Card Footer Section -->
+  <section class="footer-section">
+    <div class="footer-grid">
+      <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
+      <a href="privacy-policy.html" class="footer-card" data-lang-key="privacyPolicy">Privacy Policy</a>
+      <a href="terms.html" class="footer-card" data-lang-key="termsConditions">Terms and Conditions</a>
+
+      <div class="other-links-wrapper">
+        <button class="other-links-btn" id="otherLinksBtn" data-lang-key="otherLinks">Other Links</button>
+
+        <div class="social-popup" id="socialPopup">
+          <a href="https://www.youtube.com/@KavyaSagarorKahani" target="_blank" class="social-circle yt" title="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a href="https://facebook.com" target="_blank" class="social-circle fb" title="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 काव्य सागर और कहानी. All rights reserved.
+  </footer>
+
+  <script>
     // --- 1. LOCAL BILINGUAL DICTIONARY FOR HOME ---
     const homeDictionary = {
       hi: {
@@ -26,79 +363,6 @@
         card2Link: "Write Now →"
       }
     };
-
-    let allWorksData = [];
-
-    async function loadWorksForSearch() {
-      try {
-        const querySnapshot = await getDocs(collection(db, "works"));
-        allWorksData = [];
-        querySnapshot.forEach(docSnap => {
-          allWorksData.push({ id: docSnap.id, ...docSnap.data() });
-        });
-      } catch (err) {
-        console.error("Error loading works for search:", err);
-      }
-    }
-
-    // --- ACTIVE SEARCH MATRIX WITH REDIRECTION ---
-    window.handleGlobalSearch = function(query) {
-      const section = document.getElementById('searchResultsSection');
-      const tbody = document.getElementById('matrixTableBody');
-      tbody.innerHTML = '';
-
-      if (!query || query.trim() === '') {
-        section.classList.remove('show');
-        return;
-      }
-
-      section.classList.add('show');
-      const q = query.toLowerCase();
-
-      const matrixMap = {};
-      allWorksData.forEach(w => {
-        const author = w.author || 'Admin';
-        if (!matrixMap[author]) matrixMap[author] = { user: author, kavita: [], kahani: [], diary: [], quotes: [] };
-        
-        const cat = w.category;
-        if (cat === 'kavita') matrixMap[author].kavita.push(w);
-        else if (cat === 'kahani') matrixMap[author].kahani.push(w);
-        else if (cat === 'diary') matrixMap[author].diary.push(w);
-        else if (cat === 'prerna') matrixMap[author].quotes.push(w);
-      });
-
-      let matchCount = 0;
-      Object.values(matrixMap).forEach(row => {
-        const userMatch = row.user.toLowerCase().includes(q);
-        const kavitaMatch = row.kavita.some(w => w.title.toLowerCase().includes(q));
-        const kahaniMatch = row.kahani.some(w => w.title.toLowerCase().includes(q));
-        const diaryMatch = row.diary.some(w => w.title.toLowerCase().includes(q));
-        const quotesMatch = row.quotes.some(w => w.title.toLowerCase().includes(q));
-
-        if (userMatch || kavitaMatch || kahaniMatch || diaryMatch || quotesMatch) {
-          matchCount++;
-          const tr = document.createElement('tr');
-          
-          const formatCell = (worksList, targetPage) => {
-            if (worksList.length === 0) return '-';
-            return worksList.map(w => `<span style="cursor:pointer; color:#d4a017; text-decoration:underline;" onclick="window.location.href='${targetPage}'">${w.title}</span>`).join(', ');
-          };
-
-          tr.innerHTML = `
-            <td><strong>${row.user}</strong></td>
-            <td>${formatCell(row.kavita, 'poem.html')}</td>
-            <td>${formatCell(row.kahani, 'stories.html')}</td>
-            <td>${formatCell(row.diary, 'diaries.html')}</td>
-            <td>${formatCell(row.quotes, 'quotes.html')}</td>
-          `;
-          tbody.appendChild(tr);
-        }
-      });
-
-      if (matchCount === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#6b7280; padding:15px;">No matches found for "${query}".</td></tr>`;
-      }
-    }
 
     function renderHomePageContent() {
       const currentLang = localStorage.getItem('site_lang') || 'hi';
@@ -129,31 +393,26 @@
       const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
       const currentLang = localStorage.getItem('site_lang') || 'hi';
 
-      const myProfileLabel = currentLang === 'hi' ? 'मेरी प्रोफाइल (My Account)' : 'My Account';
-      const savedItemsLabel = currentLang === 'hi' ? 'सहेजी गई रचनाएँ' : 'Saved Items';
-      const myWorksLabel = currentLang === 'hi' ? 'मेरी रचनाएँ' : 'My Works';
-      const contactUsLabel = currentLang === 'hi' ? 'संपर्क करें' : 'Contact Us';
-      const logoutLabel = currentLang === 'hi' ? 'लॉग आउट' : 'Logout';
-
       if (isLoggedIn) {
         const rawName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
         const userName = rawName.trim();
         const userInitial = userName.charAt(0).toUpperCase() || 'A';
         const isAdmin = (userName.toLowerCase() === 'admin');
 
+        // Build Dropdown Content with optional Master Panel link for Admin
         container.innerHTML = `
-          <button class="user-btn" id="userMenuBtn">
+          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
             <span class="avatar-icon">${userInitial}</span>
             <span>${userName}</span>
             <small>▼</small>
           </button>
           <div class="dropdown-content" id="userDropdown">
-            <a href="profile.html">${myProfileLabel}</a>
-            <a href="saved-items.html">${savedItemsLabel}</a>
-            <a href="my-work.html">${myWorksLabel}</a>
+            <a href="profile.html" data-lang-key="myProfile">My Profile</a>
+            <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
+            <a href="my-work.html" data-lang-key="myWorks">My Works</a>
             ${isAdmin ? `<a href="admin-control.html" style="color: #ffd700; font-weight: bold;">⚡ Master Panel</a>` : ''}
-            <a href="mailto:official.ksok@gmail.com">${contactUsLabel}</a>
-            <button onclick="handleUserLogout()">${logoutLabel}</button>
+            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+            <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
           </div>
         `;
       } else {
@@ -161,17 +420,31 @@
         const signInLabel = currentLang === 'hi' ? 'साइन इन करें' : 'Sign In';
 
         container.innerHTML = `
-          <button class="user-btn" id="userMenuBtn">
+          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
             <span class="avatar-icon guest-avatar">G</span>
             <span>${guestLabel}</span>
             <small>▼</small>
           </button>
           <div class="dropdown-content" id="userDropdown">
             <a href="login.html" style="color:#d4a017; font-weight:600;">🔑 ${signInLabel}</a>
-            <a href="mailto:official.ksok@gmail.com">${contactUsLabel}</a>
+            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
           </div>
         `;
       }
+
+      if (typeof translations !== 'undefined' && translations[currentLang]) {
+        const dict = translations[currentLang];
+        container.querySelectorAll('[data-lang-key]').forEach(el => {
+          const key = el.getAttribute('data-lang-key');
+          if (dict[key]) el.innerText = dict[key];
+        });
+      }
+    }
+
+    function toggleUserDropdown(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) dropdown.classList.toggle('show');
     }
 
     function handleUserLogout() {
@@ -181,28 +454,17 @@
       window.location.reload();
     }
 
-    // --- 3. ROBUST GLOBAL EVENT LISTENERS (DELEGATION) ---
+    // --- 3. UI LISTENERS ---
     window.addEventListener('click', (e) => {
       const userMenuBtn = document.getElementById('userMenuBtn');
       const userDropdown = document.getElementById('userDropdown');
-      
-      // If clicking the profile button, toggle the dropdown
-      if (userMenuBtn && (userMenuBtn === e.target || userMenuBtn.contains(e.target))) {
-        e.stopPropagation();
-        if (userDropdown) {
-          userDropdown.classList.toggle('show');
-        }
-        return;
-      }
+      const otherLinksBtn = document.getElementById('otherLinksBtn');
+      const socialPopup = document.getElementById('socialPopup');
 
-      // If clicking outside the dropdown, close it
       if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
         userDropdown.classList.remove('show');
       }
 
-      // Footer Other Links popup logic
-      const otherLinksBtn = document.getElementById('otherLinksBtn');
-      const socialPopup = document.getElementById('socialPopup');
       if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
         socialPopup.classList.remove('active');
         otherLinksBtn.classList.remove('active');
@@ -215,20 +477,18 @@
     const otherLinksBtn = document.getElementById('otherLinksBtn');
     const socialPopup = document.getElementById('socialPopup');
 
-    if (otherLinksBtn && socialPopup) {
-      otherLinksBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isActive = socialPopup.classList.toggle('active');
-        otherLinksBtn.classList.toggle('active');
-        const currentLang = localStorage.getItem('site_lang') || 'hi';
-        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
-        if (dict) {
-          otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
-        } else {
-          otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
-        }
-      });
-    }
+    otherLinksBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = socialPopup.classList.toggle('active');
+      otherLinksBtn.classList.toggle('active');
+      const currentLang = localStorage.getItem('site_lang') || 'hi';
+      const dict = (typeof translations !== 'undefined') ? translations !== 'undefined' ? translations[currentLang] : null : null;
+      if (dict) {
+        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+      } else {
+        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+      }
+    });
 
     window.addEventListener('languageChanged', () => {
       renderAuthHeader();
@@ -238,6 +498,8 @@
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
       renderHomePageContent();
-      loadWorksForSearch();
     });
   </script>
+
+</body>
+</html>
