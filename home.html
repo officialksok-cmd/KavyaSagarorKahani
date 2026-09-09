@@ -28,7 +28,7 @@
 
     /* ---------------- HEADER ---------------- */
     header {
-      background: rgba(30, 30, 47, 0.85);
+      background: rgba(30, 30, 47, 0.95);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       padding: 12px 20px;
@@ -39,6 +39,8 @@
       top: 0;
       z-index: 100;
       width: 100%;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
     .brand {
@@ -53,11 +55,42 @@
 
     .brand svg { width: 28px; height: 28px; flex-shrink: 0; }
 
-    nav { display: flex; gap: 20px; }
+    nav { display: flex; gap: 20px; align-items: center; }
     nav a {
       color: #9ca3af; text-decoration: none; font-size: 0.95rem; transition: color 0.2s;
     }
     nav a:hover, nav a.active { color: #d4a017; }
+
+    /* Header Search Bar */
+    .header-search-box {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      border-radius: 20px;
+      overflow: hidden;
+      max-width: 300px;
+      width: 100%;
+    }
+    .search-icon-btn {
+      background: rgba(212, 160, 23, 0.15);
+      border: none;
+      color: #d4a017;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+    .header-search-input {
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      color: #f3f4f6;
+      font-size: 0.85rem;
+      outline: none;
+      width: 100%;
+    }
 
     .lang-dropdown-wrapper { position: relative; margin-right: 12px; }
     .lang-select {
@@ -98,6 +131,33 @@
       background: none; border: none; text-align: left; font-size: 0.85rem; cursor: pointer;
     }
     .dropdown-content a:hover, .dropdown-content button:hover { background: rgba(212, 160, 23, 0.15); color: #d4a017; }
+
+    /* Search Results Matrix Overlay */
+    .search-results-section {
+      display: none;
+      background: #181820;
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    }
+    .search-results-section.show { display: block; }
+    .search-matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+    .search-matrix-table th, .search-matrix-table td {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 14px;
+      text-align: left;
+    }
+    .search-matrix-table th { background: #23232c; color: #d4a017; }
+    .search-matrix-table tr { cursor: pointer; transition: background 0.2s; }
+    .search-matrix-table tr:hover { background: rgba(212, 160, 23, 0.15); }
+    .highlight-match { background: #fef08a; color: #000; padding: 1px 4px; border-radius: 3px; font-weight: 600; }
 
     /* ---------------- HOME CONTAINER ---------------- */
     .home-container {
@@ -259,6 +319,12 @@
       <a href="quotes.html" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
     </nav>
 
+    <!-- Active Header Search Bar -->
+    <div class="header-search-box">
+      <button class="search-icon-btn">🔍</button>
+      <input type="text" id="globalSearchInput" class="header-search-input" placeholder="Search authors, poems, stories..." oninput="handleGlobalSearch(this.value)">
+    </div>
+
     <div style="display: flex; align-items: center;">
       <div class="lang-dropdown-wrapper">
         <select id="globalLangSelect" class="lang-select" onchange="applyLanguage(this.value)">
@@ -274,6 +340,23 @@
   <!-- Main Content Container -->
   <main class="home-container">
     
+    <!-- Search Results Matrix Overlay -->
+    <section class="search-results-section" id="searchResultsSection">
+      <h3 style="color:#d4a017; font-size:1.1rem; margin-bottom:10px;">🔍 Search Results Matrix</h3>
+      <table class="search-matrix-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Poem</th>
+            <th>Story</th>
+            <th>Diaries</th>
+            <th>Quotes</th>
+          </tr>
+        </thead>
+        <tbody id="matrixTableBody"></tbody>
+      </table>
+    </section>
+
     <!-- Hero Banner -->
     <div class="hero-banner">
       <h1 id="heroGreeting">Welcome, Admin!</h1>
@@ -337,7 +420,9 @@
     &copy; 2026 काव्य सागर और कहानी. All rights reserved.
   </footer>
 
-  <script>
+  <script type="module">
+    import { db, collection, getDocs } from "./firebase.js";
+
     // --- 1. LOCAL BILINGUAL DICTIONARY FOR HOME ---
     const homeDictionary = {
       hi: {
@@ -364,6 +449,79 @@
       }
     };
 
+    let allWorksData = [];
+
+    async function loadWorksForSearch() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "works"));
+        allWorksData = [];
+        querySnapshot.forEach(docSnap => {
+          allWorksData.push({ id: docSnap.id, ...docSnap.data() });
+        });
+      } catch (err) {
+        console.error("Error loading works for search:", err);
+      }
+    }
+
+    // --- ACTIVE SEARCH MATRIX WITH REDIRECTION ---
+    window.handleGlobalSearch = function(query) {
+      const section = document.getElementById('searchResultsSection');
+      const tbody = document.getElementById('matrixTableBody');
+      tbody.innerHTML = '';
+
+      if (!query || query.trim() === '') {
+        section.classList.remove('show');
+        return;
+      }
+
+      section.classList.add('show');
+      const q = query.toLowerCase();
+
+      const matrixMap = {};
+      allWorksData.forEach(w => {
+        const author = w.author || 'Admin';
+        if (!matrixMap[author]) matrixMap[author] = { user: author, kavita: [], kahani: [], diary: [], quotes: [] };
+        
+        const cat = w.category;
+        if (cat === 'kavita') matrixMap[author].kavita.push(w);
+        else if (cat === 'kahani') matrixMap[author].kahani.push(w);
+        else if (cat === 'diary') matrixMap[author].diary.push(w);
+        else if (cat === 'prerna') matrixMap[author].quotes.push(w);
+      });
+
+      let matchCount = 0;
+      Object.values(matrixMap).forEach(row => {
+        const userMatch = row.user.toLowerCase().includes(q);
+        const kavitaMatch = row.kavita.some(w => w.title.toLowerCase().includes(q));
+        const kahaniMatch = row.kahani.some(w => w.title.toLowerCase().includes(q));
+        const diaryMatch = row.diary.some(w => w.title.toLowerCase().includes(q));
+        const quotesMatch = row.quotes.some(w => w.title.toLowerCase().includes(q));
+
+        if (userMatch || kavitaMatch || kahaniMatch || diaryMatch || quotesMatch) {
+          matchCount++;
+          const tr = document.createElement('tr');
+          
+          const formatCell = (worksList, targetPage) => {
+            if (worksList.length === 0) return '-';
+            return worksList.map(w => `<span style="cursor:pointer; color:#d4a017; text-decoration:underline;" onclick="window.location.href='${targetPage}'">${w.title}</span>`).join(', ');
+          };
+
+          tr.innerHTML = `
+            <td><strong>${row.user}</strong></td>
+            <td>${formatCell(row.kavita, 'poem.html')}</td>
+            <td>${formatCell(row.kahani, 'stories.html')}</td>
+            <td>${formatCell(row.diary, 'diaries.html')}</td>
+            <td>${formatCell(row.quotes, 'quotes.html')}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+
+      if (matchCount === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#6b7280; padding:15px;">No matches found for "${query}".</td></tr>`;
+      }
+    }
+
     function renderHomePageContent() {
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const dict = homeDictionary[currentLang] || homeDictionary.hi;
@@ -385,7 +543,7 @@
       document.getElementById('card2Link').innerText = dict.card2Link;
     }
 
-    // --- 2. DYNAMIC AUTH HEADER ---
+    // --- 2. DYNAMIC AUTH HEADER WITH ROBUST DELEGATED DROPDOWN ---
     function renderAuthHeader() {
       const container = document.getElementById('userAuthContainer');
       if (!container) return;
@@ -393,26 +551,31 @@
       const isLoggedIn = (localStorage.getItem('isLoggedIn') === 'true') || (sessionStorage.getItem('isLoggedIn') === 'true');
       const currentLang = localStorage.getItem('site_lang') || 'hi';
 
+      const myProfileLabel = currentLang === 'hi' ? 'मेरी प्रोफाइल (My Account)' : 'My Account';
+      const savedItemsLabel = currentLang === 'hi' ? 'सहेजी गई रचनाएँ' : 'Saved Items';
+      const myWorksLabel = currentLang === 'hi' ? 'मेरी रचनाएँ' : 'My Works';
+      const contactUsLabel = currentLang === 'hi' ? 'संपर्क करें' : 'Contact Us';
+      const logoutLabel = currentLang === 'hi' ? 'लॉग आउट' : 'Logout';
+
       if (isLoggedIn) {
         const rawName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
         const userName = rawName.trim();
         const userInitial = userName.charAt(0).toUpperCase() || 'A';
         const isAdmin = (userName.toLowerCase() === 'admin');
 
-        // Build Dropdown Content with optional Master Panel link for Admin
         container.innerHTML = `
-          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+          <button class="user-btn" id="userMenuBtn">
             <span class="avatar-icon">${userInitial}</span>
             <span>${userName}</span>
             <small>▼</small>
           </button>
           <div class="dropdown-content" id="userDropdown">
-            <a href="profile.html" data-lang-key="myProfile">My Profile</a>
-            <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
-            <a href="my-work.html" data-lang-key="myWorks">My Works</a>
+            <a href="profile.html">${myProfileLabel}</a>
+            <a href="saved-items.html">${savedItemsLabel}</a>
+            <a href="my-work.html">${myWorksLabel}</a>
             ${isAdmin ? `<a href="admin-control.html" style="color: #ffd700; font-weight: bold;">⚡ Master Panel</a>` : ''}
-            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
-            <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
+            <a href="mailto:official.ksok@gmail.com">${contactUsLabel}</a>
+            <button onclick="handleUserLogout()">${logoutLabel}</button>
           </div>
         `;
       } else {
@@ -420,14 +583,14 @@
         const signInLabel = currentLang === 'hi' ? 'साइन इन करें' : 'Sign In';
 
         container.innerHTML = `
-          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+          <button class="user-btn" id="userMenuBtn">
             <span class="avatar-icon guest-avatar">G</span>
             <span>${guestLabel}</span>
             <small>▼</small>
           </button>
           <div class="dropdown-content" id="userDropdown">
             <a href="login.html" style="color:#d4a017; font-weight:600;">🔑 ${signInLabel}</a>
-            <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
+            <a href="mailto:official.ksok@gmail.com">${contactUsLabel}</a>
           </div>
         `;
       }
@@ -441,12 +604,6 @@
       }
     }
 
-    function toggleUserDropdown(event) {
-      event.stopPropagation();
-      const dropdown = document.getElementById('userDropdown');
-      if (dropdown) dropdown.classList.toggle('show');
-    }
-
     function handleUserLogout() {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userName');
@@ -454,17 +611,28 @@
       window.location.reload();
     }
 
-    // --- 3. UI LISTENERS ---
+    // --- 3. ROBUST GLOBAL EVENT LISTENERS (DELEGATION) ---
     window.addEventListener('click', (e) => {
       const userMenuBtn = document.getElementById('userMenuBtn');
       const userDropdown = document.getElementById('userDropdown');
-      const otherLinksBtn = document.getElementById('otherLinksBtn');
-      const socialPopup = document.getElementById('socialPopup');
+      
+      // Toggle dropdown if profile button is clicked
+      if (userMenuBtn && (userMenuBtn === e.target || userMenuBtn.contains(e.target))) {
+        e.stopPropagation();
+        if (userDropdown) {
+          userDropdown.classList.toggle('show');
+        }
+        return;
+      }
 
+      // Close dropdown if clicking outside
       if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
         userDropdown.classList.remove('show');
       }
 
+      // Footer Other Links popup logic
+      const otherLinksBtn = document.getElementById('otherLinksBtn');
+      const socialPopup = document.getElementById('socialPopup');
       if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
         socialPopup.classList.remove('active');
         otherLinksBtn.classList.remove('active');
@@ -477,18 +645,20 @@
     const otherLinksBtn = document.getElementById('otherLinksBtn');
     const socialPopup = document.getElementById('socialPopup');
 
-    otherLinksBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isActive = socialPopup.classList.toggle('active');
-      otherLinksBtn.classList.toggle('active');
-      const currentLang = localStorage.getItem('site_lang') || 'hi';
-      const dict = (typeof translations !== 'undefined') ? translations !== 'undefined' ? translations[currentLang] : null : null;
-      if (dict) {
-        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
-      } else {
-        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
-      }
-    });
+    if (otherLinksBtn && socialPopup) {
+      otherLinksBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isActive = socialPopup.classList.toggle('active');
+        otherLinksBtn.classList.toggle('active');
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+        if (dict) {
+          otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+        } else {
+          otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+        }
+      });
+    }
 
     window.addEventListener('languageChanged', () => {
       renderAuthHeader();
@@ -498,6 +668,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
       renderHomePageContent();
+      loadWorksForSearch();
     });
   </script>
 
