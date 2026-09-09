@@ -1235,7 +1235,7 @@
         const isAdmin = (userName.toLowerCase() === 'admin');
 
         container.innerHTML = `
-          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+          <button class="user-btn" id="userMenuBtn">
             <span class="avatar-icon">${userInitial}</span>
             <span>${userName}</span>
             <small>▼</small>
@@ -1254,7 +1254,7 @@
         const signInLabel = currentLang === 'hi' ? 'साइन इन करें' : 'Sign In';
 
         container.innerHTML = `
-          <button class="user-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)">
+          <button class="user-btn" id="userMenuBtn">
             <span class="avatar-icon guest-avatar">G</span>
             <span>${guestLabel}</span>
             <small>▼</small>
@@ -1275,13 +1275,7 @@
       }
     }
 
-    window.toggleUserDropdown = function(event) {
-      event.stopPropagation();
-      const dropdown = document.getElementById('userDropdown');
-      if (dropdown) dropdown.classList.toggle('show');
-    }
-
-    window.handleUserLogout = function() {
+    function handleUserLogout() {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userName');
       sessionStorage.clear();
@@ -1294,6 +1288,14 @@
       const userDropdown = document.getElementById('userDropdown');
       const otherLinksBtn = document.getElementById('otherLinksBtn');
       const socialPopup = document.getElementById('socialPopup');
+
+      if (userMenuBtn && (userMenuBtn === e.target || userMenuBtn.contains(e.target))) {
+        e.stopPropagation();
+        if (userDropdown) {
+          userDropdown.classList.toggle('show');
+        }
+        return;
+      }
 
       if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
         userDropdown.classList.remove('show');
@@ -1311,18 +1313,20 @@
     const otherLinksBtn = document.getElementById('otherLinksBtn');
     const socialPopup = document.getElementById('socialPopup');
 
-    otherLinksBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isActive = socialPopup.classList.toggle('active');
-      otherLinksBtn.classList.toggle('active');
-      const currentLang = localStorage.getItem('site_lang') || 'hi';
-      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
-      if (dict) {
-        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
-      } else {
-        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
-      }
-    });
+    if (otherLinksBtn && socialPopup) {
+      otherLinksBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isActive = socialPopup.classList.toggle('active');
+        otherLinksBtn.classList.toggle('active');
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+        if (dict) {
+          otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+        } else {
+          otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+        }
+      });
+    }
 
     window.addEventListener('languageChanged', () => {
       renderAuthHeader();
