@@ -516,14 +516,14 @@
           <li><strong>आपका अधिकार:</strong> आपके द्वारा लिखी गई मूल रचनाओं (कविता, कहानी, डायरी प्रविष्टियाँ) पर आपका पूर्ण कॉपीराइट और स्वामित्व रहेगा।</li>
           <li><strong>मंच को लाइसेंस:</strong> सामग्री प्रकाशित करके, आप हमें वेबसाइट के संचालन और प्रचार के उद्देश्य से सामग्री को प्रदर्शित और वितरित करने का रॉयल्टी-मुक्त लाइसेंस देते हैं।</li>
           <li>
-            <strong id="prohibitLabel">प्रतिबंधित सामग्री:</strong> आप निम्नलिखित प्रकार की सामग्री पोस्ट न करने के लिए सहमत हैं:
+            <strong id="prohibitLabel">प्रतिबंधित सामग्री:</strong> <span id="prohibitText">आप निम्नलिखित प्रकार की सामग्री पोस्ट न करने के लिए सहमत हैं:</span>
             <ul class="sub-list" id="sec2SubList">
               <li>किसी अन्य व्यक्ति के कॉपीराइट या बौद्धिक संपदा का उल्लंघन करने वाली सामग्री।</li>
               <li>घृणास्पद भाषण, उत्पीड़न, अश्लीलता या गैरकानूनी सामग्री।</li>
               <li>किसी व्यक्ति की निजता या व्यक्तिगत अधिकारों का हनन करने वाली सामग्री।</li>
             </ul>
           </li>
-          <li><strong>सामग्री हटाना:</strong> हम नियमों का उल्लंघन करने वाली किसी भी सामग्री को हटाने या संपादित करने का अधिकार सुरक्षित रखते हैं।</li>
+          <li id="contentRemovalLi"><strong>सामग्री हटाना:</strong> हम नियमों का उल्लंघन करने वाली किसी भी सामग्री को हटाने या संपादित करने का अधिकार सुरक्षित रखते हैं।</li>
         </ul>
       </div>
 
@@ -613,7 +613,7 @@
 
           <a href="https://instagram.com" target="_blank" class="social-circle ig" title="Instagram">
             <svg viewBox="0 0 24 24">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.79-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
             </svg>
           </a>
         </div>
@@ -641,15 +641,16 @@
         sec2Heading: "2. उपयोगकर्ता द्वारा निर्मित सामग्री और स्वामित्व (Content Ownership)",
         sec2List: [
           "<strong>आपका अधिकार:</strong> आपके द्वारा लिखी गई मूल रचनाओं (कविता, कहानी, डायरी प्रविष्टियाँ) पर आपका पूर्ण कॉपीराइट और स्वामित्व रहेगा।",
-          "<strong>मंच को लाइसेंस:</strong> सामग्री प्रकाशित करके, आप हमें वेबसाइट के संचालन और प्रचार के उद्देश्य से सामग्री को प्रदर्शित और वितरित करने का रॉयल्टी-मुक्त लाइसेंस देते हैं।",
-          "सामग्री हटाना: हम नियमों का उल्लंघन करने वाली किसी भी सामग्री को हटाने या संपादित करने का अधिकार सुरक्षित रखते हैं।"
+          "<strong>मंच को लाइसेंस:</strong> सामग्री प्रकाशित करके, आप हमें वेबसाइट के संचालन और प्रचार के उद्देश्य से सामग्री को प्रदर्शित और वितरित करने का रॉयल्टी-मुक्त लाइसेंस देते हैं।"
         ],
         prohibitLabel: "प्रतिबंधित सामग्री:",
+        prohibitText: "आप निम्नलिखित प्रकार की सामग्री पोस्ट न करने के लिए सहमत हैं:",
         sec2SubList: [
           "किसी अन्य व्यक्ति के कॉपीराइट या बौद्धिक संपदा का उल्लंघन करने वाली सामग्री।",
           "घृणास्पद भाषण, उत्पीड़न, अश्लीलता या गैरकानूनी सामग्री।",
           "किसी व्यक्ति की निजता या व्यक्तिगत अधिकारों का हनन करने वाली सामग्री।"
         ],
+        contentRemoval: "<strong>सामग्री हटाना:</strong> हम नियमों का उल्लंघन करने वाली किसी भी सामग्री को हटाने या संपादित करने का अधिकार सुरक्षित रखते हैं।",
         sec3Heading: "3. स्वीकार्य उपयोग और टिप्पणियाँ (Acceptable Use)",
         sec3List: [
           "<strong>सभ्य बातचीत:</strong> टिप्पणियाँ और प्रतिक्रियाएँ सम्मानजनक होनी चाहिए। स्पैमिंग या अनुचित प्रचार करने पर खाता निलंबित किया जा सकता है।",
@@ -689,15 +690,16 @@
         sec2Heading: "2. User-Generated Content & Ownership",
         sec2List: [
           "<strong>Your Rights:</strong> You retain full ownership and copyright of the original content (poetry, stories, diary entries) you write and upload to the Site.",
-          "<strong>License to Us:</strong> By posting content, you grant us a non-exclusive, worldwide, royalty-free license to host, display, and distribute your content solely for operating and promoting the Site.",
-          "<strong>Content Removal:</strong> We reserve the right to review, edit, or delete any user content or comments that breach these rules."
+          "<strong>License to Us:</strong> By posting content, you grant us a non-exclusive, worldwide, royalty-free license to host, display, and distribute your content solely for operating and promoting the Site."
         ],
         prohibitLabel: "Content Prohibitions:",
+        prohibitText: "You agree not to post the following types of content:",
         sec2SubList: [
           "Infringes on someone else's copyright, trademark, or intellectual property.",
           "Contains hate speech, harassment, defamation, explicit threats, or illegal material.",
           "Violates the privacy or personal rights of any individual."
         ],
+        contentRemoval: "<strong>Content Removal:</strong> We reserve the right to review, edit, or delete any user content or comments that breach these rules.",
         sec3Heading: "3. Acceptable Use & Comments",
         sec3List: [
           "<strong>Respectful Interaction:</strong> Comments and community posts must remain respectful. Spamming or self-promotion will result in removal or account suspension.",
@@ -738,8 +740,20 @@
       document.getElementById('sec1List').innerHTML = data.sec1List.map(li => `<li>${li}</li>`).join('');
 
       document.getElementById('sec2Heading').innerText = data.sec2Heading;
-      document.getElementById('prohibitLabel').innerText = data.prohibitLabel;
-      document.getElementById('sec2SubList').innerHTML = data.sec2SubList.map(li => `<li>${li}</li>`).join('');
+      
+      // Render Section 2 lists dynamically to handle language toggling correctly
+      const sec2ListEl = document.getElementById('sec2List');
+      sec2ListEl.innerHTML = `
+        <li>${data.sec2List[0]}</li>
+        <li>${data.sec2List[1]}</li>
+        <li>
+          <strong id="prohibitLabel">${data.prohibitLabel}</strong> <span id="prohibitText">${data.prohibitText}</span>
+          <ul class="sub-list">
+            ${data.sec2SubList.map(sub => `<li>${sub}</li>`).join('')}
+          </ul>
+        </li>
+        <li>${data.contentRemoval}</li>
+      `;
 
       document.getElementById('sec3Heading').innerText = data.sec3Heading;
       document.getElementById('sec3List').innerHTML = data.sec3List.map(li => `<li>${li}</li>`).join('');
