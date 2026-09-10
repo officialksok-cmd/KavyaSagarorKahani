@@ -423,7 +423,7 @@
   </footer>
 
   <script type="module">
-    import { db, collection, getDocs, query, where } from "./firebase.js";
+    import { db } from "./firebase.js";
     import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const auth = getAuth();
@@ -472,16 +472,7 @@
       }
 
       try {
-        // Optional check in Firestore 'users' collection to confirm registration
-        const q = query(collection(db, "users"), where("email", "==", email));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-          alert(currentLang === 'hi' ? 'यह ईमेल हमारे सिस्टम में पंजीकृत नहीं है।' : 'This email is not registered in our system.');
-          return;
-        }
-
-        // Trigger Firebase Auth native email link dispatcher
+        // Trigger Firebase Auth native email link dispatcher directly
         await sendPasswordResetEmail(auth, email);
         
         alert(currentLang === 'hi' 
@@ -492,7 +483,12 @@
 
       } catch (err) {
         console.error("Firebase Auth Error:", err);
-        alert(currentLang === 'hi' ? 'ईमेल भेजने में विफल। कृपया पुनः प्रयास करें।' : 'Failed to send reset email. Please try again.');
+        // Display user-friendly error if email doesn't exist in Firebase Auth
+        if (err.code === 'auth/user-not-found') {
+          alert(currentLang === 'hi' ? 'यह ईमेल हमारे सिस्टम में पंजीकृत नहीं है।' : 'This email is not registered in our system.');
+        } else {
+          alert(currentLang === 'hi' ? 'ईमेल भेजने में विफल। कृपया पुनः प्रयास करें।' : 'Failed to send reset email. Please try again.');
+        }
       }
     });
 
