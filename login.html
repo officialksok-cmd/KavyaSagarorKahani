@@ -622,6 +622,9 @@
 
   <script type="module">
     import { db, collection, getDocs, setDoc, doc } from "./firebase.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const auth = getAuth();
 
     const authTranslations = {
       hi: {
@@ -761,7 +764,7 @@
       alert(currentLang === 'hi' ? `OTP आपके मोबाइल नंबर ${mobile} पर भेज दिया गया है!` : `OTP sent successfully to ${mobile}!`);
     });
 
-    // --- SIGN UP: SAVES TO FIREBASE FIRESTORE ---
+    // --- SIGN UP: REGISTERS IN FIREBASE AUTH & SAVES PROFILE TO FIRESTORE ---
     document.getElementById('signUpForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('signupName').value.trim();
@@ -770,33 +773,36 @@
       const password = document.getElementById('signupPassword').value;
       const currentLang = localStorage.getItem('site_lang') || 'hi';
 
-      const userId = 'user_' + Date.now();
-      const newUser = {
-        id: userId,
-        name: name,
-        email: email,
-        username: email,
-        phone: phone,
-        password: password,
-        createdAt: new Date().toISOString()
-      };
-
       try {
-        await setDoc(doc(db, "users", userId), newUser);
+        // 1. Automatically register user in Firebase Authentication (so password reset works)
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // 2. Save profile details into Firestore database linked by UID
+        const userProfile = {
+          uid: user.uid,
+          name: name,
+          email: email,
+          phone: phone,
+          createdAt: new Date().toISOString()
+        };
+
+        await setDoc(doc(db, "users", user.uid), userProfile);
+
         alert(currentLang === 'hi'
-          ? `${name} के लिए क्लाउड खाता सफलतापूर्वक बनाया गया! कृपया साइन इन करें।`
-          : `Cloud account created successfully for ${name}! Please sign in.`
+          ? `${name} के लिए खाता सफलतापूर्वक बनाया गया! कृपया साइन इन करें।`
+          : `Account created successfully for ${name}! Please sign in.`
         );
         switchForm('login');
         document.getElementById('email').value = email;
         document.getElementById('password').value = '';
       } catch (err) {
-        console.error("Error creating user in cloud:", err);
-        alert("Failed to create account in cloud database.");
+        console.error("Firebase Signup Error:", err);
+        alert(currentLang === 'hi' ? 'खाता बनाने में विफल: ' + err.message : 'Failed to create account: ' + err.message);
       }
     });
 
-    // --- SIGN IN: CHECKS FIREBASE FIRESTORE & FALLBACK ADMIN ---
+    // --- SIGN IN: AUTHENTICATES VIA FIREBASE AUTH & FALLBACK ADMIN ---
     document.getElementById('signInForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const userInput = document.getElementById('email').value.trim();
@@ -827,41 +833,29 @@
         return;
       }
 
-      // 2. Check Firebase Firestore Users Collection
+      // 2. Authenticate standard users using Firebase Authentication
       try {
-        const querySnapshot = await getDocs(collection(db, "users"));
-        let matchedUser = null;
+        const userCredential = await signInWithEmailAndPassword(auth, userInput, passInput);
+        const user = userCredential.user;
 
-        querySnapshot.forEach((docSnap) => {
-          const u = docSnap.data();
-          if ((u.username === userInput || u.email === userInput || u.name === userInput) && u.password === passInput) {
-            matchedUser = u;
-          }
-        });
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userName', user.email);
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('userName', user.email);
 
-        if (matchedUser) {
-          const displayName = matchedUser.name || matchedUser.username;
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('userName', displayName);
-          sessionStorage.setItem('isLoggedIn', 'true');
-          sessionStorage.setItem('userName', displayName);
-
-          const returnUrl = sessionStorage.getItem('redirectAfterLogin');
-          if (returnUrl) {
-            sessionStorage.removeItem('redirectAfterLogin');
-            window.location.href = returnUrl;
-          } else {
-            window.location.href = 'home.html';
-          }
+        const returnUrl = sessionStorage.getItem('redirectAfterLogin');
+        if (returnUrl) {
+          sessionStorage.removeItem('redirectAfterLogin');
+          window.location.href = returnUrl;
         } else {
-          alert(currentLang === 'hi' 
-            ? 'गलत उपयोगकर्ता नाम या पासवर्ड! कृपया पुनः प्रयास करें।' 
-            : 'Invalid Username or Password! Please try again.'
-          );
+          window.location.href = 'home.html';
         }
       } catch (err) {
-        console.error("Error signing in from cloud:", err);
-        alert("Database connection error during login.");
+        console.error("Firebase Signin Error:", err);
+        alert(currentLang === 'hi' 
+          ? 'गलत ईमेल या पासवर्ड! कृपया पुनः प्रयास करें।' 
+          : 'Invalid Email or Password! Please try again.'
+        );
       }
     });
 
