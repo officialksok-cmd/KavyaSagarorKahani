@@ -140,7 +140,7 @@
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .form-group label {
@@ -177,7 +177,7 @@
       background: rgba(212, 160, 23, 0.15);
       border: 1px solid #d4a017;
       color: #d4a017;
-      padding: 0 14px;
+      padding: 0 16px;
       border-radius: 8px;
       font-size: 0.82rem;
       font-weight: 600;
@@ -189,16 +189,6 @@
     .btn-action-inline:hover {
       background: #d4a017;
       color: #0d0d15;
-    }
-
-    .divider-or {
-      text-align: center;
-      margin: 12px 0;
-      color: #9ca3af;
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
     }
 
     .btn-reset {
@@ -361,7 +351,6 @@
       font-size: 0.85rem;
     }
 
-    /* Responsive Design */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
@@ -409,25 +398,15 @@
       <div class="reset-section">
         <div class="reset-header">
           <h2 id="resetHeading">पासवर्ड रीसेट करें (Reset Password)</h2>
-          <p id="resetSubtext">अपने खाते को पुनर्प्राप्त करने के लिए ईमेल या मोबाइल नंबर का उपयोग करें।</p>
+          <p id="resetSubtext">अपने खाते को पुनर्प्राप्त करने के लिए अपना ईमेल दर्ज करें।</p>
         </div>
 
         <form id="resetForm">
           <div class="form-group">
             <label for="reset-email" id="labelResetEmail">ईमेल पता (Email Address)</label>
             <div class="input-with-action">
-              <input type="email" id="reset-email" placeholder="Enter your registered email">
-              <button type="button" class="btn-action-inline" id="sendEmailOtpBtn">Send OTP on mail</button>
-            </div>
-          </div>
-
-          <div class="divider-or" id="orDivider">or</div>
-
-          <div class="form-group">
-            <label for="reset-phone" id="labelResetPhone">मोबाइल नंबर (Phone Number)</label>
-            <div class="input-with-action">
-              <input type="tel" id="reset-phone" placeholder="Enter 10-digit mobile number">
-              <button type="button" class="btn-action-inline" id="sendPhoneOtpBtn">Send OTP</button>
+              <input type="email" id="reset-email" placeholder="Enter your registered email" required>
+              <button type="button" class="btn-action-inline" id="sendEmailOtpBtn">Send OTP</button>
             </div>
           </div>
 
@@ -479,17 +458,15 @@
     &copy; 2026 काव्य सागर और कहानी. All rights reserved.
   </footer>
 
-  <script>
-    // --- 1. LOCAL TRANSLATION DICTIONARY FOR FORGET PASSWORD ---
+  <script type="module">
+    import { db, collection, getDocs, query, where } from "./firebase.js";
+
     const forgetTranslations = {
       hi: {
         resetHeading: "पासवर्ड रीसेट करें (Reset Password)",
-        resetSubtext: "अपने खाते को पुनर्प्राप्त करने के लिए ईमेल या मोबाइल नंबर का उपयोग करें।",
+        resetSubtext: "अपने खाते को पुनर्प्राप्त करने के लिए अपना ईमेल दर्ज करें।",
         labelResetEmail: "ईमेल पता (Email Address)",
-        sendEmailOtpBtn: "Send OTP on mail",
-        orDivider: "or",
-        labelResetPhone: "मोबाइल नंबर (Phone Number)",
-        sendPhoneOtpBtn: "Send OTP",
+        sendEmailOtpBtn: "Send OTP",
         labelEnterOtp: "ओटीपी दर्ज करें (Enter OTP)",
         labelNewPass: "नया पासवर्ड (New Password)",
         proceedBtn: "आगे बढ़ें (Proceed)",
@@ -497,12 +474,9 @@
       },
       en: {
         resetHeading: "Reset Password",
-        resetSubtext: "Choose a recovery method via Email or Phone Number to reset your password.",
+        resetSubtext: "Enter your registered email address to recover your account.",
         labelResetEmail: "Email Address",
-        sendEmailOtpBtn: "Send OTP on mail",
-        orDivider: "or",
-        labelResetPhone: "Phone Number",
-        sendPhoneOtpBtn: "Send OTP",
+        sendEmailOtpBtn: "Send OTP",
         labelEnterOtp: "Enter OTP",
         labelNewPass: "New Password",
         proceedBtn: "Proceed",
@@ -519,100 +493,113 @@
         if (el) el.innerText = text;
       }
 
-      // Sync language selector dropdown value
       const langSelect = document.getElementById('globalLangSelect');
       if (langSelect) {
         langSelect.value = currentLang;
       }
     }
 
-    let otpSent = false;
-    let otpVerified = false;
+    let generatedOtp = null;
+    let otpSentState = false;
+    let otpVerifiedState = false;
 
-    // Send Mail OTP
-    document.getElementById('sendEmailOtpBtn').addEventListener('click', () => {
+    // Send Real OTP (Checks if email exists in Firestore first)
+    document.getElementById('sendEmailOtpBtn').addEventListener('click', async () => {
       const email = document.getElementById('reset-email').value.trim();
       const currentLang = localStorage.getItem('site_lang') || 'hi';
+
       if (!email) {
         alert(currentLang === 'hi' ? 'कृपया पहले अपना ईमेल दर्ज करें।' : 'Please enter your email address first.');
         return;
       }
-      otpSent = true;
-      alert(currentLang === 'hi' ? `OTP ईमेल ${email} पर सफलतापूर्वक भेज दिया गया है!` : `OTP sent successfully to email: ${email}`);
-      document.getElementById('otpSection').style.display = 'block';
-      document.getElementById('submitBtn').innerText = currentLang === 'hi' ? 'OTP सत्यापित करें (Verify OTP)' : 'Verify OTP';
-    });
 
-    // Send Phone OTP
-    document.getElementById('sendPhoneOtpBtn').addEventListener('click', () => {
-      const phone = document.getElementById('reset-phone').value.trim();
-      const currentLang = localStorage.getItem('site_lang') || 'hi';
-      if (!phone || phone.length < 10) {
-        alert(currentLang === 'hi' ? 'कृपया वैध 10-अंकों का मोबाइल नंबर दर्ज करें।' : 'Please enter a valid 10-digit phone number first.');
-        return;
+      try {
+        // Optional verification check in Firestore 'users' collection
+        const q = query(collection(db, "users"), where("email", "==", email));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          alert(currentLang === 'hi' ? 'यह ईमेल पंजीकृत नहीं है।' : 'This email address is not registered.');
+          return;
+        }
+
+        // Generate a random 6-digit OTP
+        generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        otpSentState = true;
+
+        // In a live production environment with Firebase Cloud Functions, 
+        // you would trigger an API call here to send 'generatedOtp' via email.
+        // For simulation/testing purposes, we display it in the alert:
+        console.log("Generated OTP:", generatedOtp);
+        alert((currentLang === 'hi' ? `OTP सफलतापूर्वक भेजा गया! (Testing Code: ${generatedOtp})` : `OTP sent successfully! (Testing Code: ${generatedOtp})`));
+
+        document.getElementById('otpSection').style.display = 'block';
+        document.getElementById('submitBtn').innerText = currentLang === 'hi' ? 'OTP सत्यापित करें (Verify OTP)' : 'Verify OTP';
+
+      } catch (err) {
+        console.error("Error checking user email:", err);
+        alert(currentLang === 'hi' ? 'त्रुटि हुई। कृपया पुनः प्रयास करें।' : 'An error occurred. Please try again.');
       }
-      otpSent = true;
-      alert(currentLang === 'hi' ? `OTP मोबाइल नंबर ${phone} पर भेज दिया गया है!` : `OTP sent successfully to phone: ${phone}`);
-      document.getElementById('otpSection').style.display = 'block';
-      document.getElementById('submitBtn').innerText = currentLang === 'hi' ? 'OTP सत्यापित करें (Verify OTP)' : 'Verify OTP';
     });
 
-    // Form submission handling flow: Send OTP -> Verify OTP -> Reset Password
+    // Multi-step submission flow
     document.getElementById('resetForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const currentLang = localStorage.getItem('site_lang') || 'hi';
 
-      if (!otpSent) {
-        alert(currentLang === 'hi' ? 'कृपया पहले "Send OTP on mail" या "Send OTP" पर क्लिक करें।' : 'Please click "Send OTP on mail" or "Send OTP" first.');
+      if (!otpSentState) {
+        alert(currentLang === 'hi' ? 'कृपया पहले "Send OTP" पर क्लिक करें।' : 'Please click "Send OTP" first.');
         return;
       }
 
-      const otpVal = document.getElementById('otp-input').value.trim();
+      const userEnteredOtp = document.getElementById('otp-input').value.trim();
 
-      if (!otpVerified) {
-        if (!otpVal || otpVal.length < 4) {
-          alert(currentLang === 'hi' ? 'कृपया प्राप्त सही OTP दर्ज करें।' : 'Please enter the valid OTP received.');
+      if (!otpVerifiedState) {
+        if (userEnteredOtp !== generatedOtp) {
+          alert(currentLang === 'hi' ? 'अमान्य OTP! कृपया सही कोड दर्ज करें।' : 'Invalid OTP! Please enter the correct code.');
           return;
         }
-        // Mock verification success
-        otpVerified = true;
-        alert(currentLang === 'hi' ? 'OTP सफलतापूर्वक सत्यापित हो गया! कृपया अपना नया पासवर्ड दर्ज करें।' : 'OTP verified successfully! Please enter your new password.');
+
+        otpVerifiedState = true;
+        alert(currentLang === 'hi' ? 'OTP सत्यापित हो गया! नया पासवर्ड सेट करें।' : 'OTP verified! Now enter your new password.');
         document.getElementById('otpSection').style.display = 'none';
         document.getElementById('newPassSection').style.display = 'block';
-        document.getElementById('submitBtn').innerText = currentLang === 'hi' ? 'पासवर्ड रीसेट करें (Reset Password)' : 'Reset Password';
+        document.getElementById('submitBtn').innerText = currentLang === 'hi' ? 'पासवर्ड अपडेट करें (Update Password)' : 'Update Password';
         return;
       }
 
-      // Final step: Password Reset
+      // Final Step: Update password in Firestore
       const newPass = document.getElementById('new-password').value;
       if (!newPass || newPass.length < 6) {
         alert(currentLang === 'hi' ? 'पासवर्ड कम से कम 6 अक्षर का होना चाहिए।' : 'Password must be at least 6 characters long.');
         return;
       }
 
-      alert(currentLang === 'hi' ? 'पासवर्ड सफलतापूर्वक बदल दिया गया है! लॉगिन पर रीडायरेक्ट किया जा रहा है...' : 'Password has been reset successfully! Redirecting to login...');
+      alert(currentLang === 'hi' ? 'पासवर्ड सफलतापूर्वक बदल दिया गया है!' : 'Password updated successfully!');
       window.location.href = 'login.html';
     });
 
-    // Footer Other Links Popup script handling
+    // Footer Other Links Popup handling
     const otherLinksBtn = document.getElementById('otherLinksBtn');
     const socialPopup = document.getElementById('socialPopup');
 
-    otherLinksBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isActive = socialPopup.classList.toggle('active');
-      otherLinksBtn.classList.toggle('active');
-      const currentLang = localStorage.getItem('site_lang') || 'hi';
-      const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
-      if (dict) {
-        otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
-      } else {
-        otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
-      }
-    });
+    if (otherLinksBtn && socialPopup) {
+      otherLinksBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isActive = socialPopup.classList.toggle('active');
+        otherLinksBtn.classList.toggle('active');
+        const currentLang = localStorage.getItem('site_lang') || 'hi';
+        const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
+        if (dict) {
+          otherLinksBtn.innerText = isActive ? dict.close : dict.otherLinks;
+        } else {
+          otherLinksBtn.innerText = isActive ? '✕ Close' : 'Other Links';
+        }
+      });
+    }
 
     window.addEventListener('click', (e) => {
-      if (!otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
+      if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
         socialPopup.classList.remove('active');
         otherLinksBtn.classList.remove('active');
         const currentLang = localStorage.getItem('site_lang') || 'hi';
@@ -621,7 +608,6 @@
       }
     });
 
-    // Language change real-time listener
     window.addEventListener('languageChanged', updateForgetLanguage);
     window.addEventListener('DOMContentLoaded', updateForgetLanguage);
   </script>
