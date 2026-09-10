@@ -150,11 +150,6 @@
       margin-bottom: 6px;
     }
 
-    .input-with-action {
-      display: flex;
-      gap: 10px;
-    }
-
     .form-group input {
       width: 100%;
       padding: 11px 14px;
@@ -171,24 +166,6 @@
       border-color: #d4a017;
       background: rgba(255, 255, 255, 0.08);
       box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.2);
-    }
-
-    .btn-action-inline {
-      background: rgba(212, 160, 23, 0.15);
-      border: 1px solid #d4a017;
-      color: #d4a017;
-      padding: 0 16px;
-      border-radius: 8px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    .btn-action-inline:hover {
-      background: #d4a017;
-      color: #0d0d15;
     }
 
     .btn-reset {
@@ -398,29 +375,16 @@
       <div class="reset-section">
         <div class="reset-header">
           <h2 id="resetHeading">पासवर्ड रीसेट करें (Reset Password)</h2>
-          <p id="resetSubtext">अपने खाते को पुनर्प्राप्त करने के लिए अपना ईमेल दर्ज करें।</p>
+          <p id="resetSubtext">अपने खाते को पुनर्प्राप्त करने के लिए अपना पंजीकृत ईमेल दर्ज करें।</p>
         </div>
 
         <form id="resetForm">
           <div class="form-group">
             <label for="reset-email" id="labelResetEmail">ईमेल पता (Email Address)</label>
-            <div class="input-with-action">
-              <input type="email" id="reset-email" placeholder="Enter your registered email" required>
-              <button type="button" class="btn-action-inline" id="sendEmailOtpBtn">Send OTP</button>
-            </div>
+            <input type="email" id="reset-email" placeholder="Enter your registered email" required>
           </div>
 
-          <div class="form-group" id="otpSection" style="display: none;">
-            <label for="otp-input" id="labelEnterOtp">ओटीपी दर्ज करें (Enter OTP)</label>
-            <input type="text" id="otp-input" placeholder="Enter 6-digit verification code" maxlength="6">
-          </div>
-
-          <div class="form-group" id="newPassSection" style="display: none;">
-            <label for="new-password" id="labelNewPass">नया पासवर्ड (New Password)</label>
-            <input type="password" id="new-password" placeholder="Enter new password">
-          </div>
-
-          <button type="submit" class="btn-reset" id="submitBtn">आगे बढ़ें (Proceed)</button>
+          <button type="submit" class="btn-reset" id="submitBtn" data-lang-key="sendResetLink">रीसेट लिंक भेजें (Send Reset Link)</button>
 
           <div class="back-to-login">
             <a href="login.html" id="backToSignIn">← साइन इन पर वापस जाएं (Back to Sign In)</a>
@@ -460,26 +424,23 @@
 
   <script type="module">
     import { db, collection, getDocs, query, where } from "./firebase.js";
+    import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const auth = getAuth();
 
     const forgetTranslations = {
       hi: {
         resetHeading: "पासवर्ड रीसेट करें (Reset Password)",
-        resetSubtext: "अपने खाते को पुनर्प्राप्त करने के लिए अपना ईमेल दर्ज करें।",
+        resetSubtext: "अपने खाते को पुनर्प्राप्त करने के लिए अपना पंजीकृत ईमेल दर्ज करें।",
         labelResetEmail: "ईमेल पता (Email Address)",
-        sendEmailOtpBtn: "Send OTP",
-        labelEnterOtp: "ओटीपी दर्ज करें (Enter OTP)",
-        labelNewPass: "नया पासवर्ड (New Password)",
-        proceedBtn: "आगे बढ़ें (Proceed)",
+        submitBtn: "रीसेट लिंक भेजें (Send Reset Link)",
         backToSignIn: "← साइन इन पर वापस जाएं (Back to Sign In)"
       },
       en: {
         resetHeading: "Reset Password",
-        resetSubtext: "Enter your registered email address to recover your account.",
+        resetSubtext: "Enter your registered email address to receive a password reset link.",
         labelResetEmail: "Email Address",
-        sendEmailOtpBtn: "Send OTP",
-        labelEnterOtp: "Enter OTP",
-        labelNewPass: "New Password",
-        proceedBtn: "Proceed",
+        submitBtn: "Send Reset Link",
         backToSignIn: "← Back to Sign In"
       }
     };
@@ -499,84 +460,40 @@
       }
     }
 
-    let generatedOtp = null;
-    let otpSentState = false;
-    let otpVerifiedState = false;
-
-    // Send Real OTP (Checks if email exists in Firestore first)
-    document.getElementById('sendEmailOtpBtn').addEventListener('click', async () => {
+    // Handle Native Firebase Password Reset Email
+    document.getElementById('resetForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
       const email = document.getElementById('reset-email').value.trim();
       const currentLang = localStorage.getItem('site_lang') || 'hi';
 
       if (!email) {
-        alert(currentLang === 'hi' ? 'कृपया पहले अपना ईमेल दर्ज करें।' : 'Please enter your email address first.');
+        alert(currentLang === 'hi' ? 'कृपया अपना ईमेल दर्ज करें।' : 'Please enter your email address.');
         return;
       }
 
       try {
-        // Optional verification check in Firestore 'users' collection
+        // Optional check in Firestore 'users' collection to confirm registration
         const q = query(collection(db, "users"), where("email", "==", email));
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-          alert(currentLang === 'hi' ? 'यह ईमेल पंजीकृत नहीं है।' : 'This email address is not registered.');
+          alert(currentLang === 'hi' ? 'यह ईमेल हमारे सिस्टम में पंजीकृत नहीं है।' : 'This email is not registered in our system.');
           return;
         }
 
-        // Generate a random 6-digit OTP
-        generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-        otpSentState = true;
-
-        // In a live production environment with Firebase Cloud Functions, 
-        // you would trigger an API call here to send 'generatedOtp' via email.
-        // For simulation/testing purposes, we display it in the alert:
-        console.log("Generated OTP:", generatedOtp);
-        alert((currentLang === 'hi' ? `OTP सफलतापूर्वक भेजा गया! (Testing Code: ${generatedOtp})` : `OTP sent successfully! (Testing Code: ${generatedOtp})`));
-
-        document.getElementById('otpSection').style.display = 'block';
-        document.getElementById('submitBtn').innerText = currentLang === 'hi' ? 'OTP सत्यापित करें (Verify OTP)' : 'Verify OTP';
+        // Trigger Firebase Auth native email link dispatcher
+        await sendPasswordResetEmail(auth, email);
+        
+        alert(currentLang === 'hi' 
+          ? `पासवर्ड रीसेट करने का लिंक ${email} पर भेज दिया गया है। कृपया अपना इनबॉक्स जाँचें!` 
+          : `A password reset link has been sent to ${email}. Please check your inbox!`);
+        
+        window.location.href = 'login.html';
 
       } catch (err) {
-        console.error("Error checking user email:", err);
-        alert(currentLang === 'hi' ? 'त्रुटि हुई। कृपया पुनः प्रयास करें।' : 'An error occurred. Please try again.');
+        console.error("Firebase Auth Error:", err);
+        alert(currentLang === 'hi' ? 'ईमेल भेजने में विफल। कृपया पुनः प्रयास करें।' : 'Failed to send reset email. Please try again.');
       }
-    });
-
-    // Multi-step submission flow
-    document.getElementById('resetForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const currentLang = localStorage.getItem('site_lang') || 'hi';
-
-      if (!otpSentState) {
-        alert(currentLang === 'hi' ? 'कृपया पहले "Send OTP" पर क्लिक करें।' : 'Please click "Send OTP" first.');
-        return;
-      }
-
-      const userEnteredOtp = document.getElementById('otp-input').value.trim();
-
-      if (!otpVerifiedState) {
-        if (userEnteredOtp !== generatedOtp) {
-          alert(currentLang === 'hi' ? 'अमान्य OTP! कृपया सही कोड दर्ज करें।' : 'Invalid OTP! Please enter the correct code.');
-          return;
-        }
-
-        otpVerifiedState = true;
-        alert(currentLang === 'hi' ? 'OTP सत्यापित हो गया! नया पासवर्ड सेट करें।' : 'OTP verified! Now enter your new password.');
-        document.getElementById('otpSection').style.display = 'none';
-        document.getElementById('newPassSection').style.display = 'block';
-        document.getElementById('submitBtn').innerText = currentLang === 'hi' ? 'पासवर्ड अपडेट करें (Update Password)' : 'Update Password';
-        return;
-      }
-
-      // Final Step: Update password in Firestore
-      const newPass = document.getElementById('new-password').value;
-      if (!newPass || newPass.length < 6) {
-        alert(currentLang === 'hi' ? 'पासवर्ड कम से कम 6 अक्षर का होना चाहिए।' : 'Password must be at least 6 characters long.');
-        return;
-      }
-
-      alert(currentLang === 'hi' ? 'पासवर्ड सफलतापूर्वक बदल दिया गया है!' : 'Password updated successfully!');
-      window.location.href = 'login.html';
     });
 
     // Footer Other Links Popup handling
