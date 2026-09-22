@@ -941,7 +941,13 @@
 
           if (item.stage === 'published' && item.category === 'kahani') {
             const storyKey = 'cloud_' + docSnap.id;
-            const title = item.title || 'Untitled Story';
+            
+            // Check subCategory first since user creations store the custom title there
+            let title = item.subCategory || item.title || 'Untitled Story';
+            if (!title || title === 'नई रचना' || title === 'New Creation') {
+              title = item.title || 'Untitled Story';
+            }
+
             const authorSign = `~ ${item.author || 'Admin'}`;
             const content = item.content || '';
             const summary = content.slice(0, 180) + '...';
