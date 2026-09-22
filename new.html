@@ -544,7 +544,7 @@
     let selectedPostId = null;
     const currentAuthorName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
 
-    // --- FETCH RECENT WORKS FROM FIREBASE (Within 2 Days / 48 Hours) ---
+    // --- FETCH RECENT WORKS FROM FIREBASE (Strictly within 2 Days / 48 Hours) ---
     async function loadLatestPostsFromCloud() {
       try {
         const querySnapshot = await getDocs(collection(db, "works"));
@@ -557,7 +557,19 @@
           const item = docSnap.data();
           
           if (item.stage === 'published') {
-            const itemTime = Number(item.id) || now;
+            // Determine item timestamp robustly from createdAt, date string, or extracting numbers from ID
+            let itemTime = now;
+            if (item.createdAt) {
+              itemTime = new Date(item.createdAt).getTime();
+            } else if (item.id && item.id.includes('_')) {
+              const parts = item.id.split('_');
+              const possibleTimestamp = Number(parts[parts.length - 1]);
+              if (!isNaN(possibleTimestamp) && possibleTimestamp > 1000000000) {
+                itemTime = possibleTimestamp;
+              }
+            }
+
+            // Check if post is within the last 48 hours (2 days)
             if ((now - itemTime) <= twoDaysInMs) {
               const mappedCat = mapCategoryToLatestTab(item.category);
               if (mappedCat && cloudPosts[mappedCat]) {
@@ -566,11 +578,17 @@
                   title: item.title || 'Untitled',
                   author: `~ ${item.author || 'Admin'}`,
                   body: item.content || '',
-                  subCategory: item.subCategory || ''
+                  subCategory: item.subCategory || '',
+                  timestamp: itemTime
                 });
               }
             }
           }
+        });
+
+        // Sort each category so the newest post appears first
+        Object.keys(cloudPosts).forEach(cat => {
+          cloudPosts[cat].sort((a, b) => b.timestamp - a.timestamp);
         });
 
         latestPostsDatabase = cloudPosts;
@@ -628,7 +646,7 @@
       posts.forEach(post => {
         const oval = document.createElement('div');
         oval.className = `post-oval-item ${post.id === selectedPostId ? 'active' : ''}`;
-        oval.onclick = () => selectPost(post.id);
+        oval.onclick = (e) => selectPost(post.id, e);
 
         oval.innerHTML = `
           <span class="item-title-text">${post.title}</span>
@@ -643,7 +661,7 @@
       }
     }
 
-    function selectPost(id) {
+    function selectPost(id, event) {
       selectedPostId = id;
       const posts = latestPostsDatabase[activeCategory] || [];
       const post = posts.find(p => p.id === id);
@@ -819,12 +837,10 @@
     });
 
     window.addEventListener('languageChanged', () => {
-      renderAuthHeader();
       renderPostList();
     });
 
     window.addEventListener('DOMContentLoaded', () => {
-      renderAuthHeader();
       loadLatestPostsFromCloud();
     });
   </script>
