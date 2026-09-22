@@ -557,7 +557,7 @@
           const item = docSnap.data();
           
           if (item.stage === 'published') {
-            // Determine item timestamp robustly from createdAt, date string, or extracting numbers from ID
+            // Determine item timestamp robustly
             let itemTime = now;
             if (item.createdAt) {
               itemTime = new Date(item.createdAt).getTime();
@@ -573,9 +573,15 @@
             if ((now - itemTime) <= twoDaysInMs) {
               const mappedCat = mapCategoryToLatestTab(item.category);
               if (mappedCat && cloudPosts[mappedCat]) {
+                // Properly extract custom title from subCategory if main title is generic
+                let displayTitle = item.subCategory || item.title || 'Untitled';
+                if (!displayTitle || displayTitle === 'नई रचना' || displayTitle === 'New Creation') {
+                  displayTitle = item.title || 'Untitled';
+                }
+
                 cloudPosts[mappedCat].push({
                   id: docSnap.id,
-                  title: item.title || 'Untitled',
+                  title: displayTitle,
                   author: `~ ${item.author || 'Admin'}`,
                   body: item.content || '',
                   subCategory: item.subCategory || '',
@@ -600,10 +606,12 @@
     }
 
     function mapCategoryToLatestTab(cat) {
-      if (cat === 'kavita') return 'kavita';
-      if (cat === 'kahani') return 'kahani';
-      if (cat === 'diary') return 'diary';
-      if (cat === 'prerna') return 'quotes';
+      if (!cat) return 'kavita';
+      const c = cat.toLowerCase();
+      if (c === 'kavita' || c === 'poem' || c === 'poems' || c === 'कविता') return 'kavita';
+      if (c === 'kahani' || c === 'story' || c === 'stories' || c === 'कहानी') return 'kahani';
+      if (c === 'diary' || c === 'diaries' || c === 'डायरी') return 'diary';
+      if (c === 'prerna' || c === 'quotes' || c === 'quote' || c === 'प्रेरणादायक') return 'quotes';
       return 'kavita';
     }
 
