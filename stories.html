@@ -26,7 +26,7 @@
       width: 100%;
     }
 
-    /* ---------------- HEADER WITH SEARCH ---------------- */
+    /* ---------------- HEADER WITH SEARCH & MOBILE HAMBURGER ---------------- */
     header {
       background: rgba(30, 30, 47, 0.95);
       backdrop-filter: blur(10px);
@@ -59,20 +59,64 @@
       flex-shrink: 0;
     }
 
-    nav {
+    nav.desktop-nav {
       display: flex;
       gap: 20px;
       align-items: center;
     }
 
-    nav a {
+    nav.desktop-nav a {
       color: #9ca3af;
       text-decoration: none;
       font-size: 0.95rem;
       transition: color 0.2s;
     }
 
-    nav a:hover, nav a.active {
+    nav.desktop-nav a:hover, nav.desktop-nav a.active {
+      color: #d4a017;
+    }
+
+    /* Mobile Hamburger Menu Button */
+    .mobile-menu-btn {
+      display: none;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 160, 23, 0.4);
+      color: #d4a017;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    /* Slide-down Mobile Navigation Drawer */
+    .mobile-nav-drawer {
+      display: none;
+      width: 100%;
+      background: #181824;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px 20px;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 99;
+    }
+
+    .mobile-nav-drawer.show {
+      display: flex;
+    }
+
+    .mobile-nav-drawer a {
+      color: #d1d5db;
+      text-decoration: none;
+      font-size: 0.95rem;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.2s;
+    }
+
+    .mobile-nav-drawer a:hover, .mobile-nav-drawer a.active {
+      background: rgba(212, 160, 23, 0.15);
       color: #d4a017;
     }
 
@@ -87,6 +131,7 @@
       max-width: 280px;
       width: 100%;
     }
+
     .search-icon-btn {
       background: rgba(212, 160, 23, 0.15);
       border: none;
@@ -97,6 +142,7 @@
       display: flex;
       align-items: center;
     }
+
     .header-search-input {
       background: transparent;
       border: none;
@@ -234,22 +280,45 @@
       z-index: 90;
       position: relative;
     }
-    .search-results-section.show { display: block; }
+
+    .search-results-section.show {
+      display: block;
+    }
+
     .search-matrix-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
       font-size: 0.9rem;
     }
+
     .search-matrix-table th, .search-matrix-table td {
       border: 1px solid rgba(255, 255, 255, 0.1);
       padding: 10px 14px;
       text-align: left;
     }
-    .search-matrix-table th { background: #23232c; color: #d4a017; }
-    .search-matrix-table tr { cursor: pointer; transition: background 0.2s; }
-    .search-matrix-table tr:hover { background: rgba(212, 160, 23, 0.15); }
-    .highlight-match { background: #fef08a; color: #000; padding: 1px 4px; border-radius: 3px; font-weight: 600; }
+
+    .search-matrix-table th {
+      background: #23232c;
+      color: #d4a017;
+    }
+
+    .search-matrix-table tr {
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .search-matrix-table tr:hover {
+      background: rgba(212, 160, 23, 0.15);
+    }
+
+    .highlight-match {
+      background: #fef08a;
+      color: #000;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-weight: 600;
+    }
 
     /* ---------------- LAYOUT CONTAINER ---------------- */
     .stories-container {
@@ -367,6 +436,7 @@
       display: inline-block;
       transition: color 0.2s;
     }
+
     .story-author-badge:hover {
       color: #ffffff;
       text-decoration: underline;
@@ -454,29 +524,105 @@
       z-index: 50;
       animation: fadeInCloud 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .comment-cloud-modal.show { display: block; }
+
+    .comment-cloud-modal.show {
+      display: block;
+    }
+
     @keyframes fadeInCloud {
       from { opacity: 0; transform: scale(0.8) translateY(20px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
+
     .cloud-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 6px;
     }
-    .cloud-header h4 { color: #d4a017; font-size: 0.88rem; }
-    .cloud-close-btn { background: none; border: none; color: #9ca3af; font-size: 1rem; cursor: pointer; }
-    .cloud-close-btn:hover { color: #ffffff; }
+
+    .cloud-header h4 {
+      color: #d4a017;
+      font-size: 0.88rem;
+    }
+
+    .cloud-close-btn {
+      background: none;
+      border: none;
+      color: #9ca3af;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .cloud-close-btn:hover {
+      color: #ffffff;
+    }
+
     .cloud-comments-list {
-      max-height: 110px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; padding-right: 4px;
+      max-height: 110px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+      padding-right: 4px;
     }
-    .comment-bubble { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); padding: 6px 10px; border-radius: 12px; font-size: 0.78rem; }
-    .comment-author { color: #d4a017; font-weight: 700; margin-bottom: 2px; font-size: 0.75rem; }
-    .comment-text { color: #e5e7eb; }
-    .cloud-input-group { display: flex; gap: 6px; }
-    .cloud-input { flex: 1; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); padding: 6px 10px; border-radius: 18px; color: #ffffff; font-size: 0.8rem; outline: none; }
-    .cloud-input:focus { border-color: #d4a017; }
-    .cloud-submit-btn { background: #d4a017; color: #0d0d15; border: none; padding: 6px 14px; border-radius: 18px; font-weight: 700; font-size: 0.78rem; cursor: pointer; }
-    .cloud-submit-btn:hover { background: #b8860b; }
+
+    .comment-bubble {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+    }
+
+    .comment-author {
+      color: #d4a017;
+      font-weight: 700;
+      margin-bottom: 2px;
+      font-size: 0.75rem;
+    }
+
+    .comment-text {
+      color: #e5e7eb;
+    }
+
+    .cloud-input-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .cloud-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 6px 10px;
+      border-radius: 18px;
+      color: #ffffff;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    .cloud-input:focus {
+      border-color: #d4a017;
+    }
+
+    .cloud-submit-btn {
+      background: #d4a017;
+      color: #0d0d15;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 18px;
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .cloud-submit-btn:hover {
+      background: #b8860b;
+    }
 
     /* ---------------- STORY MODAL READER ---------------- */
     .story-modal {
@@ -687,29 +833,36 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @media (max-width: 768px) {
+    /* ---------------- RESPONSIVE BREAKPOINTS ---------------- */
+    @media (max-width: 900px) {
       .stories-container { grid-template-columns: 1fr; }
       header { padding: 10px 15px; }
-      nav { display: none; }
+      nav.desktop-nav { display: none; }
+      .mobile-menu-btn { display: block; }
       .footer-grid { grid-template-columns: repeat(2, 1fr); }
+      .header-search-box { max-width: 100%; order: 3; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Navigation Header with Search -->
+  <!-- Navigation Header with Responsive Mobile Navigation -->
   <header>
-    <a href="home.html" class="brand">
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
-        <path d="M22 38l16-16" />
-        <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
-        <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
-      </svg>
-      <span data-lang-key="brandTitle">काव्य सागर और कहानी</span>
-    </a>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation" title="Menu">☰</button>
+      <a href="home.html" class="brand">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M48 6C36 12 24 24 18 42L14 54l12-4c18-6 30-18 36-30-4 0-10 2-14 6" />
+          <path d="M22 38l16-16" />
+          <path d="M12 44c-3 1-6 4-6 7 0 4 4 7 8 7h14c6 0 10-4 12-8l4-8" stroke-width="1.8" />
+          <path d="M18 42c0-2 2-4 4-4s4 2 4 4" stroke-width="1.8" />
+        </svg>
+        <span data-lang-key="brandTitle">काव्य सागर और कहानी</span>
+      </a>
+    </div>
 
-    <nav>
+    <!-- Desktop Navigation Bar -->
+    <nav class="desktop-nav">
       <a href="home.html" data-lang-key="navHome">होम</a>
       <a href="poem.html" data-lang-key="navPoem">कविताएँ</a>
       <a href="stories.html" class="active" data-lang-key="navStory">कहानी</a>
@@ -734,6 +887,15 @@
       <div class="user-profile-menu" id="userAuthContainer"></div>
     </div>
   </header>
+
+  <!-- Responsive Mobile Dropdown Drawer -->
+  <nav class="mobile-nav-drawer" id="mobileNavDrawer">
+    <a href="home.html" data-lang-key="navHome">होम</a>
+    <a href="poem.html" data-lang-key="navPoem">कविताएँ</a>
+    <a href="stories.html" class="active" data-lang-key="navStory">कहानी</a>
+    <a href="diaries.html" data-lang-key="navDiary">डायरी</a>
+    <a href="quotes.html" data-lang-key="navInspiration">प्रेरणादायक बातें</a>
+  </nav>
 
   <!-- Search Results Matrix Overlay -->
   <section class="search-results-section" id="searchResultsSection">
@@ -817,7 +979,7 @@
     </div>
   </div>
 
-  <!-- Universal 4-Card Footer with IG -->
+  <!-- Universal 4-Card Footer with YouTube, Facebook & Instagram Preserved -->
   <section class="footer-section">
     <div class="footer-grid">
       <a href="about-us.html" class="footer-card" data-lang-key="aboutUs">About us</a>
@@ -928,6 +1090,16 @@
     let selectedStoryKey = 'fox';
     const currentAuthorName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
 
+    // Toggle Mobile Navigation Drawer
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileNavDrawer = document.getElementById('mobileNavDrawer');
+    if (mobileMenuBtn && mobileNavDrawer) {
+      mobileMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileNavDrawer.classList.toggle('show');
+      });
+    }
+
     // --- FETCH PUBLISHED STORIES FROM FIREBASE ---
     async function loadStoriesFromCloud() {
       try {
@@ -942,7 +1114,6 @@
           if (item.stage === 'published' && item.category === 'kahani') {
             const storyKey = 'cloud_' + docSnap.id;
             
-            // Check subCategory first since user creations store the custom title there
             let title = item.subCategory || item.title || 'Untitled Story';
             if (!title || title === 'नई रचना' || title === 'New Creation') {
               title = item.title || 'Untitled Story';
@@ -1305,6 +1476,11 @@
 
       if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
         userDropdown.classList.remove('show');
+      }
+
+      // Close mobile drawer when clicking outside
+      if (mobileNavDrawer && mobileMenuBtn && !mobileNavDrawer.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+        mobileNavDrawer.classList.remove('show');
       }
 
       if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
