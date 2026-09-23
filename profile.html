@@ -818,7 +818,7 @@
         <div class="avatar-label-title" id="avatarTitle">चित्र बदलें</div>
         <div class="avatar-label-subtitle" id="avatarSubtitle">(Change Picture)</div>
 
-        <!-- Followers / Following Buttons fetching visitor.html -->
+        <!-- Followers / Following Buttons -->
         <div class="network-nav-buttons">
           <a href="visitor.html?tab=followers" class="net-btn" id="btnFollowersTab">Followers</a>
           <a href="visitor.html?tab=following" class="net-btn" id="btnFollowingTab">Following</a>
@@ -955,8 +955,8 @@
 
   <script type="module">
     import { db } from "./firebase.js";
-    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { doc, getDoc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const auth = getAuth();
 
@@ -1064,11 +1064,62 @@
       window.location.href = 'login.html';
     }
 
+    // Helper function to extract count whether a field is an array (e.g. comments/likes array) or a number
+    function extractMetricCount(val) {
+      if (!val) return 0;
+      if (Array.isArray(val)) return val.length;
+      if (typeof val === 'number') return val;
+      if (typeof val === 'string') return parseInt(val, 10) || 0;
+      return 0;
+    }
+
+    // --- FETCH USER POST METRICS (POSTS, VIEWS, LIKES, SHARES, COMMENTS) ---
+    async function loadUserStats(user) {
+      if (!user) return;
+
+      try {
+        const postsRef = collection(db, "posts");
+        // Check posts created by this user's UID (falls back to email if needed)
+        let q = query(postsRef, where("authorId", "==", user.uid));
+        let snap = await getDocs(q);
+
+        // Fallback: in case posts are stored under 'userId' or 'authorUid'
+        if (snap.empty) {
+          q = query(postsRef, where("userId", "==", user.uid));
+          snap = await getDocs(q);
+        }
+
+        let totalPosts = 0;
+        let totalViews = 0;
+        let totalLikes = 0;
+        let totalShares = 0;
+        let totalComments = 0;
+
+        snap.forEach((postDoc) => {
+          const d = postDoc.data();
+          totalPosts += 1;
+          totalViews += extractMetricCount(d.views || d.viewCount);
+          totalLikes += extractMetricCount(d.likes || d.likeCount);
+          totalShares += extractMetricCount(d.shares || d.shareCount);
+          totalComments += extractMetricCount(d.comments || d.commentCount);
+        });
+
+        // Update stats panel DOM
+        document.getElementById('statTotalPosts').innerText = totalPosts.toLocaleString();
+        document.getElementById('statTotalViews').innerText = totalViews.toLocaleString();
+        document.getElementById('statTotalLikes').innerText = totalLikes.toLocaleString();
+        document.getElementById('statTotalShares').innerText = totalShares.toLocaleString();
+        document.getElementById('statTotalComments').innerText = totalComments.toLocaleString();
+
+      } catch (err) {
+        console.error("Error computing user post stats:", err);
+      }
+    }
+
     // --- FETCH PROFILE DATA DIRECTLY FROM FIRESTORE BY UID ---
-    async function loadUserProfileData() {
-      const currentUser = auth.currentUser;
+    async function loadUserProfileData(user) {
+      const currentUser = user || auth.currentUser;
       
-      // Fallback local values if auth isn't instantly ready
       let storedName = localStorage.getItem('userName') || '';
       let storedEmail = localStorage.getItem('userEmail') || '';
       let storedPhone = localStorage.getItem('userPhone') || '';
@@ -1089,12 +1140,14 @@
             storedDob = data.dob || storedDob;
             storedAvatar = data.avatar || storedAvatar;
 
-            // Keep localStorage in sync
             if (data.name) localStorage.setItem('userName', data.name);
           }
         } catch (err) {
           console.error("Error fetching profile from Firestore:", err);
         }
+
+        // Load dynamic statistics from posts collection
+        loadUserStats(currentUser);
       }
 
       document.getElementById('fullNameInput').value = storedName;
@@ -1115,12 +1168,6 @@
         profileImageDisplay.style.display = 'none';
         defaultAvatarSvg.style.display = 'block';
       }
-
-      document.getElementById('statTotalPosts').innerText = 0;
-      document.getElementById('statTotalViews').innerText = 0;
-      document.getElementById('statTotalLikes').innerText = 0;
-      document.getElementById('statTotalShares').innerText = 0;
-      document.getElementById('statTotalComments').innerText = 0;
     }
 
     // --- SAVE PROFILE UPDATES TO FIRESTORE CLOUD DATABASE ---
@@ -1246,10 +1293,14 @@
       renderAuthHeader();
       updateProfileLanguage();
       
-      // Wait briefly for Firebase auth state to initialize before loading profile
-      setTimeout(() => {
-        loadUserProfileData();
-      }, 500);
+      // Listen to auth state reliably rather than using a static timer
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          loadUserProfileData(user);
+        } else {
+          loadUserProfileData(null);
+        }
+      });
     });
   </script>
 
