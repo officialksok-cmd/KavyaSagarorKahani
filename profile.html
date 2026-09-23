@@ -527,14 +527,29 @@
       line-height: 1.3;
     }
 
+    /* Date Picker Input Styles */
     .date-input-wrapper {
       position: relative;
       display: flex;
       align-items: center;
     }
 
-    .date-input-wrapper input {
-      padding-left: 36px;
+    .date-input-wrapper input[type="date"] {
+      padding-left: 38px;
+      color-scheme: dark;
+      cursor: pointer;
+    }
+
+    /* Customize native date picker icon */
+    .date-input-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      filter: invert(0.85);
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .date-input-wrapper input[type="date"]::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
     }
 
     .calendar-icon {
@@ -542,8 +557,14 @@
       left: 12px;
       width: 16px;
       height: 16px;
-      color: #9ca3af;
-      pointer-events: none;
+      color: #d4a017;
+      cursor: pointer;
+      z-index: 2;
+      transition: transform 0.2s;
+    }
+
+    .calendar-icon:hover {
+      transform: scale(1.1);
     }
 
     .btn-update-profile {
@@ -897,16 +918,17 @@
             <input type="tel" class="form-input" id="contactPhoneInput" placeholder="10-digit mobile number">
           </div>
 
+          <!-- Updated Date of Birth Section with Datepicker -->
           <div class="form-group">
             <label class="form-label" id="labelDob">जन्म तिथि (Date of Birth)</label>
             <div class="date-input-wrapper">
-              <svg class="calendar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="calendar-icon" id="calendarIconBtn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" title="Open Calendar">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
-              <input type="text" class="form-input" id="dobInput" placeholder="DD/MM/YYYY">
+              <input type="date" class="form-input" id="dobInput">
             </div>
           </div>
 
@@ -1064,7 +1086,6 @@
       window.location.href = 'login.html';
     }
 
-    // Helper function to extract count whether a field is an array (e.g. comments/likes array) or a number
     function extractMetricCount(val) {
       if (!val) return 0;
       if (Array.isArray(val)) return val.length;
@@ -1073,17 +1094,26 @@
       return 0;
     }
 
+    // Convert any legacy "DD/MM/YYYY" format to "YYYY-MM-DD" for HTML date inputs
+    function normalizeDateForInput(dateStr) {
+      if (!dateStr) return '';
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
+        const [d, m, y] = dateStr.split('/');
+        return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+      }
+      return dateStr;
+    }
+
     // --- FETCH USER POST METRICS (POSTS, VIEWS, LIKES, SHARES, COMMENTS) ---
     async function loadUserStats(user) {
       if (!user) return;
 
       try {
         const postsRef = collection(db, "posts");
-        // Check posts created by this user's UID (falls back to email if needed)
         let q = query(postsRef, where("authorId", "==", user.uid));
         let snap = await getDocs(q);
 
-        // Fallback: in case posts are stored under 'userId' or 'authorUid'
         if (snap.empty) {
           q = query(postsRef, where("userId", "==", user.uid));
           snap = await getDocs(q);
@@ -1104,7 +1134,6 @@
           totalComments += extractMetricCount(d.comments || d.commentCount);
         });
 
-        // Update stats panel DOM
         document.getElementById('statTotalPosts').innerText = totalPosts.toLocaleString();
         document.getElementById('statTotalViews').innerText = totalViews.toLocaleString();
         document.getElementById('statTotalLikes').innerText = totalLikes.toLocaleString();
@@ -1146,7 +1175,6 @@
           console.error("Error fetching profile from Firestore:", err);
         }
 
-        // Load dynamic statistics from posts collection
         loadUserStats(currentUser);
       }
 
@@ -1155,7 +1183,7 @@
       document.getElementById('contactEmailInput').value = storedEmail;
       document.getElementById('contactPhoneInput').value = storedPhone;
       document.getElementById('bioInput').value = storedBio;
-      document.getElementById('dobInput').value = storedDob;
+      document.getElementById('dobInput').value = normalizeDateForInput(storedDob);
 
       const profileImageDisplay = document.getElementById('profileImageDisplay');
       const defaultAvatarSvg = document.getElementById('defaultAvatarSvg');
@@ -1213,6 +1241,30 @@
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const dict = profileTranslations[currentLang] || profileTranslations.hi;
       alert(dict.updateSuccess);
+    }
+
+    // Setup Calendar Picker interaction on click
+    const dobInput = document.getElementById('dobInput');
+    const calendarIconBtn = document.getElementById('calendarIconBtn');
+
+    function triggerDatePicker() {
+      if (dobInput) {
+        if (typeof dobInput.showPicker === 'function') {
+          dobInput.showPicker();
+        } else {
+          dobInput.focus();
+        }
+      }
+    }
+
+    if (dobInput) {
+      dobInput.addEventListener('click', triggerDatePicker);
+    }
+    if (calendarIconBtn) {
+      calendarIconBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        triggerDatePicker();
+      });
     }
 
     const uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
@@ -1293,7 +1345,6 @@
       renderAuthHeader();
       updateProfileLanguage();
       
-      // Listen to auth state reliably rather than using a static timer
       onAuthStateChanged(auth, (user) => {
         if (user) {
           loadUserProfileData(user);
