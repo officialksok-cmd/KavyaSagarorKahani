@@ -414,7 +414,6 @@
       text-overflow: ellipsis;
     }
 
-    /* Task Delete Button */
     .task-delete-btn {
       position: absolute;
       top: 10px;
@@ -464,7 +463,6 @@
       outline: none;
     }
 
-    /* Sub-category dropdown or Blank text box for Title Name */
     .subcat-select, .subcat-input {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(212, 160, 23, 0.4);
@@ -566,7 +564,7 @@
       box-shadow: 0 4px 12px rgba(212, 160, 23, 0.35);
     }
 
-    /* ---------------- UNIVERSAL 4-CARD FOOTER ---------------- */
+    /* ---------------- FOOTER ---------------- */
     .footer-section {
       max-width: 1240px; margin: 40px auto 0 auto; padding: 30px 20px 0 20px; width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
@@ -693,12 +691,13 @@
           </li>
           <li>
             <a href="profile.html" class="menu-item">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
               <span id="labelProfileMenu">मेरी प्रोफ़ाइल</span>
             </a>
           </li>
           <li>
-            <a href="#" id="sidebarLogoutBtn" class="menu-item">
+            <!-- Added inline fallback onclick -->
+            <a href="#" id="sidebarLogoutBtn" class="menu-item" onclick="handleUserLogout(); return false;">
               <svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
               <span id="labelLogoutMenu">लॉग आउट</span>
             </a>
@@ -780,7 +779,7 @@
         </div>
       </div>
     </div>
-  </main>
+  </section>
 
   <footer>
     &copy; 2026 काव्य सागर और कहानी. All rights reserved.
@@ -788,6 +787,9 @@
 
   <script type="module">
     import { db, collection, getDocs, doc, setDoc, deleteDoc } from "./firebase.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const auth = getAuth();
 
     // --- 1. LOCAL TRANSLATION DICTIONARY ---
     const localDict = {
@@ -891,7 +893,7 @@
         querySnapshot.forEach((docSnap) => {
           const data = docSnap.data();
           const author = data.author || 'Admin';
-          // Only pull works created by this specific logged-in user (new accounts start empty)
+          // Only pull works created by this specific logged-in user
           if (currentAuthorName.toLowerCase() === 'admin' || author.toLowerCase() === currentAuthorName.toLowerCase()) {
             const stage = data.stage && cloudWorks[data.stage] ? data.stage : 'draft';
             cloudWorks[stage].push({ id: docSnap.id, ...data });
@@ -919,7 +921,6 @@
       subCategoryContainer.innerHTML = '';
 
       if (subCategoriesMap[catKey]) {
-        // Dropdown for Poems & Quotes
         const selectEl = document.createElement('select');
         selectEl.id = 'subCategorySelect';
         selectEl.className = 'subcat-select';
@@ -934,7 +935,6 @@
         });
         subCategoryContainer.appendChild(selectEl);
       } else {
-        // Blank text box for Stories & Diaries category title naming
         const inputEl = document.createElement('input');
         inputEl.type = 'text';
         inputEl.id = 'subCategoryInput';
@@ -1163,7 +1163,6 @@
       }
     }
 
-    // --- Delete Work Item ---
     window.deleteWorkItem = async function(e, id) {
       e.stopPropagation();
       const confirmDel = confirm("क्या आप वाकई इस रचना को हटाना चाहते हैं? (Are you sure you want to delete this work?)");
@@ -1223,7 +1222,7 @@
         <div class="dropdown-content" id="userDropdown">
           <a href="profile.html" data-lang-key="myProfile">My Profile</a>
           <a href="saved-items.html" data-lang-key="savedItems">Saved Items</a>
-          <a href="my-work.html" data-lang-key="myWorks">My Works</a>
+          <a href="my-works.html" data-lang-key="myWorks">My Works</a>
           <a href="mailto:official.ksok@gmail.com" data-lang-key="contactUs">Contact us</a>
           <button onclick="handleUserLogout()" data-lang-key="logout">Logout</button>
         </div>
@@ -1236,11 +1235,26 @@
       if (dropdown) dropdown.classList.toggle('show');
     }
 
-    window.handleUserLogout = function() {
+    // Comprehensive Logout Handler
+    window.handleUserLogout = async function() {
+      try {
+        await signOut(auth);
+      } catch (err) {
+        console.warn("Firebase sign out:", err);
+      }
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userName');
       sessionStorage.clear();
       window.location.href = 'login.html';
+    };
+
+    // Attach click event to Sidebar Logout button
+    const sidebarLogoutBtn = document.getElementById('sidebarLogoutBtn');
+    if (sidebarLogoutBtn) {
+      sidebarLogoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.handleUserLogout();
+      });
     }
 
     window.addEventListener('click', (e) => {
@@ -1249,7 +1263,24 @@
       if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
         userDropdown.classList.remove('show');
       }
+
+      const otherLinksBtn = document.getElementById('otherLinksBtn');
+      const socialPopup = document.getElementById('socialPopup');
+      if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
+        socialPopup.classList.remove('active');
+        otherLinksBtn.classList.remove('active');
+      }
     });
+
+    const otherLinksBtn = document.getElementById('otherLinksBtn');
+    const socialPopup = document.getElementById('socialPopup');
+    if (otherLinksBtn && socialPopup) {
+      otherLinksBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        socialPopup.classList.toggle('active');
+        otherLinksBtn.classList.toggle('active');
+      });
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
