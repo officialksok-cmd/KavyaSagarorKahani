@@ -894,6 +894,18 @@
     let currentQuoteIndex = 0;
     const currentAuthorName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
 
+    // --- MAP SUB-CATEGORY TEXT TO CORRECT QUOTE KEY ---
+    function mapQuoteCategory(subCat) {
+      if (!subCat) return 'spiritual';
+      const s = subCat.toLowerCase();
+      if (s.includes('spiritual') || s.includes('आध्यात्म')) return 'spiritual';
+      if (s.includes('belief') || s.includes('positivity') || s.includes('आत्मविश्वास')) return 'belief';
+      if (s.includes('love') || s.includes('bond') || s.includes('gratitude') || s.includes('प्रेम')) return 'love';
+      if (s.includes('thought') || s.includes('wisdom') || s.includes('विचार')) return 'wisdom';
+      if (s.includes('success') || s.includes('hardwork') || s.includes('सफलता')) return 'success';
+      return 'spiritual';
+    }
+
     // --- FETCH PUBLISHED QUOTES FROM FIREBASE CLOUD ---
     async function loadQuotesFromCloud() {
       try {
@@ -906,7 +918,7 @@
           allWorksData.push({ id: docSnap.id, ...item });
 
           if (item.stage === 'published' && item.category === 'prerna') {
-            const targetCat = quotesData[item.subCategory] ? item.subCategory : 'spiritual';
+            const targetCat = mapQuoteCategory(item.subCategory);
             
             if (item.content && item.content.trim() !== '') {
               const quoteObj = { text: item.content, author: `~ ${item.author || currentAuthorName}` };
