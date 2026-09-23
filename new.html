@@ -561,12 +561,18 @@
             let itemTime = now;
             if (item.createdAt) {
               itemTime = new Date(item.createdAt).getTime();
+            } else if (item.date) {
+              itemTime = new Date(item.date).getTime();
             } else if (item.id && item.id.includes('_')) {
               const parts = item.id.split('_');
               const possibleTimestamp = Number(parts[parts.length - 1]);
               if (!isNaN(possibleTimestamp) && possibleTimestamp > 1000000000) {
                 itemTime = possibleTimestamp;
               }
+            }
+
+            if (isNaN(itemTime)) {
+              itemTime = now;
             }
 
             // Check if post is within the last 48 hours (2 days)
@@ -663,7 +669,7 @@
         listContainer.appendChild(oval);
       });
 
-      const currentPost = posts.find(p => p.id === selectedPostId) || posts[0];
+      const currentPost = posts.posts ? posts.find(p => p.id === selectedPostId) : (posts.find(p => p.id === selectedPostId) || posts[0]);
       if (currentPost) {
         loadPostToViewer(currentPost);
       }
@@ -808,7 +814,7 @@
 
     window.handleShareAction = function() {
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(window.location.href);
+        navigator.clipboard.writeTest(window.location.href);
         alert('Post link copied to clipboard!');
       } else {
         alert('Share triggered!');
