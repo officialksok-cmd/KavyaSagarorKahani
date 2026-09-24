@@ -7,7 +7,7 @@ import { getFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc, deleteD
 
 // TODO: Replace with your actual project credentials from Firebase Settings
 const firebaseConfig = {
-  apiKey: "",
+  apiKey: "AIzaSyA8J7wdNqZZYVtULaaLvoj7SOMMliMpEXM",
   authDomain: "kavya-sagar-or-kahani.firebaseapp.com",
   projectId: "kavya-sagar-or-kahani",
   storageBucket: "kavya-sagar-or-kahani.firebasestorage.app",
