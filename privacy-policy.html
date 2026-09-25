@@ -40,6 +40,8 @@
       top: 0;
       z-index: 100;
       width: 100%;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
     .brand {
@@ -61,6 +63,7 @@
     nav {
       display: flex;
       gap: 20px;
+      align-items: center;
     }
 
     nav a {
@@ -439,9 +442,10 @@
       font-size: 0.85rem;
     }
 
-    @media (max-width: 768px) {
-      header { padding: 10px 15px; }
-      nav { display: none; }
+    @media (max-width: 900px) {
+      header { padding: 10px 15px; justify-content: center; }
+      nav { width: 100%; justify-content: center; gap: 12px; margin-top: 5px; flex-wrap: wrap; }
+      nav a { font-size: 0.85rem; }
       .policy-container { padding: 0 12px; margin: 20px auto; }
       .policy-card { padding: 28px 20px; }
       .page-title { font-size: 1.75rem; }
