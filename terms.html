@@ -40,6 +40,8 @@
       top: 0;
       z-index: 100;
       width: 100%;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
     .brand {
@@ -61,6 +63,7 @@
     nav {
       display: flex;
       gap: 20px;
+      align-items: center;
     }
 
     nav a {
@@ -442,9 +445,10 @@
       font-size: 0.85rem;
     }
 
-    @media (max-width: 768px) {
-      header { padding: 10px 15px; }
-      nav { display: none; }
+    @media (max-width: 900px) {
+      header { padding: 10px 15px; justify-content: center; }
+      nav { width: 100%; justify-content: center; gap: 12px; margin-top: 5px; flex-wrap: wrap; }
+      nav a { font-size: 0.85rem; }
       .terms-container { padding: 0 12px; margin: 20px auto; }
       .terms-card { padding: 28px 20px; }
       .page-title { font-size: 1.75rem; }
@@ -742,7 +746,6 @@
 
       document.getElementById('sec2Heading').innerText = data.sec2Heading;
       
-      // Render Section 2 lists dynamically to handle language toggling correctly
       const sec2ListEl = document.getElementById('sec2List');
       sec2ListEl.innerHTML = `
         <li>${data.sec2List[0]}</li>
@@ -807,7 +810,7 @@
             <a href="my-work.html">${myWorksLabel}</a>
             ${isAdmin ? `<a href="admin-control.html" style="color: #ffd700; font-weight: bold;">⚡ Master Panel</a>` : ''}
             <a href="mailto:official.ksok@gmail.com">${contactUsLabel}</a>
-            <button onclick="handleUserLogout()">${logoutLabel}</button>
+            <button type="button" onclick="handleUserLogout()">${logoutLabel}</button>
           </div>
         `;
       } else {
@@ -843,12 +846,14 @@
       window.location.reload();
     }
 
+    // Make logout globally accessible
+    window.handleUserLogout = handleUserLogout;
+
     // --- 3. ROBUST GLOBAL EVENT LISTENERS (DELEGATION) ---
     window.addEventListener('click', (e) => {
       const userMenuBtn = document.getElementById('userMenuBtn');
       const userDropdown = document.getElementById('userDropdown');
       
-      // Toggle dropdown if profile button is clicked
       if (userMenuBtn && (userMenuBtn === e.target || userMenuBtn.contains(e.target))) {
         e.stopPropagation();
         if (userDropdown) {
@@ -857,12 +862,10 @@
         return;
       }
 
-      // Close dropdown if clicking outside
       if (userDropdown && userMenuBtn && !userMenuBtn.contains(e.target)) {
         userDropdown.classList.remove('show');
       }
 
-      // Footer Other Links popup logic
       const otherLinksBtn = document.getElementById('otherLinksBtn');
       const socialPopup = document.getElementById('socialPopup');
       if (otherLinksBtn && socialPopup && !otherLinksBtn.contains(e.target) && !socialPopup.contains(e.target)) {
@@ -892,13 +895,11 @@
       });
     }
 
-    // Re-render when language changes globally
     window.addEventListener('languageChanged', () => {
       renderAuthHeader();
       renderTermsPage();
     });
 
-    // Initial Load
     window.addEventListener('DOMContentLoaded', () => {
       renderAuthHeader();
       renderTermsPage();
