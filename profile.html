@@ -48,6 +48,8 @@
       top: 0;
       z-index: 100;
       width: 100%;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
     .brand {
@@ -69,6 +71,7 @@
     nav {
       display: flex;
       gap: 20px;
+      align-items: center;
     }
 
     nav a {
@@ -691,8 +694,9 @@
     }
 
     @media (max-width: 900px) {
-      header { padding: 10px 15px; }
-      nav { display: none; }
+      header { padding: 10px 15px; justify-content: center; } 
+      nav { width: 100%; justify-content: center; gap: 12px; margin-top: 5px; flex-wrap: wrap; }
+      nav a { font-size: 0.85rem; }
       .dashboard-card { grid-template-columns: 1fr; }
       .sidebar-section, .avatar-section {
         border-right: none;
@@ -1115,8 +1119,8 @@
 
               // Match by UID, or Email, or Author Name
               const isMatch = (userUid && docAuthorId === userUid) ||
-                              (userEmail && docEmail === userEmail) ||
-                              (userName && docAuthorName.toLowerCase() === userName.toLowerCase());
+                            (userEmail && docEmail === userEmail) ||
+                            (userName && docAuthorName.toLowerCase() === userName.toLowerCase());
 
               if (isMatch) {
                 seenDocIds.add(docSnap.id);
@@ -1311,7 +1315,7 @@
         otherLinksBtn.classList.remove('active');
         const currentLang = localStorage.getItem('site_lang') || 'hi';
         const dict = (typeof translations !== 'undefined') ? translations[currentLang] : null;
-        otherLinksBtn.innerText = dict ? dict.otherLinks : 'Other Links';
+        otherLinksBtn.innerText = dict ? dict.close : dict.otherLinks;
       }
     });
 
