@@ -50,6 +50,8 @@
       top: 0;
       z-index: 100;
       width: 100%;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
     .brand {
@@ -64,7 +66,7 @@
 
     .brand svg { width: 28px; height: 28px; flex-shrink: 0; }
 
-    nav { display: flex; gap: 20px; }
+    nav { display: flex; gap: 20px; align-items: center; }
     nav a {
       color: #9ca3af; text-decoration: none; font-size: 0.95rem; transition: color 0.2s;
     }
@@ -515,7 +517,9 @@
       .sidebar-section { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
       .saved-body { grid-template-columns: 1fr; }
       .item-list-column { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.06); max-height: 250px; }
-      header { padding: 10px 15px; } nav { display: none; }
+      header { padding: 10px 15px; justify-content: center; } 
+      nav { width: 100%; justify-content: center; gap: 12px; margin-top: 5px; flex-wrap: wrap; }
+      nav a { font-size: 0.85rem; }
       .footer-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
@@ -594,7 +598,7 @@
           </li>
           <li>
             <a href="profile.html" class="menu-item">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
               <span id="labelProfileMenu">मेरी प्रोफ़ाइल</span>
             </a>
           </li>
@@ -620,7 +624,7 @@
             <button class="cat-pill active" id="tab-kavita" onclick="switchCategory('kavita')">कविता (Poems)</button>
             <button class="cat-pill" id="tab-kahani" onclick="switchCategory('kahani')">कहानी (Stories)</button>
             <button class="cat-pill" id="tab-diary" onclick="switchCategory('diary')">डायरी (Diary)</button>
-            <button class="cat-pill" id="tab-quotes" onclick="switchCategory('quotes')">प्रेरणादायक बातें (Inspirational Quotes)</button>
+            <button class="cat-pill" id="tab-quotes" onclick="switchCategory('quotes')">प्रेरणादायक बातें (Quotes)</button>
           </div>
         </div>
 
