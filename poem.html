@@ -318,14 +318,14 @@
     .category-item[data-theme="religious"].active { background: linear-gradient(135deg, #ff9966, #ff5e62); color: #fff; border-color: #ff9966; box-shadow: 0 4px 15px rgba(255, 153, 102, 0.35); }
     .category-item[data-theme="sad"].active { background: linear-gradient(135deg, #4b6cb7, #182848); color: #fff; border-color: #4b6cb7; box-shadow: 0 4px 15px rgba(75, 108, 183, 0.35); }
 
-    /* ---------------- NATIVE 3D CARD CAROUSEL (RESPONSIVE) ---------------- */
+    /* ---------------- NATIVE 3D CARD CAROUSEL (FULLY RESPONSIVE) ---------------- */
     .custom-carousel-box {
       background: #15151f;
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 24px;
-      padding: 35px 20px 25px 20px;
+      padding: 30px 15px 20px 15px;
       width: 100%;
-      min-height: 520px;
+      min-height: 500px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -337,7 +337,7 @@
     .card-deck-stage {
       position: relative;
       width: 100%;
-      height: 390px;
+      height: 380px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -346,13 +346,13 @@
 
     .custom-slide-card {
       position: absolute;
-      width: 100%;
-      max-width: 520px;
-      min-height: 350px;
+      width: 92%;
+      max-width: 500px;
+      min-height: 340px;
       background: #1a1a26;
       border: 1.5px solid rgba(255, 255, 255, 0.08);
-      border-radius: 24px;
-      padding: 24px 20px 18px 20px;
+      border-radius: 20px;
+      padding: 22px 18px 18px 18px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -371,27 +371,27 @@
     }
 
     .custom-slide-card.prev {
-      transform: translateX(-210px) scale(0.82) rotateY(8deg);
-      opacity: 0.28;
+      transform: translateX(-180px) scale(0.78) rotateY(6deg);
+      opacity: 0.2;
       z-index: 5;
-      filter: blur(0.5px);
+      pointer-events: none;
     }
 
     .custom-slide-card.next {
-      transform: translateX(210px) scale(0.82) rotateY(-8deg);
-      opacity: 0.28;
+      transform: translateX(180px) scale(0.78) rotateY(-6deg);
+      opacity: 0.2;
       z-index: 5;
-      filter: blur(0.5px);
+      pointer-events: none;
     }
 
     .custom-slide-card.hidden-left {
-      transform: translateX(-350px) scale(0.6);
+      transform: translateX(-300px) scale(0.5);
       opacity: 0;
       pointer-events: none;
       z-index: 1;
     }
     .custom-slide-card.hidden-right {
-      transform: translateX(350px) scale(0.6);
+      transform: translateX(300px) scale(0.5);
       opacity: 0;
       pointer-events: none;
       z-index: 1;
@@ -412,7 +412,7 @@
     }
 
     .card-header-title {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 700;
       color: #ffffff;
       letter-spacing: 0.5px;
@@ -457,7 +457,7 @@
       font-size: 1rem;
       line-height: 1.7;
       text-align: center;
-      min-height: 110px;
+      min-height: 105px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -471,8 +471,8 @@
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-top: 12px;
-      padding-top: 12px;
+      margin-top: 10px;
+      padding-top: 10px;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       flex-wrap: wrap;
     }
@@ -481,9 +481,9 @@
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.12);
       color: #d1d5db;
-      padding: 5px 14px;
+      padding: 5px 12px;
       border-radius: 20px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -498,15 +498,15 @@
     .comment-cloud-modal {
       display: none;
       position: absolute;
-      bottom: 55px;
+      bottom: 50px;
       left: 50%;
       transform: translateX(-50%);
-      width: 90%;
-      max-width: 380px;
+      width: 92%;
+      max-width: 350px;
       background: #1e1e2d;
       border: 2px solid #d4a017;
-      border-radius: 24px;
-      padding: 16px;
+      border-radius: 20px;
+      padding: 14px;
       box-shadow: 0 15px 40px rgba(0,0,0,0.8);
       z-index: 50;
       animation: fadeInCloud 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -525,14 +525,14 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       padding-bottom: 6px;
     }
 
     .cloud-header h4 {
       color: #d4a017;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
     }
 
     .cloud-close-btn {
@@ -545,12 +545,12 @@
     .cloud-close-btn:hover { color: #ffffff; }
 
     .cloud-comments-list {
-      max-height: 120px;
+      max-height: 100px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 6px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       padding-right: 4px;
     }
 
@@ -583,7 +583,7 @@
       background: rgba(255, 255, 255, 0.07);
       border: 1px solid rgba(255, 255, 255, 0.15);
       padding: 6px 10px;
-      border-radius: 18px;
+      border-radius: 16px;
       color: #ffffff;
       font-size: 0.8rem;
       outline: none;
@@ -594,8 +594,8 @@
       background: #d4a017;
       color: #0d0d15;
       border: none;
-      padding: 6px 14px;
-      border-radius: 18px;
+      padding: 6px 12px;
+      border-radius: 16px;
       font-weight: 700;
       font-size: 0.78rem;
       cursor: pointer;
@@ -779,8 +779,9 @@
       nav { width: 100%; justify-content: center; gap: 12px; margin-top: 5px; flex-wrap: wrap; }
       nav a { font-size: 0.85rem; }
       .footer-grid { grid-template-columns: repeat(2, 1fr); }
-      .custom-slide-card.prev { transform: translateX(-140px) scale(0.8) rotateY(6deg); }
-      .custom-slide-card.next { transform: translateX(140px) scale(0.8) rotateY(-6deg); }
+      .custom-slide-card { max-width: 95%; min-height: 310px; padding: 18px 14px; }
+      .custom-slide-card.prev { transform: translateX(-110px) scale(0.75); opacity: 0.15; }
+      .custom-slide-card.next { transform: translateX(110px) scale(0.75); opacity: 0.15; }
     }
   </style>
 </head>
@@ -1399,7 +1400,7 @@
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userName');
       sessionStorage.clear();
-      window.location.href = 'login.html';
+      window.location.reload();
     }
 
     window.handleUserLogout = handleUserLogout;
