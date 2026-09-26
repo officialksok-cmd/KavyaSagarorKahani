@@ -4,7 +4,7 @@
   <meta name="google-adsense-account" content="ca-pub-9571969536554073">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>कविताएँ - काव्य सागर और कहानी</title>
+  <title>प्रेरणादायक बातें - काव्य सागर और कहानी</title>
 
   <!-- Global Language Switcher Script -->
   <script src="lang.js"></script>
@@ -118,7 +118,10 @@
       width: 22px; height: 22px; background: #ffd700; color: #0d0d15; border-radius: 50%;
       display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem;
     }
-    .avatar-icon.guest-avatar { background: #4b5563; color: #f3f4f6; }
+    .avatar-icon.guest-avatar {
+      background: #4b5563;
+      color: #f3f4f6;
+    }
 
     .dropdown-content {
       display: none; position: absolute; right: 0; top: 110%; background: #181824;
@@ -164,127 +167,86 @@
     .highlight-match { background: #fef08a; color: #000; padding: 1px 4px; border-radius: 3px; font-weight: 600; }
 
     /* ---------------- MAIN CONTAINER ---------------- */
-    .poems-container {
-      max-width: 1240px;
-      margin: 30px auto;
-      padding: 0 20px;
-      width: 100%;
-      flex: 1;
+    .quotes-container {
+      max-width: 1240px; margin: 30px auto; padding: 0 20px; width: 100%; flex: 1;
     }
 
-    /* ---------------- TOP CATEGORY TILES ---------------- */
+    /* ---------------- BASIC RECTANGLE CATEGORY CARDS ---------------- */
     .category-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 20px;
+      gap: 15px;
       margin-bottom: 35px;
-      align-items: center;
     }
 
     .tile-slot {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       cursor: pointer;
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 0.25s ease;
     }
     .tile-slot:hover {
-      transform: translateY(-6px) scale(1.03);
+      transform: translateY(-4px);
     }
 
-    .custom-tile {
+    .custom-rect-card {
       width: 100%;
-      height: 180px;
+      height: 100px;
+      background: #15151f;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 16px 12px;
-      position: relative;
-      user-select: none;
+      padding: 12px;
+      transition: all 0.25s ease;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
 
-    .custom-tile span {
+    .custom-rect-card span {
       font-size: 0.88rem;
-      font-weight: 700;
+      font-weight: 600;
       line-height: 1.35;
       color: #9ca3af;
-      z-index: 3;
-      transition: all 0.3s ease;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      transition: color 0.25s ease;
     }
 
-    .tile-bg-svg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      overflow: visible;
+    /* THEMED ACTIVE RECTANGLE STATES */
+    .theme-spiritual.active .custom-rect-card {
+      background: linear-gradient(135deg, rgba(255, 140, 0, 0.2), rgba(21, 21, 31, 0.95));
+      border-color: #ff9900;
+      box-shadow: 0 6px 20px rgba(255, 140, 0, 0.25);
     }
+    .theme-spiritual.active span { color: #ffb703; }
 
-    .tile-path {
-      fill: rgba(255, 255, 255, 0.02);
-      stroke: rgba(255, 255, 255, 0.2);
-      stroke-width: 2;
-      stroke-dasharray: 6 4;
-      transition: all 0.35s ease;
+    .theme-belief.active .custom-rect-card {
+      background: linear-gradient(135deg, rgba(163, 230, 53, 0.2), rgba(21, 21, 31, 0.95));
+      border-color: #a3e635;
+      box-shadow: 0 6px 20px rgba(163, 230, 53, 0.25);
     }
+    .theme-belief.active span { color: #bef264; }
 
-    /* ---------------- THEMED COLOR SYSTEM (QUOTES STYLE) ---------------- */
-    .theme-love .tile-path { stroke: rgba(244, 63, 94, 0.4); }
-    .theme-love.active .tile-path {
-      fill: rgba(244, 63, 94, 0.2);
-      stroke: #fb7185;
-      stroke-width: 2.8;
-      stroke-dasharray: 0;
-      filter: drop-shadow(0 0 16px rgba(251, 113, 133, 0.6));
+    .theme-love.active .custom-rect-card {
+      background: linear-gradient(135deg, rgba(251, 113, 133, 0.2), rgba(21, 21, 31, 0.95));
+      border-color: #fb7185;
+      box-shadow: 0 6px 20px rgba(251, 113, 133, 0.25);
     }
     .theme-love.active span { color: #fda4af; }
 
-    .theme-friendship .tile-path { stroke: rgba(56, 189, 248, 0.4); }
-    .theme-friendship.active .tile-path {
-      fill: rgba(14, 116, 144, 0.25);
-      stroke: #38bdf8;
-      stroke-width: 2.8;
-      stroke-dasharray: 0;
-      filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.55));
+    .theme-wisdom.active .custom-rect-card {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(21, 21, 31, 0.95));
+      border-color: #38bdf8;
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.25);
     }
-    .theme-friendship.active span { color: #7dd3fc; }
+    .theme-wisdom.active span { color: #7dd3fc; }
 
-    .theme-nature .tile-path { stroke: rgba(132, 204, 22, 0.4); }
-    .theme-nature.active .tile-path {
-      fill: rgba(132, 204, 22, 0.18);
-      stroke: #a3e635;
-      stroke-width: 2.8;
-      stroke-dasharray: 0;
-      filter: drop-shadow(0 0 16px rgba(163, 230, 53, 0.55));
+    .theme-success.active .custom-rect-card {
+      background: linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(21, 21, 31, 0.95));
+      border-color: #fb923c;
+      box-shadow: 0 6px 20px rgba(251, 146, 60, 0.25);
     }
-    .theme-nature.active span { color: #bef264; }
+    .theme-success.active span { color: #fed7aa; }
 
-    .theme-religious .tile-path { stroke: rgba(249, 115, 22, 0.4); }
-    .theme-religious.active .tile-path {
-      fill: rgba(249, 115, 22, 0.2);
-      stroke: #fb923c;
-      stroke-width: 2.8;
-      stroke-dasharray: 0;
-      filter: drop-shadow(0 0 16px rgba(251, 146, 60, 0.55));
-    }
-    .theme-religious.active span { color: #fed7aa; }
-
-    .theme-sad .tile-path { stroke: rgba(168, 85, 247, 0.4); }
-    .theme-sad.active .tile-path {
-      fill: rgba(168, 85, 247, 0.2);
-      stroke: #c084fc;
-      stroke-width: 2.8;
-      stroke-dasharray: 0;
-      filter: drop-shadow(0 0 16px rgba(192, 132, 252, 0.55));
-    }
-    .theme-sad.active span { color: #e879f9; }
-
-    /* ---------------- NATIVE 3D CARD CAROUSEL (RESPONSIVE) ---------------- */
+    /* ---------------- NATIVE 3D QUOTE CARD DECK ---------------- */
     .custom-carousel-box {
       background: #15151f;
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -323,7 +285,7 @@
     .custom-slide-card {
       position: absolute;
       width: 380px;
-      max-width: 90%;
+      max-width: 85%;
       min-height: 300px;
       background: #1b1b26;
       border: 1.5px solid rgba(255, 255, 255, 0.08);
@@ -338,7 +300,7 @@
       overflow: hidden;
     }
 
-    .poem-bg-svg {
+    .quote-bg-svg {
       position: absolute;
       top: 0;
       left: 0;
@@ -358,17 +320,17 @@
     }
 
     .custom-slide-card.prev {
-      transform: translateX(-190px) scale(0.82) rotateY(8deg);
-      opacity: 0.2;
+      transform: translateX(-210px) scale(0.84) rotateY(8deg);
+      opacity: 0.32;
       z-index: 5;
-      pointer-events: none;
+      filter: blur(0.5px);
     }
 
     .custom-slide-card.next {
-      transform: translateX(190px) scale(0.82) rotateY(-8deg);
-      opacity: 0.2;
+      transform: translateX(210px) scale(0.84) rotateY(-8deg);
+      opacity: 0.32;
       z-index: 5;
-      pointer-events: none;
+      filter: blur(0.5px);
     }
 
     .custom-slide-card.hidden-left {
@@ -385,13 +347,13 @@
     }
 
     /* THEME ACTIVE GLOWS */
+    .custom-slide-card.active.theme-spiritual { background: linear-gradient(145deg, rgba(255, 140, 0, 0.22), rgba(24, 24, 34, 0.98)); border-color: #ff9900; box-shadow: 0 0 35px rgba(255, 140, 0, 0.45); }
+    .custom-slide-card.active.theme-belief { background: linear-gradient(145deg, rgba(163, 230, 53, 0.22), rgba(24, 24, 34, 0.98)); border-color: #a3e635; box-shadow: 0 0 35px rgba(163, 230, 53, 0.45); }
     .custom-slide-card.active.theme-love { background: linear-gradient(145deg, rgba(251, 113, 133, 0.22), rgba(24, 24, 34, 0.98)); border-color: #fb7185; box-shadow: 0 0 35px rgba(251, 113, 133, 0.45); }
-    .custom-slide-card.active.theme-friendship { background: linear-gradient(145deg, rgba(56, 189, 248, 0.22), rgba(24, 24, 34, 0.98)); border-color: #38bdf8; box-shadow: 0 0 35px rgba(56, 189, 248, 0.45); }
-    .custom-slide-card.active.theme-nature { background: linear-gradient(145deg, rgba(163, 230, 53, 0.22), rgba(24, 24, 34, 0.98)); border-color: #a3e635; box-shadow: 0 0 35px rgba(163, 230, 53, 0.45); }
-    .custom-slide-card.active.theme-religious { background: linear-gradient(145deg, rgba(251, 146, 60, 0.22), rgba(24, 24, 34, 0.98)); border-color: #fb923c; box-shadow: 0 0 35px rgba(251, 146, 60, 0.45); }
-    .custom-slide-card.active.theme-sad { background: linear-gradient(145deg, rgba(192, 132, 252, 0.22), rgba(24, 24, 34, 0.98)); border-color: #c084fc; box-shadow: 0 0 35px rgba(192, 132, 252, 0.45); }
+    .custom-slide-card.active.theme-wisdom { background: linear-gradient(145deg, rgba(56, 189, 248, 0.22), rgba(24, 24, 34, 0.98)); border-color: #38bdf8; box-shadow: 0 0 35px rgba(56, 189, 248, 0.45); }
+    .custom-slide-card.active.theme-success { background: linear-gradient(145deg, rgba(251, 146, 60, 0.22), rgba(24, 24, 34, 0.98)); border-color: #fb923c; box-shadow: 0 0 35px rgba(251, 146, 60, 0.45); }
 
-    .poem-content-body {
+    .quote-content-body {
       position: relative;
       z-index: 2;
       display: flex;
@@ -399,38 +361,38 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      margin-top: 5px;
+      margin-top: 10px;
     }
 
-    .poem-badge-top {
+    .quote-badge-top {
       font-size: 0.78rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1.5px;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
-    .poem-main-text {
-      font-size: 1.05rem;
+    .quote-main-text {
+      font-size: 1.15rem;
       line-height: 1.8;
       color: #ffffff;
       font-style: italic;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       white-space: pre-line;
-      max-width: 90%;
+      max-width: 88%;
     }
 
     /* Clickable Author Badge */
-    .poem-author-badge {
-      font-size: 0.9rem;
+    .quote-author-badge {
+      font-size: 0.92rem;
       font-weight: 600;
-      width: 90%;
+      width: 88%;
       text-align: right;
       text-decoration: none;
       display: inline-block;
       transition: color 0.2s;
     }
-    .poem-author-badge:hover {
+    .quote-author-badge:hover {
       color: #ffffff !important;
       text-decoration: underline;
     }
@@ -444,7 +406,7 @@
       margin-top: 15px;
     }
 
-    .p-action-btn {
+    .q-action-btn {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.12);
       width: 38px;
@@ -457,9 +419,9 @@
       justify-content: center;
       transition: all 0.2s;
     }
-    .p-action-btn:hover { transform: scale(1.15); }
-    .p-action-btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2; }
-    .p-action-btn.liked svg { fill: #ff416c; stroke: #ff416c; color: #ff416c; }
+    .q-action-btn:hover { transform: scale(1.15); }
+    .q-action-btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .q-action-btn.liked svg { fill: #ff416c; stroke: #ff416c; color: #ff416c; }
 
     /* ---------------- CLOUD COMMENT SECTION POPUP ---------------- */
     .comment-cloud-modal {
@@ -583,11 +545,9 @@
       header { padding: 10px 15px; justify-content: center; } 
       nav { width: 100%; justify-content: center; gap: 12px; margin-top: 5px; flex-wrap: wrap; }
       nav a { font-size: 0.85rem; }
-      .category-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+      .category-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
       .footer-grid { grid-template-columns: repeat(2, 1fr); }
       .custom-carousel-box { padding: 25px 15px; }
-      .custom-slide-card.prev { transform: translateX(-120px) scale(0.7) opacity(0); }
-      .custom-slide-card.next { transform: translateX(120px) scale(0.7) opacity(0); }
     }
   </style>
 </head>
@@ -648,65 +608,50 @@
     </table>
   </section>
 
-  <!-- Main Content Container (Quotes Style Layout) -->
-  <main class="poems-container">
+  <!-- Main Content Container -->
+  <main class="quotes-container">
 
-    <!-- 1. CATEGORY TILES (Top Section matching Quotes) -->
+    <!-- 1. BASIC RECTANGLE CATEGORY CARDS (Top Section) -->
     <div class="category-grid">
 
-      <!-- Tile 1: Love -->
+      <!-- Card 1: Love -->
       <div class="tile-slot theme-love active" id="slot-love" onclick="selectPoemCategory('love', this)">
-        <div class="custom-tile">
-          <svg class="tile-bg-svg" viewBox="0 0 160 140" preserveAspectRatio="none">
-            <path class="tile-path" d="M80,128 C80,128 18,92 18,48 C18,22 42,12 60,22 C72,28 80,40 80,40 C80,40 88,28 100,22 C118,12 142,22 142,48 C142,92 80,128 80,128 Z" />
-          </svg>
+        <div class="custom-rect-card">
           <span data-lang-key="catLove">Love (प्रेम)</span>
         </div>
       </div>
 
-      <!-- Tile 2: Friendship -->
+      <!-- Card 2: Friendship -->
       <div class="tile-slot theme-friendship" id="slot-friendship" onclick="selectPoemCategory('friendship', this)">
-        <div class="custom-tile">
-          <svg class="tile-bg-svg" viewBox="0 0 160 140" preserveAspectRatio="none">
-            <path class="tile-path" d="M40,110 C20,110 10,90 20,75 C10,55 30,35 50,45 C65,25 95,25 110,45 C130,35 150,55 140,75 C150,90 140,110 120,110 Z" />
-          </svg>
+        <div class="custom-rect-card">
           <span data-lang-key="catFriendship">Friendship (दोस्ती)</span>
         </div>
       </div>
 
-      <!-- Tile 3: Nature -->
+      <!-- Card 3: Nature -->
       <div class="tile-slot theme-nature" id="slot-nature" onclick="selectPoemCategory('nature', this)">
-        <div class="custom-tile">
-          <svg class="tile-bg-svg" viewBox="0 0 160 140" preserveAspectRatio="none">
-            <path class="tile-path" d="M80,35 C65,10 40,15 35,40 C10,45 15,70 40,75 C15,80 10,105 35,110 C40,135 65,130 80,105 C95,130 120,135 125,110 C150,105 145,80 120,75 C145,70 150,45 125,40 C120,15 95,10 80,35 Z" />
-          </svg>
+        <div class="custom-rect-card">
           <span data-lang-key="catNature">Nature (प्रकृति)</span>
         </div>
       </div>
 
-      <!-- Tile 4: Religious -->
+      <!-- Card 4: Religious -->
       <div class="tile-slot theme-religious" id="slot-religious" onclick="selectPoemCategory('religious', this)">
-        <div class="custom-tile">
-          <svg class="tile-bg-svg" viewBox="0 0 160 140" preserveAspectRatio="none">
-            <path class="tile-path" d="M12,25 C45,15 75,28 80,35 C85,28 115,15 148,25 L148,115 C115,105 85,118 80,125 C75,118 45,105 12,115 Z" />
-          </svg>
+        <div class="custom-rect-card">
           <span data-lang-key="catReligious">Religious (भक्ति)</span>
         </div>
       </div>
 
-      <!-- Tile 5: Sad -->
+      <!-- Card 5: Sad -->
       <div class="tile-slot theme-sad" id="slot-sad" onclick="selectPoemCategory('sad', this)">
-        <div class="custom-tile">
-          <svg class="tile-bg-svg" viewBox="0 0 160 140" preserveAspectRatio="none">
-            <path class="tile-path" d="M80,12 C82,25 78,38 72,48 C66,58 54,64 54,76 C54,92 68,104 80,104 C92,104 106,92 106,76 C106,66 100,58 94,50 C90,44 88,36 90,30 C98,38 122,58 122,86 C122,112 103,130 80,130 C57,130 38,112 38,86 C38,62 52,42 66,28 C74,20 78,12 80,12 Z" />
-          </svg>
+        <div class="custom-rect-card">
           <span data-lang-key="catSad">Sad (दर्द)</span>
         </div>
       </div>
 
     </div>
 
-    <!-- 2. POEMS 3D CAROUSEL BOX -->
+    <!-- 2. QUOTES-STYLE 3D CAROUSEL BOX -->
     <div class="custom-carousel-box" id="viewerWorkspace">
       <div class="viewer-title-tag" id="viewerCategoryTitle">Love Poetry</div>
 
@@ -756,56 +701,11 @@
     import { db, collection, getDocs, setDoc, doc } from "./firebase.js";
 
     const poemCategoryConfigs = {
-      love: {
-        themeClass: "theme-love",
-        color: "#fb7185",
-        pathSvg: `
-          <svg class="poem-bg-svg" viewBox="0 0 320 220" preserveAspectRatio="none">
-            <path d="M160,205 C160,205 30,145 30,75 C30,30 70,15 105,30 C125,40 145,60 160,60 C175,60 195,40 215,30 C250,15 290,30 290,75 C290,145 160,205 160,205 Z" 
-                  fill="rgba(251, 113, 133, 0.08)" stroke="#fb7185" stroke-width="2.2" filter="drop-shadow(0 0 12px rgba(251, 113, 133, 0.35))"/>
-          </svg>
-        `
-      },
-      friendship: {
-        themeClass: "theme-friendship",
-        color: "#38bdf8",
-        pathSvg: `
-          <svg class="poem-bg-svg" viewBox="0 0 320 220" preserveAspectRatio="none">
-            <path d="M80,180 C40,180 20,145 40,120 C20,90 60,55 95,70 C125,40 185,40 215,70 C250,55 290,90 270,120 C290,145 270,180 230,180 Z" 
-                  fill="rgba(56, 189, 248, 0.08)" stroke="#38bdf8" stroke-width="2.2" filter="drop-shadow(0 0 10px rgba(56, 189, 248, 0.3))"/>
-          </svg>
-        `
-      },
-      nature: {
-        themeClass: "theme-nature",
-        color: "#a3e635",
-        pathSvg: `
-          <svg class="poem-bg-svg" viewBox="0 0 320 220" preserveAspectRatio="none">
-            <path d="M160,50 C135,10 80,18 70,60 C20,70 30,115 70,125 C20,135 15,175 65,185 C75,225 125,215 160,175 C195,215 245,225 255,185 C305,175 300,135 250,125 C290,115 300,70 250,60 C240,18 185,10 160,50 Z" 
-                  fill="rgba(163, 230, 53, 0.08)" stroke="#a3e635" stroke-width="2.2" filter="drop-shadow(0 0 10px rgba(163, 230, 53, 0.3))"/>
-          </svg>
-        `
-      },
-      religious: {
-        themeClass: "theme-religious",
-        color: "#fb923c",
-        pathSvg: `
-          <svg class="poem-bg-svg" viewBox="0 0 320 220" preserveAspectRatio="none">
-            <path d="M20,38 C80,22 150,42 160,52 C170,42 240,22 300,38 L300,180 C240,165 170,185 160,195 C150,185 80,165 20,180 Z" 
-                  fill="rgba(251, 146, 60, 0.08)" stroke="#fb923c" stroke-width="2.2" filter="drop-shadow(0 0 10px rgba(251, 146, 60, 0.3))"/>
-          </svg>
-        `
-      },
-      sad: {
-        themeClass: "theme-sad",
-        color: "#c084fc",
-        pathSvg: `
-          <svg class="poem-bg-svg" viewBox="0 0 320 220" preserveAspectRatio="none">
-            <path d="M160,18 C164,40 156,62 144,78 C132,94 112,104 112,124 C112,150 134,170 160,170 C186,170 208,150 208,124 C208,108 198,94 188,82 C182,72 178,60 180,50 C194,62 232,94 232,138 C232,180 200,210 160,210 C120,210 88,180 88,138 C88,100 110,68 134,44 C148,32 156,18 160,18 Z" 
-                  fill="rgba(192, 132, 252, 0.08)" stroke="#c084fc" stroke-width="2.2" filter="drop-shadow(0 0 12px rgba(192, 132, 252, 0.35))"/>
-          </svg>
-        `
-      }
+      love: { themeClass: "theme-love", color: "#fb7185" },
+      friendship: { themeClass: "theme-friendship", color: "#38bdf8" },
+      nature: { themeClass: "theme-nature", color: "#a3e635" },
+      religious: { themeClass: "theme-religious", color: "#fb923c" },
+      sad: { themeClass: "theme-sad", color: "#c084fc" }
     };
 
     const basePoemsData = {
@@ -884,7 +784,6 @@
     let allWorksData = [];
     const currentAuthorName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Admin';
 
-    // --- MAP SUB-CATEGORY TEXT TO CORRECT POEM KEY ---
     function mapPoemCategory(subCat) {
       if (!subCat) return 'love';
       const s = subCat.toLowerCase();
@@ -924,7 +823,6 @@
       }
     }
 
-    // --- SEARCH BAR MATRIX & REDIRECTION ---
     window.handleGlobalSearch = function(query) {
       const section = document.getElementById('searchResultsSection');
       const tbody = document.getElementById('matrixTableBody');
@@ -983,7 +881,6 @@
       }
     }
 
-    // --- RENDER 3D CARDS (QUOTES STYLE) ---
     window.renderPoemsView = function() {
       const currentLang = localStorage.getItem('site_lang') || 'hi';
       const config = poemCategoryConfigs[activePoemCat];
@@ -1014,8 +911,6 @@
         };
 
         card.innerHTML = `
-          ${config.pathSvg}
-
           <div class="poem-content-body">
             <div class="poem-badge-top" style="color: ${config.color};">POETRY</div>
             <div class="poem-main-text">${itemText}</div>
