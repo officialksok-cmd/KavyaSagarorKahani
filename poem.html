@@ -361,7 +361,7 @@
     }
 
     .poem-main-text {
-      font-size: 1.15rem;
+      font-size: 14px; /* Set precisely to 14px as requested */
       line-height: 1.85;
       color: #ffffff;
       font-style: italic;
@@ -535,11 +535,7 @@
       nav a { font-size: 0.85rem; }
       .category-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
       .footer-grid { grid-template-columns: repeat(2, 1fr); }
-      .custom-carousel-box { padding: 25px 15px; min-height: 540px; }
-      .card-deck-stage { height: 390px; }
-      .custom-slide-card { max-width: 95%; min-height: 360px; padding: 24px 18px; }
-      .custom-slide-card.prev { transform: translateX(-120px) scale(0.75); opacity: 0.15; }
-      .custom-slide-card.next { transform: translateX(120px) scale(0.75); opacity: 0.15; }
+      .custom-carousel-box { padding: 25px 15px; }
     }
   </style>
 </head>
@@ -603,7 +599,7 @@
   <!-- Main Content Container -->
   <main class="quotes-container">
 
-    <!-- 1. RECTANGLE CATEGORY CARDS (Top Section) -->
+    <!-- 1. BASIC RECTANGLE CATEGORY CARDS (Top Section) -->
     <div class="category-grid">
 
       <!-- Card 1: Love -->
